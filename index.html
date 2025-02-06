@@ -272,11 +272,29 @@
     <section id="contact" class="cta-section">
         <h2 data-aos="fade-up">Ready to Optimize Your Fleet Operations?</h2>
         <p data-aos="fade-up" data-aos-delay="100">Let's discuss how QualiDat DRP can transform your logistics operations.</p>
-        <a href="#" class="cta-button" data-aos="fade-up" data-aos-delay="200">Contact Us</a>
+        <a href="#" 
+           class="cta-button" 
+           data-aos="fade-up" 
+           data-aos-delay="200" 
+           data-email-user="aW5mbw==" 
+           data-email-domain="cXVhbGlkYXQ=" 
+           data-email-tld="aHU=" 
+           onclick="openMail(this); return false;">Contact Us</a>
+        
+        <script>
+        function openMail(element) {
+            // Decode base64 encoded email parts
+            const user = atob(element.getAttribute('data-email-user'));
+            const domain = atob(element.getAttribute('data-email-domain'));
+            const tld = atob(element.getAttribute('data-email-tld'));
+            const emailAddress = `${user}@${domain}.${tld}`;
+            window.location.href = 'mailto:' + emailAddress;
+        }
+        </script>
     </section>
 
     <footer class="footer">
-        <p>&copy; 2024 QualiDat. All rights reserved.</p>
+        <p>&copy; 2025 QualiDat. All rights reserved.</p>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
