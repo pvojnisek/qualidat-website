@@ -243,6 +243,36 @@
             padding: 2rem;
             text-align: center;
         }
+
+        .contact-details {
+            margin-top: 2rem; /* Add some space above the contact details */
+            display: flex;
+            flex-direction: column; /* Stack email and phone vertically */
+            align-items: center; /* Center items horizontally */
+            gap: 1.5rem; /* Space between email and phone */
+        }
+
+        .contact-link {
+            display: inline-flex; /* Align icon and text nicely */
+            align-items: center;
+            gap: 0.8rem; /* Space between icon and text */
+            text-decoration: none;
+            color: white; /* Match the parent cta-section text color */
+            font-size: 1.1rem; /* Adjust as needed */
+            transition: transform 0.3s ease;
+        }
+
+        .contact-link:hover {
+            transform: scale(1.05); /* Similar hover effect to the old button */
+            text-decoration: none; /* Ensure no underline on hover */
+            color: white; /* Keep color consistent on hover */
+        }
+
+        .contact-icon svg {
+            width: 28px; /* Adjust icon size as needed */
+            height: 28px; /* Adjust icon size as needed */
+            stroke-width: 1.5; /* Thinner stroke for a cleaner look if desired */
+        }
     </style>
 </head>
 <body>
@@ -429,16 +459,35 @@
         <section id="contact" class="cta-section">
             <h2 data-i18n="contact.title" data-aos="fade-up">Ready to Optimize Your Fleet Operations?</h2>
             <p data-i18n="contact.subtitle" data-aos="fade-up" data-aos-delay="100">Let's discuss how QualiDat DRP can transform your logistics operations.</p>
-            <a href="#" 
-               class="cta-button" 
-               data-i18n="contact.button"
-               data-aos="fade-up" 
-               data-aos-delay="200" 
-               data-email-user="aW5mbw==" 
-               data-email-domain="cXVhbGlkYXQ=" 
-               data-email-tld="aHU=" 
-               onclick="openMail(this); return false;"
-               aria-label="Contact us via email">Contact Us</a>
+            <div class="contact-details" data-aos="fade-up" data-aos-delay="200">
+                <a id="email-link" href="#" class="contact-link" 
+                   data-i18n-aria-label="contact.emailAriaLabel"
+                   data-email-user="aW5mbw==" 
+                   data-email-domain="cXVhbGlkYXQ=" 
+                   data-email-tld="aHU=" 
+                   onclick="openMail(this); return false;">
+                    <span class="contact-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <title>Email Icon</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <rect x="3" y="5" width="18" height="14" rx="2" />
+                            <polyline points="3 7 12 13 21 7" />
+                        </svg>
+                    </span>
+                    <span data-i18n="contact.emailText">Email: info@qualidat.hu</span>
+                </a>
+                <a id="phone-link" class="contact-link" href="#" 
+                   data-i18n-aria-label="contact.phoneAriaLabel">
+                    <span class="contact-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <title>Phone Icon</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" />
+                        </svg>
+                    </span>
+                    <span id="phone-text-container" data-i18n="contact.phoneText">Call: +36 30 201 7554</span>
+                </a>
+            </div>
         </section>
     </main>
 
@@ -619,9 +668,21 @@
                     en: "Let's discuss how QualiDat DRP can transform your logistics operations.",
                     hu: "Beszéljük meg, hogyan alakíthatja át a QualiDat DRP az Ön logisztikai műveleteit."
                 },
-                button: {
-                    en: "Contact Us",
-                    hu: "Kapcsolat"
+                emailText: {
+                    en: "Email: info@qualidat.hu",
+                    hu: "E-mail: info@qualidat.hu"
+                },
+                emailAriaLabel: {
+                    en: "Send an email to info@qualidat.hu",
+                    hu: "E-mail küldése: info@qualidat.hu"
+                },
+                phoneText: {
+                    en: "Call: +36 30 201 7554",
+                    hu: "Hívás: +36 30 201 7554"
+                },
+                phoneAriaLabel: {
+                    en: "Call +36 30 201 7554",
+                    hu: "Hívja a +36 30 201 7554 számot"
                 }
             },
             footer: {
@@ -777,6 +838,45 @@
                 });
             });
         });
+
+        // Bot-safe phone number
+        const phoneLink = document.getElementById('phone-link');
+        const phoneTextContainer = document.getElementById('phone-text-container');
+        if (phoneLink && phoneTextContainer) {
+            const phoneParts = ['+36', '30', '201', '7554'];
+            const fullPhoneNumber = phoneParts.join(' ');
+            const telLink = 'tel:' + phoneParts.join('');
+
+            // Get the translated "Call: " prefix
+            const lang = document.documentElement.lang || 'en';
+            let callPrefix = "Call: "; // Default
+            if (translations.contact && translations.contact.phoneText && translations.contact.phoneText[lang]) {
+                 // Extract the prefix part, assuming format "Prefix: Number"
+                callPrefix = translations.contact.phoneText[lang].substring(0, translations.contact.phoneText[lang].indexOf(':') + 2);
+            }
+            
+            phoneTextContainer.textContent = callPrefix + fullPhoneNumber;
+            phoneLink.setAttribute('href', telLink);
+        }
+        
+        // Re-apply translations after dynamically setting phone number,
+        // especially if the initial data-i18n for phoneText was just a placeholder
+        // or if the prefix needs to be part of the dynamic update.
+        // We need to ensure the applyTranslations function is called after this script runs
+        // or specifically re-translate this element.
+        // For simplicity, let's assume applyTranslations will run on DOMContentLoaded
+        // and also when language is switched. We might need to explicitly call it for phone text
+        // after setting it, if the initial setup doesn't cover it.
+        // A simple way to ensure it's re-evaluated is to set the data-i18n attribute again IF NEEDED,
+        // but since we are constructing the text content directly using translated prefix,
+        // we only need to make sure the aria-label is translated.
+        // The data-i18n on phoneTextContainer is mainly for the initial translation setup if any part was static.
+        // The current logic sets textContent directly, which is fine.
+
+        // Ensure email and phone links are focusable for accessibility if they weren't already
+        if(phoneLink) phoneLink.setAttribute('tabindex', '0');
+        const emailLink = document.getElementById('email-link');
+        if(emailLink) emailLink.setAttribute('tabindex', '0');
     </script>
 </body>
 </html>
