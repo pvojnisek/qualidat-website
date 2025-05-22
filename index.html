@@ -101,6 +101,69 @@
             color: var(--primary-color);
         }
 
+        /* Dropdown specific styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+        }
+        
+        .dropdown-toggle .arrow {
+            font-size: 0.8em; /* Smaller arrow */
+            margin-left: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-menu {
+            display: none; /* Hidden by default */
+            position: absolute;
+            top: 100%; /* Position below the toggle */
+            left: 0;
+            background-color: white;
+            min-width: 250px; /* Adjust as needed */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            z-index: 1001; /* Above other navbar items */
+            border-radius: 4px;
+            padding: 0.5rem 0;
+            opacity: 0; /* Start fully transparent */
+            transform: translateY(10px); /* Start slightly offset */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none; /* Prevent interaction when hidden */
+        }
+        
+        .dropdown:hover .dropdown-menu, 
+        .dropdown-toggle:focus + .dropdown-menu, /* Show on focus for accessibility */
+        .dropdown-menu:hover /* Keep open when hovering menu itself */ {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto; /* Allow interaction when visible */
+        }
+        
+        .dropdown:hover .dropdown-toggle .arrow,
+        .dropdown-toggle:focus .arrow {
+            transform: rotate(180deg); /* Rotate arrow when open */
+        }
+
+        .dropdown-menu a {
+            color: var(--text-color);
+            padding: 0.75rem 1.5rem; /* More padding for better clickability */
+            text-decoration: none;
+            display: block;
+            font-weight: 400; /* Standard font weight for dropdown items */
+            white-space: nowrap; /* Prevent wrapping */
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+        }
+
+
         /* Language Selector Styles */
         .language-selector {
             margin-left: 2rem;
@@ -308,6 +371,17 @@
             <a href="#benefits" data-i18n="nav.benefits">Benefits</a>
             <a href="#stats" data-i18n="nav.stats">Impact</a>
             <a href="#contact" data-i18n="nav.contact">Contact</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-i18n="nav.services" aria-haspopup="true" aria-expanded="false">Services <span class="arrow">&#9662;</span></a>
+                <div class="dropdown-menu" aria-labelledby="services-dropdown">
+                    <a href="route_optimization.html" data-i18n="nav.service1">Intelligens Útvonal Optimalizálás</a>
+                    <a href="fleet_management.html" data-i18n="nav.service2">Flotta Management</a>
+                    <a href="workforce_optimization.html" data-i18n="nav.service3">Munkaerő Optimalizálás</a>
+                    <a href="integration.html" data-i18n="nav.service4">Integráció</a>
+                    <a href="custom_workflows.html" data-i18n="nav.service5">Egyedi Munkafolyamatok</a>
+                    <a href="mobile_access.html" data-i18n="nav.service6">Mobil Hozzáférés</a>
+                </div>
+            </div>
         </div>
         
         <!-- Language selector -->
@@ -334,7 +408,7 @@
             <h2 class="section-title" data-i18n="features.title" data-aos="fade-up">Comprehensive Fleet Optimization</h2>
             <div class="features-grid">
                 <div class="feature-card" data-aos="fade-up">
-                    <a href="utvonaloptimalizalas.html" class="feature-card-link">
+                    <a href="route_optimization.html" class="feature-card-link">
                         <span class="feature-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <title>Smart Route Optimization Icon</title>
@@ -349,7 +423,7 @@
                     </a>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-                    <a href="flotta_management.html" class="feature-card-link">
+                    <a href="fleet_management.html" class="feature-card-link">
                         <span class="feature-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <title>Fleet Management Icon</title>
@@ -364,7 +438,7 @@
                     </a>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-                    <a href="munkaero_optimalizalas.html" class="feature-card-link">
+                    <a href="workforce_optimization.html" class="feature-card-link">
                         <span class="feature-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <title>Workforce Optimization Icon</title>
@@ -380,7 +454,7 @@
                     </a>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-                    <a href="integracio.html" class="feature-card-link">
+                    <a href="integration.html" class="feature-card-link">
                         <span class="feature-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <title>Seamless Integration Icon</title>
@@ -393,7 +467,7 @@
                     </a>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
-                    <a href="egyedi_munkafolyamatok.html" class="feature-card-link">
+                    <a href="custom_workflows.html" class="feature-card-link">
                         <span class="feature-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <title>Custom Workflows Icon</title>
@@ -410,7 +484,7 @@
                     </a>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
-                    <a href="mobil_hozzaferes.html" class="feature-card-link">
+                    <a href="mobile_access.html" class="feature-card-link">
                         <span class="feature-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <title>Mobile Access Icon</title>
@@ -550,6 +624,34 @@
                 contact: {
                     en: "Contact",
                     hu: "Kapcsolat"
+                },
+                services: { 
+                    en: "Services",
+                    hu: "Szolgáltatások"
+                },
+                service1: {
+                    en: "Smart Route Optimization",
+                    hu: "Intelligens Útvonal Optimalizálás"
+                },
+                service2: {
+                    en: "Fleet Management",
+                    hu: "Flotta Management"
+                },
+                service3: {
+                    en: "Workforce Optimization",
+                    hu: "Munkaerő Optimalizálás"
+                },
+                service4: {
+                    en: "Seamless Integration",
+                    hu: "Integráció"
+                },
+                service5: {
+                    en: "Custom Workflows",
+                    hu: "Egyedi Munkafolyamatok"
+                },
+                service6: {
+                    en: "Mobile Access",
+                    hu: "Mobil Hozzáférés"
                 }
             },
             header: {
@@ -810,6 +912,51 @@
             
             // Apply translations
             applyTranslations(savedLanguage);
+
+            // Dropdown menu functionality (enhanced for hover and focus)
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            dropdownToggles.forEach(toggle => {
+                // No click listener needed for hover/focus behavior with pure CSS
+                // However, ensure aria-expanded is toggled for accessibility if we were using JS for display.
+                // For pure CSS hover/focus, JS might only be needed for complex scenarios or specific ARIA updates.
+                // The CSS :focus + .dropdown-menu handles keyboard focus for the menu itself.
+                // We can ensure the toggle itself is keyboard focusable.
+                toggle.setAttribute('tabindex', '0'); // Make it focusable if it's just an <a> with href="#"
+                
+                // Optional: if you want Enter/Space to also toggle for users who prefer keyboard over Tab then Enter on link
+                toggle.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        let menu = this.nextElementSibling;
+                        if (menu && menu.classList.contains('dropdown-menu')) {
+                            // This part is tricky with pure CSS hover; direct style manipulation can conflict.
+                            // For robust accessible dropdowns, JS control over display and ARIA is often better.
+                            // But sticking to the CSS-first approach from subpages:
+                            // If menu is shown by CSS on hover/focus, this click might not be needed or could be simplified.
+                            // Let's assume the CSS handles visibility. This is more for ARIA.
+                            const isExpanded = menu.style.display === 'block';
+                            this.setAttribute('aria-expanded', !isExpanded);
+                            // menu.style.display = isExpanded ? '' : 'block'; // Avoid if CSS handles display
+                        }
+                    }
+                });
+            });
+
+            // Optional: Close dropdowns when clicking outside (if not relying solely on hover/focus)
+            // This part would be more relevant if dropdowns were click-toggled
+            // document.addEventListener('click', function(event) {
+            //     const dropdowns = document.querySelectorAll('.dropdown');
+            //     dropdowns.forEach(dropdown => {
+            //         if (!dropdown.contains(event.target)) {
+            //             let menu = dropdown.querySelector('.dropdown-menu');
+            //             if (menu) {
+            //                 menu.style.display = 'none';
+            //                 let toggle = dropdown.querySelector('.dropdown-toggle');
+            //                 if (toggle) toggle.setAttribute('aria-expanded', 'false');
+            //             }
+            //         }
+            //     });
+            // });
         });
 
         // Email function
