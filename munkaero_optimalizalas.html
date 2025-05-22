@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Munkaerő Optimalizálás - QualiDat DRP</title>
+    <meta name="description" content="A QualiDat DRP hatékony munkaerő-optimalizálási megoldásokat kínál, beleértve a sofőrgazdálkodást, jogszabályi megfelelést és teljesítménykövetést.">
+    <meta name="keywords" content="munkaerő optimalizálás, sofőrgazdálkodás, jogszabályi megfelelőség, QualiDat DRP, Magyarország, vezetési idők, pihenőidők">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1d47b8;
+            --primary-dark: #163990;
+            --text-color: #333;
+            --light-bg: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: url('background.png') center/cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 1rem;
+        }
+        
+        .navbar .logo img { 
+            height: 50px;
+            width: auto;
+            display: block; 
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center; 
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+        }
+        
+        .dropdown-toggle .arrow {
+            font-size: 0.8em; 
+            margin-left: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-menu {
+            display: none; 
+            position: absolute;
+            top: 100%; 
+            left: 0;
+            background-color: white;
+            min-width: 250px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            z-index: 1001; 
+            border-radius: 4px;
+            padding: 0.5rem 0;
+            opacity: 0; 
+            transform: translateY(10px); 
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none; 
+        }
+        
+        .dropdown:hover .dropdown-menu, 
+        .dropdown-toggle:focus + .dropdown-menu, 
+        .dropdown-menu:hover {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto; 
+        }
+        
+        .dropdown:hover .dropdown-toggle .arrow,
+        .dropdown-toggle:focus .arrow {
+            transform: rotate(180deg); 
+        }
+
+        .dropdown-menu a {
+            color: var(--text-color);
+            padding: 0.75rem 1.5rem; 
+            text-decoration: none;
+            display: block;
+            font-weight: 400; 
+            white-space: nowrap; 
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+        }
+
+        .language-selector {
+            margin-left: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: color 0.3s;
+        }
+
+        .language-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .language-btn.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .language-btn > span {
+            margin-right: 5px;
+            font-size: 1.2rem;
+        }
+
+        .section {
+            padding: 5rem 2rem;
+        }
+        
+        #main-content {
+            padding-top: 80px; 
+        }
+        
+        #main-content h1, #main-content h2, #main-content h3, #main-content h4 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+        }
+        #main-content h1 {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        #main-content h2 {
+            font-size: 2.2rem;
+             margin-top: 2.5rem;
+        }
+        #main-content h3 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        #main-content h4 {
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        #main-content p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        #main-content ul {
+            list-style-position: outside;
+            padding-left: 20px; 
+            margin-bottom: 1.5rem;
+        }
+        #main-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+        }
+        
+        .content-section { 
+            max-width: 900px;
+            margin: 0 auto 3rem auto; 
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .content-section h1, .content-section h2, .content-section h3, .content-section h4 {
+             color: var(--primary-dark);
+        }
+        
+        .cta-section-inner { 
+            padding: 3rem 2rem;
+            background: var(--light-bg);
+            text-align: center;
+            border-radius: 8px;
+            margin-top: 3rem; 
+        }
+        
+        .cta-section-inner h2 {
+             color: var(--primary-color); 
+             margin-bottom: 1.5rem;
+        }
+        
+        .cta-section-inner p {
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section-inner ul {
+            list-style: none; 
+            padding: 0;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block; 
+            text-align: left; 
+        }
+        
+        .cta-section-inner ul li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5em; 
+            position: relative;
+        }
+
+        .cta-section-inner ul li::before { 
+            content: '✓'; 
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .cta-section-inner .emphasis {
+            font-style: italic;
+            font-weight: bold;
+            margin-top: 1.5rem;
+            display: block; 
+            color: var(--primary-dark);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--primary-color); 
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 1.5rem; 
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .footer {
+            background: var(--light-bg);
+            padding: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="logo">
+            <a href="index.html" aria-label="QualiDat Főoldal">
+                <img src="qualidat_logo.jpg" alt="QualiDat Dynamic Route Planner Logo" loading="lazy">
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#features" data-i18n="nav.features">Features</a>
+            <a href="index.html#benefits" data-i18n="nav.benefits">Benefits</a>
+            <a href="index.html#stats" data-i18n="nav.stats">Impact</a>
+            <a href="index.html#contact" data-i18n="nav.contact">Contact</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-i18n="nav.services" aria-haspopup="true" aria-expanded="false">Services <span class="arrow">&#9662;</span></a>
+                <div class="dropdown-menu" aria-labelledby="services-dropdown">
+                    <a href="utvonaloptimalizalas.html" data-i18n="nav.service1">Intelligens Útvonal Optimalizálás</a>
+                    <a href="flotta_management.html" data-i18n="nav.service2">Flotta Management</a>
+                    <a href="munkaero_optimalizalas.html" data-i18n="nav.service3">Munkaerő Optimalizálás</a>
+                    <a href="integracio.html" data-i18n="nav.service4">Integráció</a>
+                    <a href="egyedi_munkafolyamatok.html" data-i18n="nav.service5">Egyedi Munkafolyamatok</a>
+                    <a href="mobil_hozzaferes.html" data-i18n="nav.service6">Mobil Hozzáférés</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="language-selector">
+            <button id="en-btn" class="language-btn" data-lang="en">
+                <span>🇬🇧</span> EN
+            </button>
+            <span style="margin: 0 0.5rem;">|</span>
+            <button id="hu-btn" class="language-btn" data-lang="hu">
+                <span>🇭🇺</span> HU
+            </button>
+        </div>
+    </nav>
+
+    <main id="main-content" class="section">
+        <div class="content-section">
+            <h1 data-i18n="workforceOptimization.title">Munkaerő Optimalizálás</h1>
+            <h2 data-i18n="workforceOptimization.subtitle">Hatékony sofőrgazdálkodás jogszabályi megfelelőséggel</h2>
+            <p data-i18n="workforceOptimization.intro">A munkaerő megfelelő beosztása és optimalizálása kritikus fontosságú a szállítmányozási tevékenység sikeréhez. A QualiDat DRP komplex megoldást kínál a humánerőforrás hatékony kezelésére.</p>
+
+            <h3 data-i18n="workforceOptimization.compliance.title">Jogszabályi megfelelőség automatikusan</h3>
+            <h4 data-i18n="workforceOptimization.compliance.euRegulations.title">EU szabályozások betartása</h4>
+            <ul>
+                <li data-i18n="workforceOptimization.compliance.euRegulations.item1">- Vezetési és pihenőidők automatikus nyomon követése</li>
+                <li data-i18n="workforceOptimization.compliance.euRegulations.item2">- 561/2006/EK rendelet teljes támogatása</li>
+                <li data-i18n="workforceOptimization.compliance.euRegulations.item3">- Heti és kétheti vezetési idők ellenőrzése</li>
+                <li data-i18n="workforceOptimization.compliance.euRegulations.item4">- Napi pihenőidők garantálása</li>
+            </ul>
+
+            <h4 data-i18n="workforceOptimization.compliance.huRegulations.title">Magyar munkajogi előírások</h4>
+            <ul>
+                <li data-i18n="workforceOptimization.compliance.huRegulations.item1">- Munkaidő-beosztás törvényes keretek között</li>
+                <li data-i18n="workforceOptimization.compliance.huRegulations.item2">- Túlórakeretek automatikus figyelése</li>
+                <li data-i18n="workforceOptimization.compliance.huRegulations.item3">- Munkaszüneti napok kezelése</li>
+                <li data-i18n="workforceOptimization.compliance.huRegulations.item4">- Szabadságolási tervezés integrálása</li>
+            </ul>
+
+            <h3 data-i18n="workforceOptimization.scheduling.title">Intelligens beosztás optimalizálás</h3>
+            <h4 data-i18n="workforceOptimization.scheduling.multiObjective.title">Többcélú optimalizálás</h4>
+            <ul>
+                <li data-i18n="workforceOptimization.scheduling.multiObjective.item1">- Sofőr preferenciák figyelembevétele</li>
+                <li data-i18n="workforceOptimization.scheduling.multiObjective.item2">- Képzettségek és jogosítványok szerinti beosztás</li>
+                <li data-i18n="workforceOptimization.scheduling.multiObjective.item3">- Nyelvtudás alapú ügyfélkijelölés</li>
+            </ul>
+
+            <h4 data-i18n="workforceOptimization.scheduling.dynamicRescheduling.title">Dinamikus újrabeosztás</h4>
+            <ul>
+                <li data-i18n="workforceOptimization.scheduling.dynamicRescheduling.item1">- Betegség vagy lemondás esetén azonnali átszervezés</li>
+                <li data-i18n="workforceOptimization.scheduling.dynamicRescheduling.item2">- Késések automatikus kezelése</li>
+                <li data-i18n="workforceOptimization.scheduling.dynamicRescheduling.item3">- Váratlan megrendelések beillesztése</li>
+                <li data-i18n="workforceOptimization.scheduling.dynamicRescheduling.item4">- Real-time kommunikáció a sofőrökkel</li>
+            </ul>
+
+            <h3 data-i18n="workforceOptimization.performance.title">Teljesítménykövetés és fejlesztés</h3>
+            <h4 data-i18n="workforceOptimization.performance.tracking.title">Teljesítménymérés</h4>
+            <ul>
+                <li data-i18n="workforceOptimization.performance.tracking.item1">- Pontossági mutatók nyomon követése</li>
+                <li data-i18n="workforceOptimization.performance.tracking.item2">- Üzemanyag-fogyasztási szokások elemzése</li>
+                <li data-i18n="workforceOptimization.performance.tracking.item3">- Ügyfél-visszajelzések integrálása</li>
+                <li data-i18n="workforceOptimization.performance.tracking.item4">- Vezetési stílus optimalizálási javaslatok</li>
+            </ul>
+
+            <h4 data-i18n="workforceOptimization.performance.development.title">Fejlesztési programok támogatása</h4>
+            <ul>
+                <li data-i18n="workforceOptimization.performance.development.item1">- Teljesítménybeli hiányosságok feltárása</li>
+                <li data-i18n="workforceOptimization.performance.development.item2">- Motivációs rendszerek támogatása</li>
+            </ul>
+            
+            <h3 data-i18n="workforceOptimization.costOptimization.title">Költségoptimalizálás</h3>
+            <h4 data-i18n="workforceOptimization.costOptimization.overtime.title">Túlóraköltségek csökkentése</h4>
+            <ul>
+                <li data-i18n="workforceOptimization.costOptimization.overtime.item1">- Hatékony műszakbeosztás</li>
+                <li data-i18n="workforceOptimization.costOptimization.overtime.item2">- Előre tervezhető munkaterhelés</li>
+                <li data-i18n="workforceOptimization.costOptimization.overtime.item3">- Csúcsidőszakok kezelése</li>
+                <li data-i18n="workforceOptimization.costOptimization.overtime.item4">- Part-time munkavállalók optimális bevonása</li>
+            </ul>
+
+            <h4 data-i18n="workforceOptimization.costOptimization.productivity.title">Produktivitás növelése</h4>
+            <ul>
+                <li data-i18n="workforceOptimization.costOptimization.productivity.item1">- Egy sofőrre jutó szállítások számának növelése</li>
+                <li data-i18n="workforceOptimization.costOptimization.productivity.item2">- Várakozási idők minimalizálása</li>
+                <li data-i18n="workforceOptimization.costOptimization.productivity.item3">- Optimális útvonal-sofőr párosítás</li>
+                <li data-i18n="workforceOptimization.costOptimization.productivity.item4">- Tapasztalat alapú feladatkiosztás</li>
+            </ul>
+
+            <h3 data-i18n="workforceOptimization.satisfaction.title">Sofőr-elégedettség</h3>
+            <h4 data-i18n="workforceOptimization.satisfaction.workLifeBalance.title">Work-life balance</h4>
+            <ul>
+                <li data-i18n="workforceOptimization.satisfaction.workLifeBalance.item1">- Otthoni pihenőidők maximalizálása</li>
+                <li data-i18n="workforceOptimization.satisfaction.workLifeBalance.item2">- Hétvégi munkavégzés minimalizálása</li>
+                <li data-i18n="workforceOptimization.satisfaction.workLifeBalance.item3">- Szabadságolás rugalmas tervezése</li>
+                <li data-i18n="workforceOptimization.satisfaction.workLifeBalance.item4">- Családi kötelezettségek figyelembevétele</li>
+            </ul>
+            
+            <div id="results-section">
+                <h3 data-i18n="workforceOptimization.results.title">Mért eredmények</h3>
+                <ul>
+                    <li data-i18n="workforceOptimization.results.item1">- <strong>35% csökkenés</strong> túlóraköltségekben</li>
+                    <li data-i18n="workforceOptimization.results.item2">- <strong>90% megfelelőség</strong> EU szabályozásoknak</li>
+                    <li data-i18n="workforceOptimization.results.item3">- <strong>25% növekedés</strong> sofőr-elégedettségben</li>
+                    <li data-i18n="workforceOptimization.results.item4">- <strong>20% csökkenés</strong> fluktuációban</li>
+                </ul>
+            </div>
+        </div>
+
+        <section class="cta-section-inner">
+            <h2 data-i18n="subPageCta.title">Készen áll a következő lépésre?</h2>
+            <p data-i18n="subPageCta.intro">Fedezze fel, hogyan segíthet a QualiDat DRP az Ön vállalatának hatékonyabb működésében. Szakértőink szívesen bemutatják, milyen konkrét előnyöket nyújthat a rendszer az Ön specifikus igényeihez szabva.</p>
+            <p><strong data-i18n="subPageCta.contactUs">Lépjen kapcsolatba velünk még ma:</strong></p>
+            <ul>
+                <li data-i18n="subPageCta.item1">- Személyre szabott bemutató</li>
+                <li data-i18n="subPageCta.item2">- Részletes költség-haszon elemzés</li>
+                <li data-i18n="subPageCta.item3">- Ingyenes konzultáció logisztikai kihívásairól</li>
+                <li data-i18n="subPageCta.item4">- Próbaüzem szervezése</li>
+            </ul>
+            <p class="emphasis" data-i18n="subPageCta.tagline">A hatékonyság növelése egy telefonhívásnyira van!</p>
+            <a href="index.html#contact" class="cta-button" data-i18n="subPageCta.button">Kapcsolatfelvétel</a>
+        </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <p data-i18n="footer.copyright">&copy; 2025 QualiDat. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        const translations = {
+            nav: {
+                features: { en: "Features", hu: "Funkciók" },
+                benefits: { en: "Benefits", hu: "Előnyök" },
+                stats: { en: "Impact", hu: "Eredmények" },
+                contact: { en: "Contact", hu: "Kapcsolat" },
+                services: { en: "Services", hu: "Szolgáltatások" },
+                service1: { en: "Smart Route Optimization", hu: "Intelligens Útvonal Optimalizálás" },
+                service2: { en: "Fleet Management", hu: "Flotta Management" },
+                service3: { en: "Workforce Optimization", hu: "Munkaerő Optimalizálás" },
+                service4: { en: "Seamless Integration", hu: "Integráció" },
+                service5: { en: "Custom Workflows", hu: "Egyedi Munkafolyamatok" },
+                service6: { en: "Mobile Access", hu: "Mobil Hozzáférés" }
+            },
+            footer: {
+                copyright: { en: "© 2025 QualiDat. All rights reserved.", hu: "© 2025 QualiDat. Minden jog fenntartva." }
+            },
+            workforceOptimization: {
+                title: { en: "Workforce Optimization", hu: "Munkaerő Optimalizálás" },
+                subtitle: { en: "Effective driver management with regulatory compliance", hu: "Hatékony sofőrgazdálkodás jogszabályi megfelelőséggel" },
+                intro: { 
+                    en: "Proper workforce scheduling and optimization are critical to the success of transportation activities. QualiDat DRP offers a complex solution for effective human resource management.", 
+                    hu: "A munkaerő megfelelő beosztása és optimalizálása kritikus fontosságú a szállítmányozási tevékenység sikeréhez. A QualiDat DRP komplex megoldást kínál a humánerőforrás hatékony kezelésére." 
+                },
+                compliance: {
+                    title: { en: "Automatic Regulatory Compliance", hu: "Jogszabályi megfelelőség automatikusan" },
+                    euRegulations: {
+                        title: { en: "Compliance with EU Regulations", hu: "EU szabályozások betartása" },
+                        item1: { en: "- Automatic tracking of driving and rest times", hu: "- Vezetési és pihenőidők automatikus nyomon követése" },
+                        item2: { en: "- Full support for Regulation (EC) No 561/2006", hu: "- 561/2006/EK rendelet teljes támogatása" },
+                        item3: { en: "- Monitoring of weekly and bi-weekly driving times", hu: "- Heti és kétheti vezetési idők ellenőrzése" },
+                        item4: { en: "- Guarantee of daily rest periods", hu: "- Napi pihenőidők garantálása" }
+                    },
+                    huRegulations: {
+                        title: { en: "Hungarian Labor Law Provisions", hu: "Magyar munkajogi előírások" },
+                        item1: { en: "- Work scheduling within legal frameworks", hu: "- Munkaidő-beosztás törvényes keretek között" },
+                        item2: { en: "- Automatic monitoring of overtime limits", hu: "- Túlórakeretek automatikus figyelése" },
+                        item3: { en: "- Management of public holidays", hu: "- Munkaszüneti napok kezelése" },
+                        item4: { en: "- Integration of vacation planning", hu: "- Szabadságolási tervezés integrálása" }
+                    }
+                },
+                scheduling: {
+                    title: { en: "Intelligent Schedule Optimization", hu: "Intelligens beosztás optimalizálás" },
+                    multiObjective: {
+                        title: { en: "Multi-objective Optimization", hu: "Többcélú optimalizálás" },
+                        item1: { en: "- Consideration of driver preferences", hu: "- Sofőr preferenciák figyelembevétele" },
+                        item2: { en: "- Scheduling based on qualifications and licenses", hu: "- Képzettségek és jogosítványok szerinti beosztás" },
+                        item3: { en: "- Language-based customer assignment", hu: "- Nyelvtudás alapú ügyfélkijelölés" }
+                    },
+                    dynamicRescheduling: {
+                        title: { en: "Dynamic Rescheduling", hu: "Dinamikus újrabeosztás" },
+                        item1: { en: "- Immediate reorganization in case of illness or cancellation", hu: "- Betegség vagy lemondás esetén azonnali átszervezés" },
+                        item2: { en: "- Automatic handling of delays", hu: "- Késések automatikus kezelése" },
+                        item3: { en: "- Insertion of unexpected orders", hu: "- Váratlan megrendelések beillesztése" },
+                        item4: { en: "- Real-time communication with drivers", hu: "- Real-time kommunikáció a sofőrökkel" }
+                    }
+                },
+                performance: {
+                    title: { en: "Performance Tracking and Development", hu: "Teljesítménykövetés és fejlesztés" },
+                    tracking: {
+                        title: { en: "Performance Measurement", hu: "Teljesítménymérés" },
+                        item1: { en: "- Tracking of punctuality indicators", hu: "- Pontossági mutatók nyomon követése" },
+                        item2: { en: "- Analysis of fuel consumption habits", hu: "- Üzemanyag-fogyasztási szokások elemzése" },
+                        item3: { en: "- Integration of customer feedback", hu: "- Ügyfél-visszajelzések integrálása" },
+                        item4: { en: "- Driving style optimization suggestions", hu: "- Vezetési stílus optimalizálási javaslatok" }
+                    },
+                    development: {
+                        title: { en: "Support for Development Programs", hu: "Fejlesztési programok támogatása" },
+                        item1: { en: "- Identification of performance gaps", hu: "- Teljesítménybeli hiányosságok feltárása" },
+                        item2: { en: "- Support for motivation systems", hu: "- Motivációs rendszerek támogatása" }
+                    }
+                },
+                costOptimization: {
+                    title: { en: "Cost Optimization", hu: "Költségoptimalizálás" },
+                    overtime: {
+                        title: { en: "Reduction of Overtime Costs", hu: "Túlóraköltségek csökkentése" },
+                        item1: { en: "- Efficient shift scheduling", hu: "- Hatékony műszakbeosztás" },
+                        item2: { en: "- Predictable workload planning", hu: "- Előre tervezhető munkaterhelés" },
+                        item3: { en: "- Management of peak periods", hu: "- Csúcsidőszakok kezelése" },
+                        item4: { en: "- Optimal involvement of part-time employees", hu: "- Part-time munkavállalók optimális bevonása" }
+                    },
+                    productivity: {
+                        title: { en: "Increase in Productivity", hu: "Produktivitás növelése" },
+                        item1: { en: "- Increasing the number of deliveries per driver", hu: "- Egy sofőrre jutó szállítások számának növelése" },
+                        item2: { en: "- Minimization of waiting times", hu: "- Várakozási idők minimalizálása" },
+                        item3: { en: "- Optimal route-driver pairing", hu: "- Optimális útvonal-sofőr párosítás" },
+                        item4: { en: "- Experience-based task assignment", hu: "- Tapasztalat alapú feladatkiosztás" }
+                    }
+                },
+                satisfaction: {
+                    title: { en: "Driver Satisfaction", hu: "Sofőr-elégedettség" },
+                    workLifeBalance: {
+                        title: { en: "Work-life balance", hu: "Work-life balance" },
+                        item1: { en: "- Maximizing home rest times", hu: "- Otthoni pihenőidők maximalizálása" },
+                        item2: { en: "- Minimizing weekend work", hu: "- Hétvégi munkavégzés minimalizálása" },
+                        item3: { en: "- Flexible vacation planning", hu: "- Szabadságolás rugalmas tervezése" },
+                        item4: { en: "- Consideration of family obligations", hu: "- Családi kötelezettségek figyelembevétele" }
+                    }
+                },
+                results: {
+                    title: { en: "Measured Results", hu: "Mért eredmények" },
+                    item1: { en: "- <strong>35% reduction</strong> in overtime costs", hu: "- <strong>35% csökkenés</strong> túlóraköltségekben" },
+                    item2: { en: "- <strong>90% compliance</strong> with EU regulations", hu: "- <strong>90% megfelelőség</strong> EU szabályozásoknak" },
+                    item3: { en: "- <strong>25% increase</strong> in driver satisfaction", hu: "- <strong>25% növekedés</strong> sofőr-elégedettségben" },
+                    item4: { en: "- <strong>20% reduction</strong> in turnover", hu: "- <strong>20% csökkenés</strong> fluktuációban" }
+                }
+            },
+            subPageCta: { 
+                title: { en: "Ready for the Next Step?", hu: "Készen áll a következő lépésre?"},
+                intro: { 
+                    en: "Discover how QualiDat DRP can help your company operate more efficiently. Our experts are happy to demonstrate the specific benefits the system can offer, tailored to your specific needs.",
+                    hu: "Fedezze fel, hogyan segíthet a QualiDat DRP az Ön vállalatának hatékonyabb működésében. Szakértőink szívesen bemutatják, milyen konkrét előnyöket nyújthat a rendszer az Ön specifikus igényeihez szabva."
+                },
+                contactUs: { en: "Contact us today:", hu: "Lépjen kapcsolatba velünk még ma:"},
+                item1: { en: "- Personalized demo", hu: "- Személyre szabott bemutató"},
+                item2: { en: "- Detailed cost-benefit analysis", hu: "- Részletes költség-haszon elemzés"},
+                item3: { en: "- Free consultation on your logistics challenges", hu: "- Ingyenes konzultáció logisztikai kihívásairól"},
+                item4: { en: "- Organization of a trial run", hu: "- Próbaüzem szervezése"},
+                tagline: { en: "Efficiency improvement is just a phone call away!", hu: "A hatékonyság növelése egy telefonhívásnyira van!"},
+                button: { en: "Contact Us", hu: "Kapcsolatfelvétel"}
+            }
+        };
+
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        let currentLanguage = localStorage.getItem('preferredLanguage') || 'hu';
+        document.documentElement.lang = currentLanguage;
+
+        function applyTranslations(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+            
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const keys = element.getAttribute('data-i18n').split('.');
+                let value = translations;
+                
+                for (let i = 0; i < keys.length; i++) {
+                    const key = keys[i];
+                    if (value && typeof value === 'object' && value[key] !== undefined) {
+                        value = value[key];
+                        if (i === keys.length - 1 && typeof value === 'object' && value[lang] !== undefined) {
+                            if (element.tagName === 'LI' && (keys.join('.').startsWith('workforceOptimization.results.') )) {
+                                element.innerHTML = value[lang];
+                            } else {
+                                element.textContent = value[lang];
+                            }
+                            return;
+                        }
+                    } else {
+                        // console.warn(`Translation key not found: ${element.getAttribute('data-i18n')} for lang ${lang}`);
+                        return;
+                    }
+                }
+            });
+
+            const logoLink = document.querySelector('.navbar .logo a');
+            if (logoLink) {
+                logoLink.href = 'index.html'; 
+            }
+            
+            languageButtons.forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        const languageButtons = document.querySelectorAll('.language-btn');
+        languageButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const language = this.getAttribute('data-lang');
+                applyTranslations(language);
+                localStorage.setItem('preferredLanguage', language);
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            applyTranslations(currentLanguage); 
+
+            const navbar = document.querySelector('.navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            document.querySelectorAll('.nav-links a[href^="#"], .nav-links a[href^="index.html#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href.startsWith('index.html#')) {
+                        return; 
+                    }
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        e.preventDefault();
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    let menu = this.nextElementSibling;
+                    if (menu && menu.classList.contains('dropdown-menu')) {
+                        if (menu.style.display === 'block') {
+                            menu.style.display = '';
+                            this.setAttribute('aria-expanded', 'false');
+                        } else {
+                            menu.style.display = 'block';
+                            this.setAttribute('aria-expanded', 'true');
+                        }
+                    }
+                });
+                toggle.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+
+            document.addEventListener('click', function(event) {
+                const dropdowns = document.querySelectorAll('.dropdown');
+                dropdowns.forEach(dropdown => {
+                    const toggle = dropdown.querySelector('.dropdown-toggle');
+                    const menu = dropdown.querySelector('.dropdown-menu');
+                    if (menu && !dropdown.contains(event.target)) {
+                        menu.style.display = 'none';
+                        if(toggle) toggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+        });
+
+        function openMail(element) {
+            const user = atob(element.getAttribute('data-email-user'));
+            const domain = atob(element.getAttribute('data-email-domain'));
+            const tld = atob(element.getAttribute('data-email-tld'));
+            const emailAddress = `${user}@${domain}.${tld}`;
+            window.location.href = 'mailto:' + emailAddress;
+        }
+    </script>
+</body>
+</html>
