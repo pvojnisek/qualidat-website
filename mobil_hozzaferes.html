@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobil Hozzáférés - QualiDat DRP</title>
+    <meta name="description" content="A QualiDat DRP mobilalkalmazása minden fontos információt a sofőrök kezébe ad, valós idejű navigációval, feladatkezeléssel és kommunikációval.">
+    <meta name="keywords" content="mobil hozzáférés, sofőr alkalmazás, valós idejű navigáció, QualiDat DRP, Magyarország, mobil logisztika">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1d47b8;
+            --primary-dark: #163990;
+            --text-color: #333;
+            --light-bg: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: url('background.png') center/cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 1rem;
+        }
+        
+        .navbar .logo img { 
+            height: 50px;
+            width: auto;
+            display: block; 
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center; 
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+        }
+        
+        .dropdown-toggle .arrow {
+            font-size: 0.8em; 
+            margin-left: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-menu {
+            display: none; 
+            position: absolute;
+            top: 100%; 
+            left: 0;
+            background-color: white;
+            min-width: 250px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            z-index: 1001; 
+            border-radius: 4px;
+            padding: 0.5rem 0;
+            opacity: 0; 
+            transform: translateY(10px); 
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none; 
+        }
+        
+        .dropdown:hover .dropdown-menu, 
+        .dropdown-toggle:focus + .dropdown-menu, 
+        .dropdown-menu:hover {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto; 
+        }
+        
+        .dropdown:hover .dropdown-toggle .arrow,
+        .dropdown-toggle:focus .arrow {
+            transform: rotate(180deg); 
+        }
+
+        .dropdown-menu a {
+            color: var(--text-color);
+            padding: 0.75rem 1.5rem; 
+            text-decoration: none;
+            display: block;
+            font-weight: 400; 
+            white-space: nowrap; 
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+        }
+
+        .language-selector {
+            margin-left: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: color 0.3s;
+        }
+
+        .language-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .language-btn.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .language-btn > span {
+            margin-right: 5px;
+            font-size: 1.2rem;
+        }
+
+        .section {
+            padding: 5rem 2rem;
+        }
+        
+        #main-content {
+            padding-top: 80px; 
+        }
+        
+        #main-content h1, #main-content h2, #main-content h3, #main-content h4 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+        }
+        #main-content h1 {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        #main-content h2 {
+            font-size: 2.2rem;
+             margin-top: 2.5rem;
+        }
+        #main-content h3 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        #main-content h4 {
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        #main-content p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        #main-content ul {
+            list-style-position: outside;
+            padding-left: 20px; 
+            margin-bottom: 1.5rem;
+        }
+        #main-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+        }
+        
+        .content-section { 
+            max-width: 900px;
+            margin: 0 auto 3rem auto; 
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .content-section h1, .content-section h2, .content-section h3, .content-section h4 {
+             color: var(--primary-dark);
+        }
+        
+        .cta-section-inner { 
+            padding: 3rem 2rem;
+            background: var(--light-bg);
+            text-align: center;
+            border-radius: 8px;
+            margin-top: 3rem; 
+        }
+        
+        .cta-section-inner h2 {
+             color: var(--primary-color); 
+             margin-bottom: 1.5rem;
+        }
+        
+        .cta-section-inner p {
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section-inner ul {
+            list-style: none; 
+            padding: 0;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block; 
+            text-align: left; 
+        }
+        
+        .cta-section-inner ul li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5em; 
+            position: relative;
+        }
+
+        .cta-section-inner ul li::before { 
+            content: '✓'; 
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .cta-section-inner .emphasis {
+            font-style: italic;
+            font-weight: bold;
+            margin-top: 1.5rem;
+            display: block; 
+            color: var(--primary-dark);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--primary-color); 
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 1.5rem; 
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .footer {
+            background: var(--light-bg);
+            padding: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="logo">
+            <a href="index.html" aria-label="QualiDat Főoldal">
+                <img src="qualidat_logo.jpg" alt="QualiDat Dynamic Route Planner Logo" loading="lazy">
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#features" data-i18n="nav.features">Features</a>
+            <a href="index.html#benefits" data-i18n="nav.benefits">Benefits</a>
+            <a href="index.html#stats" data-i18n="nav.stats">Impact</a>
+            <a href="index.html#contact" data-i18n="nav.contact">Contact</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-i18n="nav.services" aria-haspopup="true" aria-expanded="false">Services <span class="arrow">&#9662;</span></a>
+                <div class="dropdown-menu" aria-labelledby="services-dropdown">
+                    <a href="utvonaloptimalizalas.html" data-i18n="nav.service1">Intelligens Útvonal Optimalizálás</a>
+                    <a href="flotta_management.html" data-i18n="nav.service2">Flotta Management</a>
+                    <a href="munkaero_optimalizalas.html" data-i18n="nav.service3">Munkaerő Optimalizálás</a>
+                    <a href="integracio.html" data-i18n="nav.service4">Integráció</a>
+                    <a href="egyedi_munkafolyamatok.html" data-i18n="nav.service5">Egyedi Munkafolyamatok</a>
+                    <a href="mobil_hozzaferes.html" data-i18n="nav.service6">Mobil Hozzáférés</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="language-selector">
+            <button id="en-btn" class="language-btn" data-lang="en">
+                <span>🇬🇧</span> EN
+            </button>
+            <span style="margin: 0 0.5rem;">|</span>
+            <button id="hu-btn" class="language-btn" data-lang="hu">
+                <span>🇭🇺</span> HU
+            </button>
+        </div>
+    </nav>
+
+    <main id="main-content" class="section">
+        <div class="content-section">
+            <h1 data-i18n="mobileAccess.title">Mobil Hozzáférés</h1>
+            <h2 data-i18n="mobileAccess.subtitle">Minden fontos információ a sofőrök kezében</h2>
+            <p data-i18n="mobileAccess.intro">A modern logisztikában a mobilitás kulcsfontosságú. A QualiDat DRP fejlett mobilalkalmazása biztosítja, hogy sofőrjei mindig naprakész információkkal rendelkezzenek, bárhol is legyenek.</p>
+
+            <h3 data-i18n="mobileAccess.driverApp.title">Intuitív sofőr alkalmazás</h3>
+            <h4 data-i18n="mobileAccess.driverApp.ui.title">Felhasználóbarát interface</h4>
+            <ul>
+                <li data-i18n="mobileAccess.driverApp.ui.item1">- Egyszerű, tiszta felhasználói felület</li>
+                <li data-i18n="mobileAccess.driverApp.ui.item2">- Nagy gombok könnyű kezelhetőségért</li>
+                <li data-i18n="mobileAccess.driverApp.ui.item3">- Hangvezérlés biztonságos használathoz</li>
+                <li data-i18n="mobileAccess.driverApp.ui.item4">- Éjszakai üzemmód a vezetés kényelméért</li>
+            </ul>
+
+            <h4 data-i18n="mobileAccess.driverApp.offline.title">Offline funkcionalitás</h4>
+            <ul>
+                <li data-i18n="mobileAccess.driverApp.offline.item1">- Útvonalak letöltése offline használatra</li>
+                <li data-i18n="mobileAccess.driverApp.offline.item2">- Internetkapcsolat nélküli működés</li>
+                <li data-i18n="mobileAccess.driverApp.offline.item3">- Automatikus szinkronizáció kapcsolódáskor</li>
+                <li data-i18n="mobileAccess.driverApp.offline.item4">- Adatvesztés elleni védelem</li>
+            </ul>
+
+            <h3 data-i18n="mobileAccess.navigation.title">Valós idejű navigáció és útmutatás</h3>
+            <h4 data-i18n="mobileAccess.navigation.smartRoute.title">Intelligens útvonalvezetés</h4>
+            <ul>
+                <li data-i18n="mobileAccess.navigation.smartRoute.item1">- Turn-by-turn navigáció Google Maps és Waze integrációval</li>
+                <li data-i18n="mobileAccess.navigation.smartRoute.item2">- Forgalmi helyzethez alkalmazkodó útvonal-módosítás</li>
+                <li data-i18n="mobileAccess.navigation.smartRoute.item3">- Kamion-specifikus navigáció (magasság, súly, kitiltások)</li>
+                <li data-i18n="mobileAccess.navigation.smartRoute.item4">- Köztes célpontok automatikus bejárása</li>
+            </ul>
+
+            <h4 data-i18n="mobileAccess.navigation.dynamicUpdate.title">Dinamikus útvonal-frissítés</h4>
+            <ul>
+                <li data-i18n="mobileAccess.navigation.dynamicUpdate.item1">- Új megrendelések útközben történő hozzáadása</li>
+                <li data-i18n="mobileAccess.navigation.dynamicUpdate.item2">- Törlések és módosítások azonnali megjelenítése</li>
+                <li data-i18n="mobileAccess.navigation.dynamicUpdate.item3">- Prioritások valós idejű átrendezése</li>
+                <li data-i18n="mobileAccess.navigation.dynamicUpdate.item4">- Alternatív útvonalak ajánlása</li>
+            </ul>
+
+            <h3 data-i18n="mobileAccess.taskManagement.title">Feladatkezelés és státuszkövetés</h3>
+            <h4 data-i18n="mobileAccess.taskManagement.shipments.title">Szállítmányok kezelése</h4>
+            <ul>
+                <li data-i18n="mobileAccess.taskManagement.shipments.item1">- Részletes szállítási információk megtekintése</li>
+                <li data-i18n="mobileAccess.taskManagement.shipments.item2">- Címzett elérhetőségek közvetlen hívással</li>
+                <li data-i18n="mobileAccess.taskManagement.shipments.item3">- Speciális instrukciók (pl. kapukulcs, emelet)</li>
+                <li data-i18n="mobileAccess.taskManagement.shipments.item4">- Csomagméret és súly információk</li>
+            </ul>
+
+            <h4 data-i18n="mobileAccess.taskManagement.statusUpdates.title">Státusz frissítések</h4>
+            <ul>
+                <li data-i18n="mobileAccess.taskManagement.statusUpdates.item1">- Érkezés jelzése egy gombnyomással</li>
+                <li data-i18n="mobileAccess.taskManagement.statusUpdates.item2">- Sikeres/sikertelen kézbesítés rögzítése</li>
+                <li data-i18n="mobileAccess.taskManagement.statusUpdates.item3">- Fényképes dokumentálás lehetősége</li>
+                <li data-i18n="mobileAccess.taskManagement.statusUpdates.item4">- Aláírás digitális rögzítése</li>
+            </ul>
+
+            <h3 data-i18n="mobileAccess.communication.title">Kommunikáció és támogatás</h3>
+            <h4 data-i18n="mobileAccess.communication.dispatch.title">Központtal való kapcsolat</h4>
+            <ul>
+                <li data-i18n="mobileAccess.communication.dispatch.item1">- Azonnali üzenetküldés diszpécserrel</li>
+                <li data-i18n="mobileAccess.communication.dispatch.item2">- Sürgős helyzetek gyors jelzése</li>
+                <li data-i18n="mobileAccess.communication.dispatch.item3">- Problémák fotókkal való dokumentálása</li>
+                <li data-i18n="mobileAccess.communication.dispatch.item4">- Segítségkérés egy érintéssel</li>
+            </ul>
+
+            <h4 data-i18n="mobileAccess.communication.customer.title">Ügyfélkommunikáció</h4>
+            <ul>
+                <li data-i18n="mobileAccess.communication.customer.item1">- Automatikus értesítések szállítás előtt</li>
+                <li data-i18n="mobileAccess.communication.customer.item2">- Érkezési idő becslések megosztása</li>
+                <li data-i18n="mobileAccess.communication.customer.item3">- Közvetlen telefonálás ügyfeleknek</li>
+                <li data-i18n="mobileAccess.communication.customer.item4">- SMS küldés késések esetén</li>
+            </ul>
+
+            <h3 data-i18n="mobileAccess.tracking.title">Költség- és időnyilvántartás</h3>
+            <h4 data-i18n="mobileAccess.tracking.autoRecord.title">Automatikus adatrögzítés</h4>
+            <ul>
+                <li data-i18n="mobileAccess.tracking.autoRecord.item1">- Futott kilométerek pontos nyilvántartása</li>
+                <li data-i18n="mobileAccess.tracking.autoRecord.item2">- Munkaidő automatikus követése</li>
+                <li data-i18n="mobileAccess.tracking.autoRecord.item3">- Üzemanyag-fogyasztás monitoring</li>
+                <li data-i18n="mobileAccess.tracking.autoRecord.item4">- Pihenőidők dokumentálása</li>
+            </ul>
+
+            <h3 data-i18n="mobileAccess.security.title">Biztonság és megfelelőség</h3>
+            <h4 data-i18n="mobileAccess.security.drivingTimes.title">Vezetési idők automatikus nyilvántartása</h4>
+            <ul>
+                <li data-i18n="mobileAccess.security.drivingTimes.item1">- Pihenőidők emlékeztetői</li>
+                <li data-i18n="mobileAccess.security.drivingTimes.item2">- Maximális vezetési idő figyelmeztetések</li>
+                <li data-i18n="mobileAccess.security.drivingTimes.item3">- Automatikus munkaidő-nyilvántartás</li>
+            </ul>
+             <h4 data-i18n="mobileAccess.security.emergency.title">Vészhelyzeti funkciók</h4>
+            <ul>
+                <li data-i18n="mobileAccess.security.emergency.item1">- SOS gomb azonnali segítségkéréshez</li>
+                <li data-i18n="mobileAccess.security.emergency.item2">- Automatikus balesetészlelés</li>
+                <li data-i18n="mobileAccess.security.emergency.item3">- GPS koordináták küldése vészhelyzetben</li>
+            </ul>
+
+            <h3 data-i18n="mobileAccess.performance.title">Teljesítménykövetés és fejlesztés</h3>
+            <h4 data-i18n="mobileAccess.performance.dashboard.title">Sofőr teljesítmény dashboard</h4>
+            <ul>
+                <li data-i18n="mobileAccess.performance.dashboard.item1">- Napi teljesítmény összegzése</li>
+                <li data-i18n="mobileAccess.performance.dashboard.item2">- Pontossági mutatók követése</li>
+                <li data-i18n="mobileAccess.performance.dashboard.item3">- Üzemanyag-hatékonysági statisztikák</li>
+            </ul>
+            <h4 data-i18n="mobileAccess.performance.gamification.title">Gamifikáció és motiváció</h4>
+            <ul>
+                <li data-i18n="mobileAccess.performance.gamification.item1">- Teljesítmény alapú pontozás</li>
+                <li data-i18n="mobileAccess.performance.gamification.item2">- Havi és éves kiválóság díjak</li>
+                <li data-i18n="mobileAccess.performance.gamification.item3">- Csapatversenyek eredményei</li>
+                <li data-i18n="mobileAccess.performance.gamification.item4">- Személyes fejlődési célok követése</li>
+            </ul>
+
+            <h3 data-i18n="mobileAccess.customization.title">Testreszabható beállítások</h3>
+            <h4 data-i18n="mobileAccess.customization.personalization.title">Személyre szabás</h4>
+            <ul>
+                <li data-i18n="mobileAccess.customization.personalization.item1">- Nyelvi beállítások (magyar, angol, német, stb.)</li>
+                <li data-i18n="mobileAccess.customization.personalization.item2">- Értesítési preferenciák</li>
+                <li data-i18n="mobileAccess.customization.personalization.item3">- Hangos utasítások testreszabása</li>
+                <li data-i18n="mobileAccess.customization.personalization.item4">- Megjelenés személyre szabása</li>
+            </ul>
+            <h4 data-i18n="mobileAccess.customization.integration.title">Integrációs lehetőségek</h4>
+            <ul>
+                <li data-i18n="mobileAccess.customization.integration.item1">- Vállalati könyvtárból történő bejelentkezés</li>
+                <li data-i18n="mobileAccess.customization.integration.item2">- Meglévő mobileszközök támogatása</li>
+                <li data-i18n="mobileAccess.customization.integration.item3">- BYOD (Bring Your Own Device) szabályzat</li>
+            </ul>
+
+            <h3 data-i18n="mobileAccess.sync.title">Offline és online szinkronizáció</h3>
+            <h4 data-i18n="mobileAccess.sync.dataManagement.title">Intelligens adatkezelés</h4>
+            <ul>
+                <li data-i18n="mobileAccess.sync.dataManagement.item1">- Kritikus adatok prioritásos szinkronizálása</li>
+                <li data-i18n="mobileAccess.sync.dataManagement.item2">- Alacsony sávszélesség optimalizálása</li>
+                <li data-i18n="mobileAccess.sync.dataManagement.item3">- Adatforgalom minimalizálása</li>
+                <li data-i18n="mobileAccess.sync.dataManagement.item4">- Automatikus WiFi kapcsolódás</li>
+            </ul>
+            <h4 data-i18n="mobileAccess.sync.dataSecurity.title">Adatbiztonság mobilon</h4>
+            <ul>
+                <li data-i18n="mobileAccess.sync.dataSecurity.item1">- Helyi adatok titkosítása</li>
+                <li data-i18n="mobileAccess.sync.dataSecurity.item2">- Távoli törlés lehetősége</li>
+                <li data-i18n="mobileAccess.sync.dataSecurity.item3">- Biometrikus azonosítás támogatása</li>
+                <li data-i18n="mobileAccess.sync.dataSecurity.item4">- Időzített automatikus kijelentkezés</li>
+            </ul>
+            
+            <div id="results-section">
+                <h3 data-i18n="mobileAccess.results.title">Mért eredmények</h3>
+                <ul>
+                    <li data-i18n="mobileAccess.results.item1">- <strong>95% felhasználói elégedettség</strong> a mobil applikációval</li>
+                    <li data-i18n="mobileAccess.results.item2">- <strong>40% csökkenés</strong> a kommunikációs hibákban</li>
+                    <li data-i18n="mobileAccess.results.item3">- <strong>25% növekedés</strong> a kézbesítési pontosságban</li>
+                    <li data-i18n="mobileAccess.results.item4">- <strong>30% csökkenés</strong> a papír alapú adminisztrációban</li>
+                </ul>
+            </div>
+        </div>
+
+        <section class="cta-section-inner">
+            <h2 data-i18n="subPageCta.title">Készen áll a következő lépésre?</h2>
+            <p data-i18n="subPageCta.intro">Fedezze fel, hogyan segíthet a QualiDat DRP az Ön vállalatának hatékonyabb működésében. Szakértőink szívesen bemutatják, milyen konkrét előnyöket nyújthat a rendszer az Ön specifikus igényeihez szabva.</p>
+            <p><strong data-i18n="subPageCta.contactUs">Lépjen kapcsolatba velünk még ma:</strong></p>
+            <ul>
+                <li data-i18n="subPageCta.item1">- Személyre szabott bemutató</li>
+                <li data-i18n="subPageCta.item2">- Részletes költség-haszon elemzés</li>
+                <li data-i18n="subPageCta.item3">- Ingyenes konzultáció logisztikai kihívásairól</li>
+                <li data-i18n="subPageCta.item4">- Próbaüzem szervezése</li>
+            </ul>
+            <p class="emphasis" data-i18n="subPageCta.tagline">A hatékonyság növelése egy telefonhívásnyira van!</p>
+            <a href="index.html#contact" class="cta-button" data-i18n="subPageCta.button">Kapcsolatfelvétel</a>
+        </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <p data-i18n="footer.copyright">&copy; 2025 QualiDat. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        const translations = {
+            nav: {
+                features: { en: "Features", hu: "Funkciók" },
+                benefits: { en: "Benefits", hu: "Előnyök" },
+                stats: { en: "Impact", hu: "Eredmények" },
+                contact: { en: "Contact", hu: "Kapcsolat" },
+                services: { en: "Services", hu: "Szolgáltatások" },
+                service1: { en: "Smart Route Optimization", hu: "Intelligens Útvonal Optimalizálás" },
+                service2: { en: "Fleet Management", hu: "Flotta Management" },
+                service3: { en: "Workforce Optimization", hu: "Munkaerő Optimalizálás" },
+                service4: { en: "Seamless Integration", hu: "Integráció" },
+                service5: { en: "Custom Workflows", hu: "Egyedi Munkafolyamatok" },
+                service6: { en: "Mobile Access", hu: "Mobil Hozzáférés" }
+            },
+            footer: {
+                copyright: { en: "© 2025 QualiDat. All rights reserved.", hu: "© 2025 QualiDat. Minden jog fenntartva." }
+            },
+            mobileAccess: {
+                title: { en: "Mobile Access", hu: "Mobil Hozzáférés" },
+                subtitle: { en: "All important information in the hands of the drivers", hu: "Minden fontos információ a sofőrök kezében" },
+                intro: { 
+                    en: "In modern logistics, mobility is key. QualiDat DRP's advanced mobile application ensures that your drivers always have up-to-date information, wherever they are.", 
+                    hu: "A modern logisztikában a mobilitás kulcsfontosságú. A QualiDat DRP fejlett mobilalkalmazása biztosítja, hogy sofőrjei mindig naprakész információkkal rendelkezzenek, bárhol is legyenek." 
+                },
+                driverApp: {
+                    title: { en: "Intuitive Driver Application", hu: "Intuitív sofőr alkalmazás" },
+                    ui: {
+                        title: { en: "User-friendly Interface", hu: "Felhasználóbarát interface" },
+                        item1: { en: "- Simple, clean user interface", hu: "- Egyszerű, tiszta felhasználói felület" },
+                        item2: { en: "- Large buttons for easy handling", hu: "- Nagy gombok könnyű kezelhetőségért" },
+                        item3: { en: "- Voice control for safe use", hu: "- Hangvezérlés biztonságos használathoz" },
+                        item4: { en: "- Night mode for driving comfort", hu: "- Éjszakai üzemmód a vezetés kényelméért" }
+                    },
+                    offline: {
+                        title: { en: "Offline Functionality", hu: "Offline funkcionalitás" },
+                        item1: { en: "- Download routes for offline use", hu: "- Útvonalak letöltése offline használatra" },
+                        item2: { en: "- Operation without internet connection", hu: "- Internetkapcsolat nélküli működés" },
+                        item3: { en: "- Automatic synchronization upon connection", hu: "- Automatikus szinkronizáció kapcsolódáskor" },
+                        item4: { en: "- Protection against data loss", hu: "- Adatvesztés elleni védelem" }
+                    }
+                },
+                navigation: {
+                    title: { en: "Real-time Navigation and Guidance", hu: "Valós idejű navigáció és útmutatás" },
+                    smartRoute: {
+                        title: { en: "Intelligent Route Guidance", hu: "Intelligens útvonalvezetés" },
+                        item1: { en: "- Turn-by-turn navigation with Google Maps and Waze integration", hu: "- Turn-by-turn navigáció Google Maps és Waze integrációval" },
+                        item2: { en: "- Route modification adapting to traffic conditions", hu: "- Forgalmi helyzethez alkalmazkodó útvonal-módosítás" },
+                        item3: { en: "- Truck-specific navigation (height, weight, restrictions)", hu: "- Kamion-specifikus navigáció (magasság, súly, kitiltások)" },
+                        item4: { en: "- Automatic traversal of intermediate destinations", hu: "- Köztes célpontok automatikus bejárása" }
+                    },
+                    dynamicUpdate: {
+                        title: { en: "Dynamic Route Update", hu: "Dinamikus útvonal-frissítés" },
+                        item1: { en: "- Adding new orders en route", hu: "- Új megrendelések útközben történő hozzáadása" },
+                        item2: { en: "- Immediate display of deletions and modifications", hu: "- Törlések és módosítások azonnali megjelenítése" },
+                        item3: { en: "- Real-time rearrangement of priorities", hu: "- Prioritások valós idejű átrendezése" },
+                        item4: { en: "- Recommendation of alternative routes", hu: "- Alternatív útvonalak ajánlása" }
+                    }
+                },
+                taskManagement: {
+                    title: { en: "Task Management and Status Tracking", hu: "Feladatkezelés és státuszkövetés" },
+                    shipments: {
+                        title: { en: "Shipment Handling", hu: "Szállítmányok kezelése" },
+                        item1: { en: "- Viewing detailed shipping information", hu: "- Részletes szállítási információk megtekintése" },
+                        item2: { en: "- Direct call to recipient contacts", hu: "- Címzett elérhetőségek közvetlen hívással" },
+                        item3: { en: "- Special instructions (e.g., gate key, floor)", hu: "- Speciális instrukciók (pl. kapukulcs, emelet)" },
+                        item4: { en: "- Package size and weight information", hu: "- Csomagméret és súly információk" }
+                    },
+                    statusUpdates: {
+                        title: { en: "Status Updates", hu: "Státusz frissítések" },
+                        item1: { en: "- Arrival indication with one button press", hu: "- Érkezés jelzése egy gombnyomással" },
+                        item2: { en: "- Recording successful/unsuccessful delivery", hu: "- Sikeres/sikertelen kézbesítés rögzítése" },
+                        item3: { en: "- Option for photo documentation", hu: "- Fényképes dokumentálás lehetősége" },
+                        item4: { en: "- Digital signature capture", hu: "- Aláírás digitális rögzítése" }
+                    }
+                },
+                communication: {
+                    title: { en: "Communication and Support", hu: "Kommunikáció és támogatás" },
+                    dispatch: {
+                        title: { en: "Contact with Dispatch Center", hu: "Központtal való kapcsolat" },
+                        item1: { en: "- Instant messaging with dispatcher", hu: "- Azonnali üzenetküldés diszpécserrel" },
+                        item2: { en: "- Quick reporting of urgent situations", hu: "- Sürgős helyzetek gyors jelzése" },
+                        item3: { en: "- Documenting problems with photos", hu: "- Problémák fotókkal való dokumentálása" },
+                        item4: { en: "- Requesting help with one touch", hu: "- Segítségkérés egy érintéssel" }
+                    },
+                    customer: {
+                        title: { en: "Customer Communication", hu: "Ügyfélkommunikáció" },
+                        item1: { en: "- Automatic notifications before delivery", hu: "- Automatikus értesítések szállítás előtt" },
+                        item2: { en: "- Sharing estimated arrival times", hu: "- Érkezési idő becslések megosztása" },
+                        item3: { en: "- Direct calling to customers", hu: "- Közvetlen telefonálás ügyfeleknek" },
+                        item4: { en: "- Sending SMS in case of delays", hu: "- SMS küldés késések esetén" }
+                    }
+                },
+                tracking: {
+                    title: { en: "Cost and Time Tracking", hu: "Költség- és időnyilvántartás" },
+                    autoRecord: {
+                        title: { en: "Automatic Data Recording", hu: "Automatikus adatrögzítés" },
+                        item1: { en: "- Accurate recording of kilometers driven", hu: "- Futott kilométerek pontos nyilvántartása" },
+                        item2: { en: "- Automatic tracking of working hours", hu: "- Munkaidő automatikus követése" },
+                        item3: { en: "- Fuel consumption monitoring", hu: "- Üzemanyag-fogyasztás monitoring" },
+                        item4: { en: "- Documentation of rest periods", hu: "- Pihenőidők dokumentálása" }
+                    }
+                },
+                security: {
+                    title: { en: "Security and Compliance", hu: "Biztonság és megfelelőség" },
+                    drivingTimes: {
+                        title: { en: "Automatic Recording of Driving Times", hu: "Vezetési idők automatikus nyilvántartása" },
+                        item1: { en: "- Reminders for rest periods", hu: "- Pihenőidők emlékeztetői" },
+                        item2: { en: "- Warnings for maximum driving time", hu: "- Maximális vezetési idő figyelmeztetések" },
+                        item3: { en: "- Automatic work time recording", hu: "- Automatikus munkaidő-nyilvántartás" }
+                    },
+                    emergency: {
+                        title: { en: "Emergency Functions", hu: "Vészhelyzeti funkciók" },
+                        item1: { en: "- SOS button for immediate help request", hu: "- SOS gomb azonnali segítségkéréshez" },
+                        item2: { en: "- Automatic accident detection", hu: "- Automatikus balesetészlelés" },
+                        item3: { en: "- Sending GPS coordinates in an emergency", hu: "- GPS koordináták küldése vészhelyzetben" }
+                    }
+                },
+                performance: {
+                    title: { en: "Performance Tracking and Development", hu: "Teljesítménykövetés és fejlesztés" },
+                    dashboard: {
+                        title: { en: "Driver Performance Dashboard", hu: "Sofőr teljesítmény dashboard" },
+                        item1: { en: "- Daily performance summary", hu: "- Napi teljesítmény összegzése" },
+                        item2: { en: "- Tracking punctuality indicators", hu: "- Pontossági mutatók követése" },
+                        item3: { en: "- Fuel efficiency statistics", hu: "- Üzemanyag-hatékonysági statisztikák" }
+                    },
+                    gamification: {
+                        title: { en: "Gamification and Motivation", hu: "Gamifikáció és motiváció" },
+                        item1: { en: "- Performance-based scoring", hu: "- Teljesítmény alapú pontozás" },
+                        item2: { en: "- Monthly and annual excellence awards", hu: "- Havi és éves kiválóság díjak" },
+                        item3: { en: "- Team competition results", hu: "- Csapatversenyek eredményei" },
+                        item4: { en: "- Tracking personal development goals", hu: "- Személyes fejlődési célok követése" }
+                    }
+                },
+                customization: {
+                    title: { en: "Customizable Settings", hu: "Testreszabható beállítások" },
+                    personalization: {
+                        title: { en: "Personalization", hu: "Személyre szabás" },
+                        item1: { en: "- Language settings (Hungarian, English, German, etc.)", hu: "- Nyelvi beállítások (magyar, angol, német, stb.)" },
+                        item2: { en: "- Notification preferences", hu: "- Értesítési preferenciák" },
+                        item3: { en: "- Customization of voice instructions", hu: "- Hangos utasítások testreszabása" },
+                        item4: { en: "- Appearance personalization", hu: "- Megjelenés személyre szabása" }
+                    },
+                    integration: {
+                        title: { en: "Integration Options", hu: "Integrációs lehetőségek" },
+                        item1: { en: "- Login from corporate directory", hu: "- Vállalati könyvtárból történő bejelentkezés" },
+                        item2: { en: "- Support for existing mobile devices", hu: "- Meglévő mobileszközök támogatása" },
+                        item3: { en: "- BYOD (Bring Your Own Device) policy", hu: "- BYOD (Bring Your Own Device) szabályzat" }
+                    }
+                },
+                sync: {
+                    title: { en: "Offline and Online Synchronization", hu: "Offline és online szinkronizáció" },
+                    dataManagement: {
+                        title: { en: "Intelligent Data Management", hu: "Intelligens adatkezelés" },
+                        item1: { en: "- Priority synchronization of critical data", hu: "- Kritikus adatok prioritásos szinkronizálása" },
+                        item2: { en: "- Optimization for low bandwidth", hu: "- Alacsony sávszélesség optimalizálása" },
+                        item3: { en: "- Minimization of data traffic", hu: "- Adatforgalom minimalizálása" },
+                        item4: { en: "- Automatic WiFi connection", hu: "- Automatikus WiFi kapcsolódás" }
+                    },
+                    dataSecurity: {
+                        title: { en: "Data Security on Mobile", hu: "Adatbiztonság mobilon" },
+                        item1: { en: "- Encryption of local data", hu: "- Helyi adatok titkosítása" },
+                        item2: { en: "- Remote wipe capability", hu: "- Távoli törlés lehetősége" },
+                        item3: { en: "- Biometric authentication support", hu: "- Biometrikus azonosítás támogatása" },
+                        item4: { en: "- Timed automatic logout", hu: "- Időzített automatikus kijelentkezés" }
+                    }
+                },
+                results: {
+                    title: { en: "Measured Results", hu: "Mért eredmények" },
+                    item1: { en: "- <strong>95% user satisfaction</strong> with the mobile application", hu: "- <strong>95% felhasználói elégedettség</strong> a mobil applikációval" },
+                    item2: { en: "- <strong>40% reduction</strong> in communication errors", hu: "- <strong>40% csökkenés</strong> a kommunikációs hibákban" },
+                    item3: { en: "- <strong>25% increase</strong> in delivery accuracy", hu: "- <strong>25% növekedés</strong> a kézbesítési pontosságban" },
+                    item4: { en: "- <strong>30% reduction</strong> in paper-based administration", hu: "- <strong>30% csökkenés</strong> a papír alapú adminisztrációban" }
+                }
+            },
+            subPageCta: { 
+                title: { en: "Ready for the Next Step?", hu: "Készen áll a következő lépésre?"},
+                intro: { 
+                    en: "Discover how QualiDat DRP can help your company operate more efficiently. Our experts are happy to demonstrate the specific benefits the system can offer, tailored to your specific needs.",
+                    hu: "Fedezze fel, hogyan segíthet a QualiDat DRP az Ön vállalatának hatékonyabb működésében. Szakértőink szívesen bemutatják, milyen konkrét előnyöket nyújthat a rendszer az Ön specifikus igényeihez szabva."
+                },
+                contactUs: { en: "Contact us today:", hu: "Lépjen kapcsolatba velünk még ma:"},
+                item1: { en: "- Personalized demo", hu: "- Személyre szabott bemutató"},
+                item2: { en: "- Detailed cost-benefit analysis", hu: "- Részletes költség-haszon elemzés"},
+                item3: { en: "- Free consultation on your logistics challenges", hu: "- Ingyenes konzultáció logisztikai kihívásairól"},
+                item4: { en: "- Organization of a trial run", hu: "- Próbaüzem szervezése"},
+                tagline: { en: "Efficiency improvement is just a phone call away!", hu: "A hatékonyság növelése egy telefonhívásnyira van!"},
+                button: { en: "Contact Us", hu: "Kapcsolatfelvétel"}
+            }
+        };
+
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        let currentLanguage = localStorage.getItem('preferredLanguage') || 'hu';
+        document.documentElement.lang = currentLanguage;
+
+        function applyTranslations(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+            
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const keys = element.getAttribute('data-i18n').split('.');
+                let value = translations;
+                
+                for (let i = 0; i < keys.length; i++) {
+                    const key = keys[i];
+                    if (value && typeof value === 'object' && value[key] !== undefined) {
+                        value = value[key];
+                        if (i === keys.length - 1 && typeof value === 'object' && value[lang] !== undefined) {
+                            if (element.tagName === 'LI' && (keys.join('.').startsWith('mobileAccess.results.') )) {
+                                element.innerHTML = value[lang];
+                            } else {
+                                element.textContent = value[lang];
+                            }
+                            return;
+                        }
+                    } else {
+                        // console.warn(`Translation key not found: ${element.getAttribute('data-i18n')} for lang ${lang}`);
+                        return;
+                    }
+                }
+            });
+
+            const logoLink = document.querySelector('.navbar .logo a');
+            if (logoLink) {
+                logoLink.href = 'index.html'; 
+            }
+            
+            languageButtons.forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        const languageButtons = document.querySelectorAll('.language-btn');
+        languageButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const language = this.getAttribute('data-lang');
+                applyTranslations(language);
+                localStorage.setItem('preferredLanguage', language);
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            applyTranslations(currentLanguage); 
+
+            const navbar = document.querySelector('.navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            document.querySelectorAll('.nav-links a[href^="#"], .nav-links a[href^="index.html#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href.startsWith('index.html#')) {
+                        return; 
+                    }
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        e.preventDefault();
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    let menu = this.nextElementSibling;
+                    if (menu && menu.classList.contains('dropdown-menu')) {
+                        if (menu.style.display === 'block') {
+                            menu.style.display = '';
+                            this.setAttribute('aria-expanded', 'false');
+                        } else {
+                            menu.style.display = 'block';
+                            this.setAttribute('aria-expanded', 'true');
+                        }
+                    }
+                });
+                toggle.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+
+            document.addEventListener('click', function(event) {
+                const dropdowns = document.querySelectorAll('.dropdown');
+                dropdowns.forEach(dropdown => {
+                    const toggle = dropdown.querySelector('.dropdown-toggle');
+                    const menu = dropdown.querySelector('.dropdown-menu');
+                    if (menu && !dropdown.contains(event.target)) {
+                        menu.style.display = 'none';
+                        if(toggle) toggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+        });
+
+        function openMail(element) {
+            const user = atob(element.getAttribute('data-email-user'));
+            const domain = atob(element.getAttribute('data-email-domain'));
+            const tld = atob(element.getAttribute('data-email-tld'));
+            const emailAddress = `${user}@${domain}.${tld}`;
+            window.location.href = 'mailto:' + emailAddress;
+        }
+    </script>
+</body>
+</html>
