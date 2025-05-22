@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Munkaerő Optimalizálás - QualiDat DRP</title>
-    <meta name="description" content="A QualiDat DRP hatékony munkaerő-optimalizálási megoldásokat kínál, beleértve a sofőrgazdálkodást, jogszabályi megfelelést és teljesítménykövetést.">
-    <meta name="keywords" content="munkaerő optimalizálás, sofőrgazdálkodás, jogszabályi megfelelőség, QualiDat DRP, Magyarország, vezetési idők, pihenőidők">
+    <title>Flotta Management - QualiDat DRP</title>
+    <meta name="description" content="A QualiDat DRP teljes körű flottamenedzsment megoldásokat kínál a járműkihasználtság optimalizálásától a karbantartás tervezéséig.">
+    <meta name="keywords" content="flotta management, flotta optimalizálás, járműkihasználtság, karbantartás tervezés, QualiDat DRP, Magyarország">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
     <style>
@@ -83,7 +83,7 @@
         .nav-links {
             display: flex;
             gap: 2rem;
-            align-items: center; 
+            align-items: center; /* Vertically align items including dropdown */
         }
 
         .nav-links a {
@@ -97,6 +97,7 @@
             color: var(--primary-color);
         }
         
+        /* Dropdown specific styles */
         .dropdown {
             position: relative;
             display: inline-block;
@@ -107,49 +108,49 @@
         }
         
         .dropdown-toggle .arrow {
-            font-size: 0.8em; 
+            font-size: 0.8em; /* Smaller arrow */
             margin-left: 4px;
             transition: transform 0.3s ease;
         }
 
         .dropdown-menu {
-            display: none; 
+            display: none; /* Hidden by default */
             position: absolute;
-            top: 100%; 
+            top: 100%; /* Position below the toggle */
             left: 0;
             background-color: white;
-            min-width: 250px; 
+            min-width: 250px; /* Adjust as needed */
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            z-index: 1001; 
+            z-index: 1001; /* Above other navbar items */
             border-radius: 4px;
             padding: 0.5rem 0;
-            opacity: 0; 
-            transform: translateY(10px); 
+            opacity: 0; /* Start fully transparent */
+            transform: translateY(10px); /* Start slightly offset */
             transition: opacity 0.3s ease, transform 0.3s ease;
-            pointer-events: none; 
+            pointer-events: none; /* Prevent interaction when hidden */
         }
         
         .dropdown:hover .dropdown-menu, 
-        .dropdown-toggle:focus + .dropdown-menu, 
-        .dropdown-menu:hover {
+        .dropdown-toggle:focus + .dropdown-menu, /* Show on focus for accessibility */
+        .dropdown-menu:hover /* Keep open when hovering menu itself */ {
             display: block;
             opacity: 1;
             transform: translateY(0);
-            pointer-events: auto; 
+            pointer-events: auto; /* Allow interaction when visible */
         }
         
         .dropdown:hover .dropdown-toggle .arrow,
         .dropdown-toggle:focus .arrow {
-            transform: rotate(180deg); 
+            transform: rotate(180deg); /* Rotate arrow when open */
         }
 
         .dropdown-menu a {
             color: var(--text-color);
-            padding: 0.75rem 1.5rem; 
+            padding: 0.75rem 1.5rem; /* More padding for better clickability */
             text-decoration: none;
             display: block;
-            font-weight: 400; 
-            white-space: nowrap; 
+            font-weight: 400; /* Standard font weight for dropdown items */
+            white-space: nowrap; /* Prevent wrapping */
             transition: background-color 0.2s ease, color 0.2s ease;
         }
 
@@ -158,6 +159,8 @@
             color: var(--primary-color);
         }
 
+
+        /* Language Selector Styles */
         .language-selector {
             margin-left: 2rem;
             display: flex;
@@ -300,15 +303,16 @@
             color: var(--primary-dark);
         }
 
+
         .cta-button {
             display: inline-block;
             padding: 1rem 2rem;
-            background: var(--primary-color); 
+            background: var(--primary-color); /* Main CTA buttons on subpages can be primary */
             color: white;
             text-decoration: none;
             border-radius: 4px;
             font-weight: bold;
-            margin-top: 1.5rem; 
+            margin-top: 1.5rem; /* Adjusted margin */
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
@@ -339,22 +343,22 @@
             <div class="dropdown">
                 <a href="#" class="dropdown-toggle" data-i18n="nav.services" aria-haspopup="true" aria-expanded="false">Services <span class="arrow">&#9662;</span></a>
                 <div class="dropdown-menu" aria-labelledby="services-dropdown">
-                    <a href="utvonaloptimalizalas.html" data-i18n="nav.service1">Intelligens Útvonal Optimalizálás</a>
-                    <a href="flotta_management.html" data-i18n="nav.service2">Flotta Management</a>
-                    <a href="munkaero_optimalizalas.html" data-i18n="nav.service3">Munkaerő Optimalizálás</a>
-                    <a href="integracio.html" data-i18n="nav.service4">Integráció</a>
-                    <a href="egyedi_munkafolyamatok.html" data-i18n="nav.service5">Egyedi Munkafolyamatok</a>
-                    <a href="mobil_hozzaferes.html" data-i18n="nav.service6">Mobil Hozzáférés</a>
+                    <a href="route_optimization.html" data-i18n="nav.service1">Intelligens Útvonal Optimalizálás</a>
+                    <a href="fleet_management.html" data-i18n="nav.service2">Flotta Management</a>
+                    <a href="workforce_optimization.html" data-i18n="nav.service3">Munkaerő Optimalizálás</a>
+                    <a href="integration.html" data-i18n="nav.service4">Integráció</a>
+                    <a href="custom_workflows.html" data-i18n="nav.service5">Egyedi Munkafolyamatok</a>
+                    <a href="mobile_access.html" data-i18n="nav.service6">Mobil Hozzáférés</a>
                 </div>
             </div>
         </div>
         
         <div class="language-selector">
-            <button id="en-btn" class="language-btn" data-lang="en">
+            <button id="en-btn" class="language-btn" data-lang="en"> <!-- Default active set by JS -->
                 <span>🇬🇧</span> EN
             </button>
             <span style="margin: 0 0.5rem;">|</span>
-            <button id="hu-btn" class="language-btn" data-lang="hu">
+            <button id="hu-btn" class="language-btn" data-lang="hu"> <!-- Default active set by JS -->
                 <span>🇭🇺</span> HU
             </button>
         </div>
@@ -362,91 +366,84 @@
 
     <main id="main-content" class="section">
         <div class="content-section">
-            <h1 data-i18n="workforceOptimization.title">Munkaerő Optimalizálás</h1>
-            <h2 data-i18n="workforceOptimization.subtitle">Hatékony sofőrgazdálkodás jogszabályi megfelelőséggel</h2>
-            <p data-i18n="workforceOptimization.intro">A munkaerő megfelelő beosztása és optimalizálása kritikus fontosságú a szállítmányozási tevékenység sikeréhez. A QualiDat DRP komplex megoldást kínál a humánerőforrás hatékony kezelésére.</p>
+            <h1 data-i18n="fleetManagement.title">Flotta Management</h1>
+            <h2 data-i18n="fleetManagement.subtitle">Teljes körű flottaoptimalizálás intelligens döntéstámogatással</h2>
+            <p data-i18n="fleetManagement.intro">A hatékony flottaműködés kulcsa a megfelelő járműkihasználás és a hosszú távú tervezés. A QualiDat DRP átfogó megoldást kínál flottája optimális működtetéséhez.</p>
 
-            <h3 data-i18n="workforceOptimization.compliance.title">Jogszabályi megfelelőség automatikusan</h3>
-            <h4 data-i18n="workforceOptimization.compliance.euRegulations.title">EU szabályozások betartása</h4>
+            <h3 data-i18n="fleetManagement.utilization.title">Járműkihasználtság optimalizálása</h3>
+            <h4 data-i18n="fleetManagement.utilization.monitoring.title">Valós idejű monitoring</h4>
             <ul>
-                <li data-i18n="workforceOptimization.compliance.euRegulations.item1">- Vezetési és pihenőidők automatikus nyomon követése</li>
-                <li data-i18n="workforceOptimization.compliance.euRegulations.item2">- 561/2006/EK rendelet teljes támogatása</li>
-                <li data-i18n="workforceOptimization.compliance.euRegulations.item3">- Heti és kétheti vezetési idők ellenőrzése</li>
-                <li data-i18n="workforceOptimization.compliance.euRegulations.item4">- Napi pihenőidők garantálása</li>
+                <li data-i18n="fleetManagement.utilization.monitoring.item1">- Járművek helyének és állapotának nyomon követése</li>
+                <li data-i18n="fleetManagement.utilization.monitoring.item2">- Kihasználtsági mutatók folyamatos elemzése</li>
+                <li data-i18n="fleetManagement.utilization.monitoring.item3">- Üresjáratok automatikus azonosítása</li>
+                <li data-i18n="fleetManagement.utilization.monitoring.item4">- Teljesítményriportok generálása</li>
             </ul>
 
-            <h4 data-i18n="workforceOptimization.compliance.huRegulations.title">Magyar munkajogi előírások</h4>
+            <h4 data-i18n="fleetManagement.utilization.distribution.title">Intelligens járműelosztás</h4>
             <ul>
-                <li data-i18n="workforceOptimization.compliance.huRegulations.item1">- Munkaidő-beosztás törvényes keretek között</li>
-                <li data-i18n="workforceOptimization.compliance.huRegulations.item2">- Túlórakeretek automatikus figyelése</li>
-                <li data-i18n="workforceOptimization.compliance.huRegulations.item3">- Munkaszüneti napok kezelése</li>
-                <li data-i18n="workforceOptimization.compliance.huRegulations.item4">- Szabadságolási tervezés integrálása</li>
+                <li data-i18n="fleetManagement.utilization.distribution.item1">- Megrendelések optimális járművekhez rendelése</li>
+                <li data-i18n="fleetManagement.utilization.distribution.item2">- Területi hatékonyság maximalizálása</li>
+                <li data-i18n="fleetManagement.utilization.distribution.item3">- Visszatérő útvonalak optimalizálása</li>
+                <li data-i18n="fleetManagement.utilization.distribution.item4">- Kombinált szállítások előnyben részesítése</li>
             </ul>
 
-            <h3 data-i18n="workforceOptimization.scheduling.title">Intelligens beosztás optimalizálás</h3>
-            <h4 data-i18n="workforceOptimization.scheduling.multiObjective.title">Többcélú optimalizálás</h4>
+            <h3 data-i18n="fleetManagement.sizeOptimization.title">Flottaméret optimalizálás</h3>
+            <h4 data-i18n="fleetManagement.sizeOptimization.decisionSupport.title">Adatvezérelt döntéstámogatás</h4>
             <ul>
-                <li data-i18n="workforceOptimization.scheduling.multiObjective.item1">- Sofőr preferenciák figyelembevétele</li>
-                <li data-i18n="workforceOptimization.scheduling.multiObjective.item2">- Képzettségek és jogosítványok szerinti beosztás</li>
-                <li data-i18n="workforceOptimization.scheduling.multiObjective.item3">- Nyelvtudás alapú ügyfélkijelölés</li>
+                <li data-i18n="fleetManagement.sizeOptimization.decisionSupport.item1">- Historikus adatok elemzése</li>
+                <li data-i18n="fleetManagement.sizeOptimization.decisionSupport.item2">- Szezonális ingadozások figyelembevétele</li>
+                <li data-i18n="fleetManagement.sizeOptimization.decisionSupport.item3">- Igényprognózis készítése</li>
+                <li data-i18n="fleetManagement.sizeOptimization.decisionSupport.item4">- ROI kalkulációk járműbeszerzésekhez</li>
             </ul>
 
-            <h4 data-i18n="workforceOptimization.scheduling.dynamicRescheduling.title">Dinamikus újrabeosztás</h4>
+            <h4 data-i18n="fleetManagement.sizeOptimization.rentVsBuy.title">Bérlés vs. vétel elemzés</h4>
             <ul>
-                <li data-i18n="workforceOptimization.scheduling.dynamicRescheduling.item1">- Betegség vagy lemondás esetén azonnali átszervezés</li>
-                <li data-i18n="workforceOptimization.scheduling.dynamicRescheduling.item2">- Késések automatikus kezelése</li>
-                <li data-i18n="workforceOptimization.scheduling.dynamicRescheduling.item3">- Váratlan megrendelések beillesztése</li>
-                <li data-i18n="workforceOptimization.scheduling.dynamicRescheduling.item4">- Real-time kommunikáció a sofőrökkel</li>
+                <li data-i18n="fleetManagement.sizeOptimization.rentVsBuy.item1">- Költség-haszon elemzések</li>
+                <li data-i18n="fleetManagement.sizeOptimization.rentVsBuy.item2">- Lízingopciók összehasonlítása</li>
+                <li data-i18n="fleetManagement.sizeOptimization.rentVsBuy.item3">- Flottaköltségek optimalizálása</li>
+                <li data-i18n="fleetManagement.sizeOptimization.rentVsBuy.item4">- Amortizációs számítások</li>
             </ul>
 
-            <h3 data-i18n="workforceOptimization.performance.title">Teljesítménykövetés és fejlesztés</h3>
-            <h4 data-i18n="workforceOptimization.performance.tracking.title">Teljesítménymérés</h4>
+            <h3 data-i18n="fleetManagement.maintenance.title">Karbantartás tervezés</h3>
+            <h4 data-i18n="fleetManagement.maintenance.predictive.title">Prediktív karbantartás</h4>
             <ul>
-                <li data-i18n="workforceOptimization.performance.tracking.item1">- Pontossági mutatók nyomon követése</li>
-                <li data-i18n="workforceOptimization.performance.tracking.item2">- Üzemanyag-fogyasztási szokások elemzése</li>
-                <li data-i18n="workforceOptimization.performance.tracking.item3">- Ügyfél-visszajelzések integrálása</li>
-                <li data-i18n="workforceOptimization.performance.tracking.item4">- Vezetési stílus optimalizálási javaslatok</li>
+                <li data-i18n="fleetManagement.maintenance.predictive.item1">- Járműállapot monitoring</li>
+                <li data-i18n="fleetManagement.maintenance.predictive.item2">- Karbantartási igények előrejelzése</li>
+                <li data-i18n="fleetManagement.maintenance.predictive.item3">- Üzemszünetek minimalizálása</li>
+                <li data-i18n="fleetManagement.maintenance.predictive.item4">- Költséghatékony szervizelés</li>
             </ul>
 
-            <h4 data-i18n="workforceOptimization.performance.development.title">Fejlesztési programok támogatása</h4>
+            <h4 data-i18n="fleetManagement.maintenance.scheduling.title">Karbantartási ütemezés optimalizálása</h4>
             <ul>
-                <li data-i18n="workforceOptimization.performance.development.item1">- Teljesítménybeli hiányosságok feltárása</li>
-                <li data-i18n="workforceOptimization.performance.development.item2">- Motivációs rendszerek támogatása</li>
-            </ul>
-            
-            <h3 data-i18n="workforceOptimization.costOptimization.title">Költségoptimalizálás</h3>
-            <h4 data-i18n="workforceOptimization.costOptimization.overtime.title">Túlóraköltségek csökkentése</h4>
-            <ul>
-                <li data-i18n="workforceOptimization.costOptimization.overtime.item1">- Hatékony műszakbeosztás</li>
-                <li data-i18n="workforceOptimization.costOptimization.overtime.item2">- Előre tervezhető munkaterhelés</li>
-                <li data-i18n="workforceOptimization.costOptimization.overtime.item3">- Csúcsidőszakok kezelése</li>
-                <li data-i18n="workforceOptimization.costOptimization.overtime.item4">- Part-time munkavállalók optimális bevonása</li>
+                <li data-i18n="fleetManagement.maintenance.scheduling.item1">- Forgalmi csúcsidőszakok elkerülése</li>
+                <li data-i18n="fleetManagement.maintenance.scheduling.item2">- Több jármű egyidejű karbantartásának tervezése</li>
+                <li data-i18n="fleetManagement.maintenance.scheduling.item3">- Pótjárművek optimális elosztása</li>
             </ul>
 
-            <h4 data-i18n="workforceOptimization.costOptimization.productivity.title">Produktivitás növelése</h4>
+            <h3 data-i18n="fleetManagement.performance.title">Teljesítménymérés és jelentéstétel</h3>
+            <h4 data-i18n="fleetManagement.performance.kpi.title">KPI dashboard</h4>
             <ul>
-                <li data-i18n="workforceOptimization.costOptimization.productivity.item1">- Egy sofőrre jutó szállítások számának növelése</li>
-                <li data-i18n="workforceOptimization.costOptimization.productivity.item2">- Várakozási idők minimalizálása</li>
-                <li data-i18n="workforceOptimization.costOptimization.productivity.item3">- Optimális útvonal-sofőr párosítás</li>
-                <li data-i18n="workforceOptimization.costOptimization.productivity.item4">- Tapasztalat alapú feladatkiosztás</li>
+                <li data-i18n="fleetManagement.performance.kpi.item1">- Valós idejű teljesítménymutatók</li>
+                <li data-i18n="fleetManagement.performance.kpi.item2">- Költségelemzések</li>
+                <li data-i18n="fleetManagement.performance.kpi.item3">- Hatékonyság benchmarkok</li>
+                <li data-i18n="fleetManagement.performance.kpi.item4">- Trend analízisek</li>
             </ul>
 
-            <h3 data-i18n="workforceOptimization.satisfaction.title">Sofőr-elégedettség</h3>
-            <h4 data-i18n="workforceOptimization.satisfaction.workLifeBalance.title">Work-life balance</h4>
+            <h4 data-i18n="fleetManagement.performance.reports.title">Részletes riportok</h4>
             <ul>
-                <li data-i18n="workforceOptimization.satisfaction.workLifeBalance.item1">- Otthoni pihenőidők maximalizálása</li>
-                <li data-i18n="workforceOptimization.satisfaction.workLifeBalance.item2">- Hétvégi munkavégzés minimalizálása</li>
-                <li data-i18n="workforceOptimization.satisfaction.workLifeBalance.item3">- Szabadságolás rugalmas tervezése</li>
-                <li data-i18n="workforceOptimization.satisfaction.workLifeBalance.item4">- Családi kötelezettségek figyelembevétele</li>
+                <li data-i18n="fleetManagement.performance.reports.item1">- Sofőrteljesítmény értékelése</li>
+                <li data-i18n="fleetManagement.performance.reports.item2">- Járműenkénti költségstruktúra</li>
+                <li data-i18n="fleetManagement.performance.reports.item3">- Ügyfélelégedettségi mutatók</li>
+                <li data-i18n="fleetManagement.performance.reports.item4">- Környezeti hatások mérése</li>
             </ul>
             
             <div id="results-section">
-                <h3 data-i18n="workforceOptimization.results.title">Mért eredmények</h3>
+                <h3 data-i18n="fleetManagement.results.title">Mért eredmények</h3>
                 <ul>
-                    <li data-i18n="workforceOptimization.results.item1">- <strong>35% csökkenés</strong> túlóraköltségekben</li>
-                    <li data-i18n="workforceOptimization.results.item2">- <strong>90% megfelelőség</strong> EU szabályozásoknak</li>
-                    <li data-i18n="workforceOptimization.results.item3">- <strong>25% növekedés</strong> sofőr-elégedettségben</li>
-                    <li data-i18n="workforceOptimization.results.item4">- <strong>20% csökkenés</strong> fluktuációban</li>
+                    <li data-i18n="fleetManagement.results.item1">- <strong>20% csökkenés</strong> a flottaműködési költségekben</li>
+                    <li data-i18n="fleetManagement.results.item2">- <strong>15% növekedés</strong> a járműkihasználtságban</li>
+                    <li data-i18n="fleetManagement.results.item3">- <strong>30% csökkenés</strong> a váratlan karbantartási költségekben</li>
+                    <li data-i18n="fleetManagement.results.item4">- <strong>25% csökkenés</strong> az üresjáratokban</li>
                 </ul>
             </div>
         </div>
@@ -489,97 +486,98 @@
             footer: {
                 copyright: { en: "© 2025 QualiDat. All rights reserved.", hu: "© 2025 QualiDat. Minden jog fenntartva." }
             },
-            workforceOptimization: {
-                title: { en: "Workforce Optimization", hu: "Munkaerő Optimalizálás" },
-                subtitle: { en: "Effective driver management with regulatory compliance", hu: "Hatékony sofőrgazdálkodás jogszabályi megfelelőséggel" },
+            routeOptimization: { // Copied from utvonaloptimalizalas.html for completeness, not strictly needed here but good for central object
+                title: { en: "Smart Route Optimization", hu: "Intelligens Útvonal Optimalizálás"},
+                subtitle: { en: "Let the Algorithm Plan for You", hu: "Hagyja, hogy az algoritmus tervezzen Önnek"},
                 intro: { 
-                    en: "Proper workforce scheduling and optimization are critical to the success of transportation activities. QualiDat DRP offers a complex solution for effective human resource management.", 
-                    hu: "A munkaerő megfelelő beosztása és optimalizálása kritikus fontosságú a szállítmányozási tevékenység sikeréhez. A QualiDat DRP komplex megoldást kínál a humánerőforrás hatékony kezelésére." 
+                    en: "The era of traditional route planning is over. QualiDat Dynamic Route Planner (DRP) intelligent algorithms optimize even the most complex transportation tasks, considering all relevant factors.",
+                    hu: "A hagyományos útvonaltervezés ideje lejárt. A QualiDat Dynamic Route Planner (DRP) intelligens algoritmusai optimalizálják a legbonyolultabb szállítási feladatokat is, figyelembe véve minden releváns tényezőt."
                 },
-                compliance: {
-                    title: { en: "Automatic Regulatory Compliance", hu: "Jogszabályi megfelelőség automatikusan" },
-                    euRegulations: {
-                        title: { en: "Compliance with EU Regulations", hu: "EU szabályozások betartása" },
-                        item1: { en: "- Automatic tracking of driving and rest times", hu: "- Vezetési és pihenőidők automatikus nyomon követése" },
-                        item2: { en: "- Full support for Regulation (EC) No 561/2006", hu: "- 561/2006/EK rendelet teljes támogatása" },
-                        item3: { en: "- Monitoring of weekly and bi-weekly driving times", hu: "- Heti és kétheti vezetési idők ellenőrzése" },
-                        item4: { en: "- Guarantee of daily rest periods", hu: "- Napi pihenőidők garantálása" }
+                // ... (rest of routeOptimization translations can be kept for consistency but are not directly used on this page)
+            },
+            fleetManagement: {
+                title: { en: "Fleet Management", hu: "Flotta Management" },
+                subtitle: { en: "Comprehensive fleet optimization with intelligent decision support", hu: "Teljes körű flottaoptimalizálás intelligens döntéstámogatással" },
+                intro: { 
+                    en: "The key to efficient fleet operation is proper vehicle utilization and long-term planning. QualiDat DRP offers a comprehensive solution for the optimal operation of your fleet.", 
+                    hu: "A hatékony flottaműködés kulcsa a megfelelő járműkihasználás és a hosszú távú tervezés. A QualiDat DRP átfogó megoldást kínál flottája optimális működtetéséhez." 
+                },
+                utilization: {
+                    title: { en: "Vehicle Utilization Optimization", hu: "Járműkihasználtság optimalizálása" },
+                    monitoring: {
+                        title: { en: "Real-time Monitoring", hu: "Valós idejű monitoring" },
+                        item1: { en: "- Tracking vehicle location and status", hu: "- Járművek helyének és állapotának nyomon követése" },
+                        item2: { en: "- Continuous analysis of utilization indicators", hu: "- Kihasználtsági mutatók folyamatos elemzése" },
+                        item3: { en: "- Automatic identification of idle times", hu: "- Üresjáratok automatikus azonosítása" },
+                        item4: { en: "- Generation of performance reports", hu: "- Teljesítményriportok generálása" }
                     },
-                    huRegulations: {
-                        title: { en: "Hungarian Labor Law Provisions", hu: "Magyar munkajogi előírások" },
-                        item1: { en: "- Work scheduling within legal frameworks", hu: "- Munkaidő-beosztás törvényes keretek között" },
-                        item2: { en: "- Automatic monitoring of overtime limits", hu: "- Túlórakeretek automatikus figyelése" },
-                        item3: { en: "- Management of public holidays", hu: "- Munkaszüneti napok kezelése" },
-                        item4: { en: "- Integration of vacation planning", hu: "- Szabadságolási tervezés integrálása" }
+                    distribution: {
+                        title: { en: "Intelligent Vehicle Allocation", hu: "Intelligens járműelosztás" },
+                        item1: { en: "- Assigning orders to optimal vehicles", hu: "- Megrendelések optimális járművekhez rendelése" },
+                        item2: { en: "- Maximizing territorial efficiency", hu: "- Területi hatékonyság maximalizálása" },
+                        item3: { en: "- Optimization of recurring routes", hu: "- Visszatérő útvonalak optimalizálása" },
+                        item4: { en: "- Prioritizing combined transports", hu: "- Kombinált szállítások előnyben részesítése" }
                     }
                 },
-                scheduling: {
-                    title: { en: "Intelligent Schedule Optimization", hu: "Intelligens beosztás optimalizálás" },
-                    multiObjective: {
-                        title: { en: "Multi-objective Optimization", hu: "Többcélú optimalizálás" },
-                        item1: { en: "- Consideration of driver preferences", hu: "- Sofőr preferenciák figyelembevétele" },
-                        item2: { en: "- Scheduling based on qualifications and licenses", hu: "- Képzettségek és jogosítványok szerinti beosztás" },
-                        item3: { en: "- Language-based customer assignment", hu: "- Nyelvtudás alapú ügyfélkijelölés" }
+                sizeOptimization: {
+                    title: { en: "Fleet Size Optimization", hu: "Flottaméret optimalizálás" },
+                    decisionSupport: {
+                        title: { en: "Data-driven Decision Support", hu: "Adatvezérelt döntéstámogatás" },
+                        item1: { en: "- Analysis of historical data", hu: "- Historikus adatok elemzése" },
+                        item2: { en: "- Consideration of seasonal fluctuations", hu: "- Szezonális ingadozások figyelembevétele" },
+                        item3: { en: "- Demand forecasting", hu: "- Igényprognózis készítése" },
+                        item4: { en: "- ROI calculations for vehicle acquisitions", hu: "- ROI kalkulációk járműbeszerzésekhez" }
                     },
-                    dynamicRescheduling: {
-                        title: { en: "Dynamic Rescheduling", hu: "Dinamikus újrabeosztás" },
-                        item1: { en: "- Immediate reorganization in case of illness or cancellation", hu: "- Betegség vagy lemondás esetén azonnali átszervezés" },
-                        item2: { en: "- Automatic handling of delays", hu: "- Késések automatikus kezelése" },
-                        item3: { en: "- Insertion of unexpected orders", hu: "- Váratlan megrendelések beillesztése" },
-                        item4: { en: "- Real-time communication with drivers", hu: "- Real-time kommunikáció a sofőrökkel" }
+                    rentVsBuy: {
+                        title: { en: "Rent vs. Buy Analysis", hu: "Bérlés vs. vétel elemzés" },
+                        item1: { en: "- Cost-benefit analyses", hu: "- Költség-haszon elemzések" },
+                        item2: { en: "- Comparison of leasing options", hu: "- Lízingopciók összehasonlítása" },
+                        item3: { en: "- Fleet cost optimization", hu: "- Flottaköltségek optimalizálása" },
+                        item4: { en: "- Depreciation calculations", hu: "- Amortizációs számítások" }
+                    }
+                },
+                maintenance: {
+                    title: { en: "Maintenance Planning", hu: "Karbantartás tervezés" },
+                    predictive: {
+                        title: { en: "Predictive Maintenance", hu: "Prediktív karbantartás" },
+                        item1: { en: "- Vehicle condition monitoring", hu: "- Járműállapot monitoring" },
+                        item2: { en: "- Forecasting maintenance needs", hu: "- Karbantartási igények előrejelzése" },
+                        item3: { en: "- Minimizing downtime", hu: "- Üzemszünetek minimalizálása" },
+                        item4: { en: "- Cost-effective servicing", hu: "- Költséghatékony szervizelés" }
+                    },
+                    scheduling: {
+                        title: { en: "Maintenance Schedule Optimization", hu: "Karbantartási ütemezés optimalizálása" },
+                        item1: { en: "- Avoiding peak traffic periods", hu: "- Forgalmi csúcsidőszakok elkerülése" },
+                        item2: { en: "- Planning simultaneous maintenance for multiple vehicles", hu: "- Több jármű egyidejű karbantartásának tervezése" },
+                        item3: { en: "- Optimal allocation of replacement vehicles", hu: "- Pótjárművek optimális elosztása" }
                     }
                 },
                 performance: {
-                    title: { en: "Performance Tracking and Development", hu: "Teljesítménykövetés és fejlesztés" },
-                    tracking: {
-                        title: { en: "Performance Measurement", hu: "Teljesítménymérés" },
-                        item1: { en: "- Tracking of punctuality indicators", hu: "- Pontossági mutatók nyomon követése" },
-                        item2: { en: "- Analysis of fuel consumption habits", hu: "- Üzemanyag-fogyasztási szokások elemzése" },
-                        item3: { en: "- Integration of customer feedback", hu: "- Ügyfél-visszajelzések integrálása" },
-                        item4: { en: "- Driving style optimization suggestions", hu: "- Vezetési stílus optimalizálási javaslatok" }
+                    title: { en: "Performance Measurement and Reporting", hu: "Teljesítménymérés és jelentéstétel" },
+                    kpi: {
+                        title: { en: "KPI Dashboard", hu: "KPI dashboard" },
+                        item1: { en: "- Real-time performance indicators", hu: "- Valós idejű teljesítménymutatók" },
+                        item2: { en: "- Cost analyses", hu: "- Költségelemzések" },
+                        item3: { en: "- Efficiency benchmarks", hu: "- Hatékonyság benchmarkok" },
+                        item4: { en: "- Trend analyses", hu: "- Trend analízisek" }
                     },
-                    development: {
-                        title: { en: "Support for Development Programs", hu: "Fejlesztési programok támogatása" },
-                        item1: { en: "- Identification of performance gaps", hu: "- Teljesítménybeli hiányosságok feltárása" },
-                        item2: { en: "- Support for motivation systems", hu: "- Motivációs rendszerek támogatása" }
-                    }
-                },
-                costOptimization: {
-                    title: { en: "Cost Optimization", hu: "Költségoptimalizálás" },
-                    overtime: {
-                        title: { en: "Reduction of Overtime Costs", hu: "Túlóraköltségek csökkentése" },
-                        item1: { en: "- Efficient shift scheduling", hu: "- Hatékony műszakbeosztás" },
-                        item2: { en: "- Predictable workload planning", hu: "- Előre tervezhető munkaterhelés" },
-                        item3: { en: "- Management of peak periods", hu: "- Csúcsidőszakok kezelése" },
-                        item4: { en: "- Optimal involvement of part-time employees", hu: "- Part-time munkavállalók optimális bevonása" }
-                    },
-                    productivity: {
-                        title: { en: "Increase in Productivity", hu: "Produktivitás növelése" },
-                        item1: { en: "- Increasing the number of deliveries per driver", hu: "- Egy sofőrre jutó szállítások számának növelése" },
-                        item2: { en: "- Minimization of waiting times", hu: "- Várakozási idők minimalizálása" },
-                        item3: { en: "- Optimal route-driver pairing", hu: "- Optimális útvonal-sofőr párosítás" },
-                        item4: { en: "- Experience-based task assignment", hu: "- Tapasztalat alapú feladatkiosztás" }
-                    }
-                },
-                satisfaction: {
-                    title: { en: "Driver Satisfaction", hu: "Sofőr-elégedettség" },
-                    workLifeBalance: {
-                        title: { en: "Work-life balance", hu: "Work-life balance" },
-                        item1: { en: "- Maximizing home rest times", hu: "- Otthoni pihenőidők maximalizálása" },
-                        item2: { en: "- Minimizing weekend work", hu: "- Hétvégi munkavégzés minimalizálása" },
-                        item3: { en: "- Flexible vacation planning", hu: "- Szabadságolás rugalmas tervezése" },
-                        item4: { en: "- Consideration of family obligations", hu: "- Családi kötelezettségek figyelembevétele" }
+                    reports: {
+                        title: { en: "Detailed Reports", hu: "Részletes riportok" },
+                        item1: { en: "- Driver performance evaluation", hu: "- Sofőrteljesítmény értékelése" },
+                        item2: { en: "- Cost structure per vehicle", hu: "- Járműenkénti költségstruktúra" },
+                        item3: { en: "- Customer satisfaction indicators", hu: "- Ügyfélelégedettségi mutatók" },
+                        item4: { en: "- Measurement of environmental impacts", hu: "- Környezeti hatások mérése" }
                     }
                 },
                 results: {
                     title: { en: "Measured Results", hu: "Mért eredmények" },
-                    item1: { en: "- <strong>35% reduction</strong> in overtime costs", hu: "- <strong>35% csökkenés</strong> túlóraköltségekben" },
-                    item2: { en: "- <strong>90% compliance</strong> with EU regulations", hu: "- <strong>90% megfelelőség</strong> EU szabályozásoknak" },
-                    item3: { en: "- <strong>25% increase</strong> in driver satisfaction", hu: "- <strong>25% növekedés</strong> sofőr-elégedettségben" },
-                    item4: { en: "- <strong>20% reduction</strong> in turnover", hu: "- <strong>20% csökkenés</strong> fluktuációban" }
+                    item1: { en: "- <strong>20% reduction</strong> in fleet operating costs", hu: "- <strong>20% csökkenés</strong> a flottaműködési költségekben" },
+                    item2: { en: "- <strong>15% increase</strong> in vehicle utilization", hu: "- <strong>15% növekedés</strong> a járműkihasználtságban" },
+                    item3: { en: "- <strong>30% reduction</strong> in unexpected maintenance costs", hu: "- <strong>30% csökkenés</strong> a váratlan karbantartási költségekben" },
+                    item4: { en: "- <strong>25% reduction</strong> in idle times", hu: "- <strong>25% csökkenés</strong> az üresjáratokban" }
                 }
             },
-            subPageCta: { 
+            subPageCta: { // Generic CTA, same as in utvonaloptimalizalas.html
                 title: { en: "Ready for the Next Step?", hu: "Készen áll a következő lépésre?"},
                 intro: { 
                     en: "Discover how QualiDat DRP can help your company operate more efficiently. Our experts are happy to demonstrate the specific benefits the system can offer, tailored to your specific needs.",
@@ -617,7 +615,7 @@
                     if (value && typeof value === 'object' && value[key] !== undefined) {
                         value = value[key];
                         if (i === keys.length - 1 && typeof value === 'object' && value[lang] !== undefined) {
-                            if (element.tagName === 'LI' && (keys.join('.').startsWith('workforceOptimization.results.') )) {
+                            if (element.tagName === 'LI' && (keys.join('.').startsWith('fleetManagement.results.') )) {
                                 element.innerHTML = value[lang];
                             } else {
                                 element.textContent = value[lang];
@@ -688,6 +686,7 @@
                     event.preventDefault();
                     let menu = this.nextElementSibling;
                     if (menu && menu.classList.contains('dropdown-menu')) {
+                        // Simple toggle logic, could be enhanced
                         if (menu.style.display === 'block') {
                             menu.style.display = '';
                             this.setAttribute('aria-expanded', 'false');
@@ -697,6 +696,7 @@
                         }
                     }
                 });
+                // Accessibility: ensure menu can be opened with Enter/Space if it's a link
                 toggle.addEventListener('keydown', function(event) {
                     if (event.key === 'Enter' || event.key === ' ') {
                         event.preventDefault();
@@ -705,6 +705,7 @@
                 });
             });
 
+            // Close dropdowns when clicking outside
             document.addEventListener('click', function(event) {
                 const dropdowns = document.querySelectorAll('.dropdown');
                 dropdowns.forEach(dropdown => {
