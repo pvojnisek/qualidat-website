@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Water Polo Tournament Results</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background-color: #f0f8ff; color: #333; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 20px; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .section-header-title { background-color: #0077be; color: white; padding: 10px; margin-bottom: 15px; text-align: center; font-size: 1.5em; border-radius:8px; }
+        .static-content-section { background: white; margin: 30px 0; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 20px; }
+        .footer { background: linear-gradient(135deg, #0077be, #00a8cc); color: white; text-align: center; padding: 40px 20px; margin-top: 50px; }
+        .footer p { margin-bottom: 10px; opacity: 0.9; }
+        #error-message { display: none; padding: 15px; margin: 15px 0; background-color: #ffdddd; border: 1px solid #ffaaaa; color: #d8000c; border-radius: 5px; text-align: center; }
+        #error-message.visible { display: block; }
+        .data-section { margin-bottom: 30px; padding:20px; background-color: #f9f9f9; border-radius:8px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
+        .data-section h2 { text-align: center; color: #0077be; margin-top:0; }
+        .card { background-color: #ffffff; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 10px; }
+        .card h3 { margin-top: 0; color: #005a8c; }
+        .memorial-story { background: linear-gradient(135deg, #f8f9fa, #ffffff); padding: 30px; border-radius: 15px; border: 1px solid #e9ecef; margin-bottom: 30px; text-align: center; }
+        .memorial-story h3 { color: #0077be; font-size: 1.5rem; margin-bottom: 15px; }
+        .memorial-story p { line-height: 1.8; color: #555; margin-bottom: 15px; }
+        .fun-facts-container .section-header-title { margin-bottom: 0; border-radius: 8px 8px 0 0;}
+        .fun-facts-content { padding: 20px; background-color: #fff; border-radius: 0 0 8px 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #e9ecef; border-top:none;}
+        .fun-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .fact-card { background: linear-gradient(135deg, #ffffff, #f0f8ff); padding: 25px; border-radius: 15px; border-left: 5px solid #0077be; }
+        .fact-icon { font-size: 2rem; margin-bottom: 15px; color: #0077be; }
+        .fact-title { font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 10px; }
+        .fact-text { color: #666; line-height: 1.6; }
+        #toggle-all-matches { background-color: #0077be; color:white; padding:10px 15px; border:none; border-radius:5px; cursor:pointer; font-size:1em; margin-bottom:10px;}
+        #toggle-all-matches:hover { background-color: #005a8c; }
+
+        /* --- Styles for Dynamic Content --- */
+
+        /* Standings */
+        #standings-content ol { list-style-type: none; padding-left: 0; }
+        .standing-item { display: flex; justify-content: flex-start; align-items: center; padding: 8px 5px; border-bottom: 1px solid #eee; background-color: #fff; transition: background-color 0.3s ease; }
+        .standing-item:nth-child(odd) { background-color: #f9f9f9; }
+        .standing-item:hover { background-color: #e9f5ff; }
+        .standing-item .rank { font-weight: bold; min-width: 50px; color: #0077be; font-size: 1em; }
+        .standing-item .team { text-align: left; flex-grow: 1; font-size: 1em; }
+        .standing-item:last-child { border-bottom: none; }
+
+        #standings-content ol li:nth-child(1) .rank { color: #D4AF37; } /* Gold */
+        #standings-content ol li:nth-child(1) .team { font-weight: bold;}
+        #standings-content ol li:nth-child(2) .rank { color: #C0C0C0; } /* Silver */
+        #standings-content ol li:nth-child(2) .team { font-weight: bold;}
+        #standings-content ol li:nth-child(3) .rank { color: #CD7F32; } /* Bronze */
+        #standings-content ol li:nth-child(3) .team { font-weight: bold;}
+
+
+        /* Statistics */
+        #statistics-content p { background-color: #e9f5ff; padding: 12px 15px; border-radius: 6px; margin-bottom: 10px; border-left: 5px solid #0077be; font-size: 1em; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        #statistics-content p strong { color: #005a8c; margin-right: 8px; }
+
+        /* Key Games & All Matches (shared card styles) */
+        .match-card h3 { font-size: 1.3em; margin-bottom: 12px; color: #0077be; text-align:center; border-bottom: 1px solid #eee; padding-bottom: 8px;}
+        .match-card p { margin-bottom: 8px; line-height: 1.5; }
+        .match-card .team { font-weight: bold; } /* Applied to team name span in key games */
+        .match-card .winner { color: #28a745 !important; font-weight: bold; } /* Highlight for winner team span in key games */
+        .match-card .game-details { font-size: 0.9em; color: #777; text-align: center; margin-top: 12px;}
+
+        /* All Matches Section */
+        #all-matches-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+            padding-top: 15px;
+        }
+        .compact-match-card {
+            background-color: #fff;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: box-shadow 0.3s ease;
+        }
+        .compact-match-card:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .compact-match-card p { margin: 0; line-height: 1.6; }
+        .compact-match-card .winner-text { font-weight: bold; color: #28a745; } /* Applied by JS for all matches */
+        .compact-match-card em { color: #555; font-size:0.9em; display:block; margin-top:4px;}
+
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 768px) {
+            .data-section h2 { font-size: 1.3em; }
+            /* Key Games card specific adjustments if needed */
+            .match-card .team { display: block; text-align: center; margin-bottom: 5px;} /* Stack teams in key games if too narrow */
+            .match-card p strong { display: block; text-align:center; margin: 5px 0; } /* Center score */
+            #all-matches-content { grid-template-columns: 1fr; } /* Single column for all matches */
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 15px; margin: 10px auto; } /* More padding for smaller devices */
+            .data-section { padding: 15px; }
+            .data-section h2 { font-size: 1.2em; }
+            .section-header-title { font-size: 1.2em; padding: 8px; }
+            .fact-card { padding: 20px; } /* Increased padding for touch targets */
+            .memorial-story { padding: 20px; }
+
+            .standing-item { flex-direction: column; align-items: flex-start; }
+            .standing-item .rank { min-width: auto; margin-bottom: 3px; font-size:0.95em; }
+            .standing-item .team { font-size: 1em; }
+
+            .match-card h3 { font-size: 1.1em; }
+            .compact-match-card { font-size: 0.9em; padding: 10px; }
+            #toggle-all-matches { font-size: 0.9em; padding: 8px 12px; }
+            .footer { padding: 30px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="error-message" title="Detailed error here"></div>
+
+        <div class="static-content-section">
+            <div class="section-header-title">About the Memorial</div>
+            <div class="memorial-story">
+                <h3>🌟 Kennedie June Von Ryan Memorial Tournament</h3>
+                <p>This tournament honors Kennedie June Von Ryan, who was the starting center on CHAWP's 18 and under girls team. She had an amazing sense of humor and upbeat personality. Kennedie was the most supportive and beloved teammate, and her enthusiasm and dedication endeared her to all who knew her.</p>
+                <p>Kennedie passed away in a tragic car accident in October 2018, at the age of 17. She had a passion for playing water polo and supporting her teams and fellow students through her inspiration, commitment, respect, love, and compassion. The foundation's mission is to honor Kennedie June Von Ryan's spirit and enthusiasm by providing scholarships to student athletes in our community and opportunities for local youth.</p>
+            </div>
+        </div>
+
+        <div id="tournament-data-container">
+            <div class="data-section" id="standings-section"><h2>Final Standings</h2><div id="standings-content"><!-- Dynamic content here --></div></div>
+            <div class="data-section" id="statistics-section"><h2>Tournament Statistics</h2><div id="statistics-content"><!-- Dynamic content here --></div></div>
+            <div class="data-section" id="key-games-section"><h2>Key Games</h2><div id="key-games-content"><!-- Dynamic content here --></div></div>
+            <div class="data-section" id="all-matches-section">
+                <h2>All Matches</h2>
+                <button id="toggle-all-matches">Show All Matches</button>
+                <div id="all-matches-content" style="display:none;"><!-- Dynamic content here --></div>
+            </div>
+        </div>
+
+        <div class="static-content-section fun-facts-container">
+            <div class="section-header-title">🌊 Fun Facts & Water Polo History</div>
+            <div class="fun-facts-content">
+                <div class="fun-facts">
+                    <div class="fact-card">
+                        <div class="fact-icon">🏊‍♂️</div>
+                        <div class="fact-title">California Water Polo Legacy</div>
+                        <div class="fact-text">California-based teams dominate collegiate water polo. The University of California, Berkeley leads with 17 NCAA titles, followed by UCLA (13), Stanford (11), and USC (10). One of these four schools has won every championship since 1998!</div>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-icon">🎯</div>
+                        <div class="fact-title">The "Dry Pass" Innovation</div>
+                        <div class="fact-text">In 1928, Hungarian coach Bela Komjadi invented the "air pass" or "dry pass" - passing the ball directly through air to another player without it hitting water. This revolutionized the game and contributed to Hungarian dominance for 60 years!</div>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-icon">🏀</div>
+                        <div class="fact-title">California Innovation</div>
+                        <div class="fact-text">In 1936, California water polo coach James R. "Jimmy" Smith developed the modern water polo ball with an inflatable bladder and rubber fabric cover, replacing the heavy leather ball that absorbed water during games.</div>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-icon">📈</div>
+                        <div class="fact-title">Growing Sport</div>
+                        <div class="fact-text">Water polo is one of the fastest growing sports in the U.S. according to USA Water Polo. While California remains the epicenter, the sport is flourishing in Utah, Illinois, Texas, Florida, Michigan, and Oregon.</div>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-icon">🥇</div>
+                        <div class="fact-title">USA Women's Success</div>
+                        <div class="fact-text">The US women's water polo team is the only team to medal in all five Olympic tournaments since women's water polo became an Olympic sport in 2000, winning gold in 2012 and 2016!</div>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-icon">🏛️</div>
+                        <div class="fact-title">Olympic History</div>
+                        <div class="fact-text">Men's water polo was one of the first team sports introduced at the Olympics in 1900, along with cricket, rugby, soccer, and rowing. The sport has been played at nearly every Summer Olympics since!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>18 BOYS KJVR MEMORIAL 2025</strong></p>
+        <p>June 7-8, 2025 • Norco High School • California</p>
+        <p>In loving memory of Kennedie June Von Ryan • Forever in our hearts 💙</p>
+    </div>
+
+    <script defer>
+document.addEventListener('DOMContentLoaded', () => {
+    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1RGwrL8EqPVffcpfQIraEkYT0htM0bUo0PcO4Pd6N6OI/export?format=csv&gid=441102513';
+
+    function displayError(message, detailedError) {
+        const errorDiv = document.getElementById('error-message');
+        if (errorDiv) {
+            errorDiv.textContent = message;
+            errorDiv.title = String(detailedError); // Convert detailedError to string
+            errorDiv.classList.add('visible');
+        }
+        console.error(message, detailedError); // Also log to console
+    }
+
+    async function fetchData() {
+        try {
+            const response = await fetch(SHEET_URL);
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+            }
+            const csvText = await response.text();
+            return csvText;
+        } catch (error) {
+            console.error('Fetch error:', error);
+            throw error; // Re-throw to be caught by main
+        }
+    }
+
+    function parseCSV(csvText) {
+        const games = [];
+        const lines = csvText.split(/\r\n|\n/); // Split by new line characters
+
+        // Expected header: DATE,LOCATION,TIME,WHITE,S,BLUE,S,COMMENTS
+        // We'll use a simple check for the first part of the header to identify it
+        const headerPattern = /^DATE,LOCATION,TIME,WHITE,S,BLUE,S,COMMENTS/i;
+        let headerFound = false;
+
+        lines.forEach(line => {
+            const trimmedLine = line.trim();
+
+            // Skip empty lines
+            if (!trimmedLine) {
+                return;
+            }
+
+            // Skip comment lines (if any, e.g. starting with #, though not in sample)
+            // For this CSV, the "comment" is usually an empty line or a line with just commas
+            if (trimmedLine.startsWith('#') || trimmedLine.replace(/,/g, '').length === 0) {
+                return;
+            }
+
+            // Check for and skip header rows
+            if (headerPattern.test(trimmedLine)) {
+                headerFound = true;
+                return;
+            }
+
+            const cells = trimmedLine.split(',');
+
+            // Basic validation: check for expected number of cells (8 for a full game row)
+            // Some rows might be notes or partial, we want to filter those.
+            // A valid game row should have at least team names and scores (cells 0 through 6).
+            if (cells.length < 7) { // DATE,LOCATION,TIME,WHITE,S,BLUE,S
+                // console.warn('Skipping malformed or partial row:', line);
+                return;
+            }
+
+            // Further validation: ensure team names and scores are present
+            // cells[3] = WHITE team, cells[4] = WHITE score
+            // cells[5] = BLUE team, cells[6] = BLUE score
+            if (!cells[3] || !cells[4] || !cells[5] || !cells[6]) {
+                // console.warn('Skipping row with missing team/score:', line);
+                return;
+            }
+
+            // Check if scores are parseable integers
+            const scoreWhite = parseInt(cells[4], 10);
+            const scoreBlue = parseInt(cells[6], 10);
+
+            if (isNaN(scoreWhite) || isNaN(scoreBlue)) {
+                // console.warn('Skipping row with non-numeric scores:', line);
+                return; // Skip if scores are not valid numbers
+            }
+
+            try {
+                const game = {
+                    date: cells[0] ? cells[0].replace(/^"|"$/g, '').trim() : '',
+                    location: cells[1] ? cells[1].replace(/^"|"$/g, '').trim() : '',
+                    time: cells[2] ? cells[2].replace(/^"|"$/g, '').trim() : '',
+                    teamWhite: cells[3].replace(/^"|"$/g, '').trim(),
+                    scoreWhite: scoreWhite,
+                    teamBlue: cells[5].replace(/^"|"$/g, '').trim(),
+                    scoreBlue: scoreBlue,
+                    comments: cells[7] ? cells[7].replace(/^"|"$/g, '').trim() : ''
+                };
+
+                // Additional check: ensure team names are not empty after trimming
+                if (!game.teamWhite || !game.teamBlue) {
+                    // console.warn('Skipping row with empty team name after processing:', line);
+                    return;
+                }
+
+                games.push(game);
+            } catch (e) {
+                // console.warn(`Error parsing row: "${line}". Error: ${e.message}`);
+                // Skip rows that cause errors during object creation
+            }
+        });
+
+        if (!headerFound && games.length > 0) {
+            // This might indicate the CSV format changed or we missed the header,
+            // but we still got some data. Could be a warning or error.
+            // For now, proceed if games were parsed.
+            // console.warn("CSV Header row not explicitly found, but data was parsed.");
+        }
+
+
+        if (games.length === 0 && csvText.length > 0 && headerFound) {
+             // console.warn("CSV parsing resulted in zero games, though header was found and text was present.");
+        }
+
+
+        return games;
+    }
+
+    // Helper function to clean team names
+    function cleanTeamName(name) {
+        if (!name) return '';
+        // Remove potential prefixes like "1st A - ", "W1 - ", "Loser Game X ", etc.
+        // Also handles cases like "Winner Game 1" or "Loser of game 2"
+        // Adjust regex as needed for more specific patterns observed in data
+        let cleaned = name.replace(/^([WL]\d+\s*-\s*|([1-4](st|nd|rd|th)\s*[A-Z]\s*-\s*)|(Winner|Loser)\s*(Game|of game)\s*\d*\s*-\s*)/i, '');
+        cleaned = cleaned.replace(/^"|"$/g, '').trim(); // Remove surrounding quotes and trim
+        return cleaned;
+    }
+
+    function calculateStandings(games) {
+        const standings = {};
+        const placementGames = [
+            { comment: "1st", places: ["1st", "2nd"] },
+            { comment: "3rd", places: ["3rd", "4th"] },
+            { comment: "5th", places: ["5th", "6th"] },
+            { comment: "7th", places: ["7th", "8th"] }
+        ];
+
+        placementGames.forEach(pg => {
+            const game = games.find(g => g.comments && g.comments.toLowerCase().includes(pg.comment.toLowerCase()));
+            if (game) {
+                const winner = game.scoreWhite > game.scoreBlue ? game.teamWhite : game.teamBlue;
+                const loser = game.scoreWhite < game.scoreBlue ? game.teamWhite : game.teamBlue;
+
+                standings[pg.places[0]] = winner; // Winner takes the higher place
+                standings[pg.places[1]] = loser;  // Loser takes the lower place
+            }
+        });
+        return standings;
+    }
+
+    function calculateStatistics(games) {
+        const uniqueTeamsSet = new Set();
+        let totalGoals = 0;
+        let highestScore = 0;
+
+        games.forEach(game => {
+            // Ensure team names are added to the set (already cleaned in processGameData)
+            if (game.teamWhite) uniqueTeamsSet.add(game.teamWhite);
+            if (game.teamBlue) uniqueTeamsSet.add(game.teamBlue);
+
+            totalGoals += game.scoreWhite + game.scoreBlue;
+            highestScore = Math.max(highestScore, game.scoreWhite, game.scoreBlue);
+        });
+
+        const totalGames = games.length;
+        const uniqueTeams = Array.from(uniqueTeamsSet).sort();
+        const totalTeams = uniqueTeams.length;
+        const averageGoalsPerGame = totalGames > 0 ? parseFloat((totalGoals / totalGames).toFixed(1)) : 0;
+
+        return {
+            totalGames,
+            totalTeams,
+            uniqueTeams,
+            totalGoals,
+            highestScore,
+            averageGoalsPerGame
+        };
+    }
+
+    function processGameData(rawGames) {
+        // First, create a new array of games with cleaned team names
+        const cleanedGames = rawGames.map(game => ({
+            ...game,
+            teamWhite: cleanTeamName(game.teamWhite),
+            teamBlue: cleanTeamName(game.teamBlue)
+        }));
+
+        // Now, pass the cleanedGames to calculation functions
+        const standings = calculateStandings(cleanedGames);
+        const statistics = calculateStatistics(cleanedGames);
+
+        return {
+            standings,
+            statistics,
+            allGames: cleanedGames // Pass through the games list with cleaned names
+        };
+    }
+
+    // --- Helper Functions ---
+    function clearContent(elementId) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.innerHTML = '';
+        }
+    }
+
+    // --- Rendering Functions ---
+    function renderStandings(standings, containerId) {
+        clearContent(containerId);
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (!standings || Object.keys(standings).length === 0) {
+            container.innerHTML = '<p>Standings are not available.</p>';
+            return;
+        }
+
+        const ol = document.createElement('ol');
+        // Ensure consistent order for display if possible, e.g., 1st, 2nd ... 8th
+        const places = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
+        places.forEach(place => {
+            if (standings[place]) {
+                const li = document.createElement('li');
+                li.className = 'standing-item'; // For potential styling
+                li.innerHTML = `<span class="rank">${place}:</span> <span class="team">${standings[place]}</span>`;
+                ol.appendChild(li);
+            }
+        });
+        container.appendChild(ol);
+    }
+
+    function renderStatistics(statistics, containerId) {
+        clearContent(containerId);
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (!statistics) {
+            container.innerHTML = '<p>Statistics are not available.</p>';
+            return;
+        }
+
+        container.innerHTML = `
+            <p><strong>Total Games Played:</strong> ${statistics.totalGames || 0}</p>
+            <p><strong>Total Teams Participating:</strong> ${statistics.totalTeams || 0}</p>
+            <p><strong>Total Goals Scored:</strong> ${statistics.totalGoals || 0}</p>
+            <p><strong>Highest Score in a Single Game:</strong> ${statistics.highestScore || 0}</p>
+            <p><strong>Average Goals Per Game:</strong> ${statistics.averageGoalsPerGame || 0}</p>
+        `;
+        // Could also list unique teams if desired:
+        // <p><strong>Teams:</strong> ${statistics.uniqueTeams.join(', ')}</p>
+    }
+
+    function getGameTitleFromComment(comment) {
+        if (!comment) return "Game Result";
+        if (comment.toLowerCase().includes("1st")) return "Championship Game (1st/2nd Place)";
+        if (comment.toLowerCase().includes("3rd")) return "3rd Place Game";
+        if (comment.toLowerCase().includes("5th")) return "5th Place Game";
+        if (comment.toLowerCase().includes("7th")) return "7th Place Game";
+        return `Game: ${comment}`; // Fallback for other comments
+    }
+
+    function renderKeyGames(games, containerId) {
+        clearContent(containerId);
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const keyGameComments = ["1st", "3rd", "5th", "7th"];
+        const keyGames = games.filter(game =>
+            game.comments && keyGameComments.some(kgc => game.comments.toLowerCase().includes(kgc))
+        ).sort((a, b) => { // Sort them by significance
+            const aIndex = keyGameComments.findIndex(kgc => a.comments.toLowerCase().includes(kgc));
+            const bIndex = keyGameComments.findIndex(kgc => b.comments.toLowerCase().includes(kgc));
+            return aIndex - bIndex;
+        });
+
+
+        if (keyGames.length === 0) {
+            container.innerHTML = '<p>Key games data not available.</p>';
+            return;
+        }
+
+        keyGames.forEach(game => {
+            const card = document.createElement('div');
+            card.className = 'card match-card'; // Use existing .card styles
+
+            const gameTitle = getGameTitleFromComment(game.comments);
+            const winnerWhite = game.scoreWhite > game.scoreBlue;
+            const winnerBlue = game.scoreBlue > game.scoreWhite;
+
+            card.innerHTML = `
+                <h3>${gameTitle}</h3>
+                <p>
+                    <span class="team ${winnerWhite ? 'winner' : ''}">${game.teamWhite}</span>
+                    <strong>${game.scoreWhite}</strong> - <strong>${game.scoreBlue}</strong>
+                    <span class="team ${winnerBlue ? 'winner' : ''}">${game.teamBlue}</span>
+                </p>
+                <p><small>Date: ${game.date} Time: ${game.time} Location: ${game.location}</small></p>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function renderAllMatches(games, containerId) {
+        clearContent(containerId);
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (!games || games.length === 0) {
+            container.innerHTML = '<p>No match data available.</p>';
+            return;
+        }
+
+        games.forEach(game => {
+            const card = document.createElement('div');
+            // Using 'card' for some base styling, and 'compact-match-card' for specifics
+            card.className = 'card compact-match-card';
+            const winnerWhite = game.scoreWhite > game.scoreBlue;
+            const winnerBlue = game.scoreBlue > game.scoreWhite;
+
+            card.innerHTML = `
+                <p>
+                    ${game.date} ${game.time} (${game.location || 'N/A'}):
+                    <span class="${winnerWhite ? 'winner-text' : ''}">${game.teamWhite}</span>
+                    (${game.scoreWhite}) vs
+                    <span class="${winnerBlue ? 'winner-text' : ''}">${game.teamBlue}</span>
+                    (${game.scoreBlue})
+                    ${game.comments ? `<em>(${game.comments})</em>` : ''}
+                </p>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function setupToggleForCollapsible(buttonId, contentId) {
+        const button = document.getElementById(buttonId);
+        const content = document.getElementById(contentId);
+
+        if (!button || !content) {
+            console.warn(`Toggle button or content not found for: ${buttonId}, ${contentId}`);
+            return;
+        }
+
+        button.addEventListener('click', () => {
+            const isHidden = content.style.display === 'none';
+            content.style.display = isHidden ? 'block' : 'none'; // Or 'grid' etc. if preferred
+            button.textContent = isHidden ? 'Hide All Matches' : 'Show All Matches';
+        });
+    }
+
+
+    // --- Main Execution ---
+    async function main() {
+        try {
+            const csvData = await fetchData();
+            if (csvData) {
+                const rawGames = parseCSV(csvData);
+
+                if (rawGames && rawGames.length > 0) {
+                    const processedData = processGameData(rawGames);
+                    console.log("Processed Data:", processedData);
+
+                    renderStandings(processedData.standings, 'standings-content');
+                    renderStatistics(processedData.statistics, 'statistics-content');
+                    renderKeyGames(processedData.allGames, 'key-games-content');
+                    renderAllMatches(processedData.allGames, 'all-matches-content');
+                    setupToggleForCollapsible('toggle-all-matches', 'all-matches-content');
+
+                    const errorDiv = document.getElementById('error-message');
+                    if (errorDiv) errorDiv.classList.remove('visible');
+                } else if (rawGames && rawGames.length === 0) {
+                     console.warn("No games were parsed from the CSV data. Check CSV format and parsing logic.");
+                     displayError("Successfully fetched data, but no valid games found.", "CSV parsing yielded no game objects. The sheet might be empty or in an unexpected format.");
+                     // Clear sections if no data
+                     renderStandings(null, 'standings-content');
+                     renderStatistics(null, 'statistics-content');
+                     renderKeyGames([], 'key-games-content');
+                     renderAllMatches([], 'all-matches-content');
+                }
+            }
+        } catch (error) {
+            displayError('Failed to load or process tournament data.', error.message + (error.stack ? `\n${error.stack}`: ''));
+            // Clear sections on critical error
+            renderStandings(null, 'standings-content');
+            renderStatistics(null, 'statistics-content');
+            renderKeyGames([], 'key-games-content');
+            renderAllMatches([], 'all-matches-content');
+        }
+    }
+
+    main();
+});
+</script>
+</body>
+</html>
