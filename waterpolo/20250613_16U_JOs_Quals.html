@@ -1,71 +1,540 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025 JO Quals 16U Boys</title>
+    <title>16U Boys Water Polo - Junior Olympics Qualification</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <img src="../qualidat_logo.jpg" alt="QualiDat Logo" class="logo">
-        <h1>2025 Junior Olympics Qualifications - 16U Boys</h1>
-    </header>
-    <main>
-        <p><a href="index.html">Back to Tournaments</a></p>
-        <p>This tournament is for 16U Boys teams aiming to qualify for the Junior Olympics. Results will be updated here as they become available.</p>
+    <div class="container">
+        <h1>16U Boys Water Polo Tournament</h1>
+        <h2>Junior Olympics Qualification - June 13-15, 2025</h2>
 
-        <section id="schedule">
-            <h2>Tournament Schedule</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Venue</th>
-                        <th>Team 1</th>
-                        <th>Team 2</th>
-                        <th>Score</th>
-                        <th>Status</th>
-                        <th>Game ID</th>
-                    </tr>
-                </thead>
-                <tbody id="schedule-body">
-                    <!-- Games will be dynamically loaded here by script.js -->
-                </tbody>
-            </table>
-        </section>
+        <h2>Group Stage</h2>
+        <div class="groups-container">
+            <div class="group">
+                <h3>Group A</h3>
+                <div class="team">Del Mar Blue</div>
+                <div class="team">Del Mar White</div>
+                <div class="team">Southern</div>
+                <div class="team">Southern B</div>
+            </div>
 
-        <section id="standings">
-            <h2>Tournament Standings</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Team</th>
-                        <th>Played</th>
-                        <th>Wins</th>
-                        <th>Losses</th>
-                        <th>Ties</th>
-                        <th>Points</th>
-                        <th>Goal Difference</th>
-                    </tr>
-                </thead>
-                <tbody id="standings-body">
-                    <!-- Standings will be dynamically loaded here by script.js -->
-                </tbody>
-            </table>
-        </section>
-        <p>Last updated: <span id="last-updated">N/A</span></p>
-    </main>
-    <footer>
-        <p>&copy; 2024 QualiDat. All rights reserved.</p>
-    </footer>
-    <script>
-        // Specific configuration for this tournament
-        const tournamentID = '20250613_16U_JOs_Quals';
-        const tournamentTitle = '2025 JO Quals 16U Boys';
-    </script>
-    <script src="script.js"></script>
+            <div class="group">
+                <h3>Group B</h3>
+                <div class="team">LJ United A</div>
+                <div class="team">Poway</div>
+                <div class="team">LJ United B</div>
+                <div class="team">NADO</div>
+            </div>
+
+            <div class="group">
+                <h3>Group C</h3>
+                <div class="team">Shores Black</div>
+                <div class="team">Shores Gold</div>
+                <div class="team">NSD Stars</div>
+                <div class="team">Odin B</div>
+            </div>
+
+            <div class="group">
+                <h3>Group D</h3>
+                <div class="team">CBAD Black</div>
+                <div class="team">Odin A</div>
+                <div class="team">Shores White</div>
+                <div class="team">CBAD Silver</div>
+            </div>
+        </div>
+
+        <div class="matches-section">
+            <h2>Group Stage Matches</h2>
+
+            <div class="date-header">Friday, June 13 - BBMAC</div>
+
+            <div class="match">
+                <span class="match-info">Game 1 - BBMAC #1</span>
+                <span class="team-name">Del Mar Blue</span>
+                <span class="score">5</span>
+                <span class="vs">vs</span>
+                <span class="score">0</span>
+                <span class="team-name">Southern B <span class="opt-out">(Opt Out)</span></span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 2 - 1:00 PM</span>
+                <span class="team-name">Del Mar White</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">Southern</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 3 - BBMAC #1</span>
+                <span class="team-name">LJ United A</span>
+                <span class="score">5</span>
+                <span class="vs">vs</span>
+                <span class="score">0</span>
+                <span class="team-name">NADO <span class="opt-out">(Opt Out)</span></span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 4 - 3:00 PM</span>
+                <span class="team-name">Poway</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">LJ United B</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 5 - 6:00 PM</span>
+                <span class="team-name">Del Mar Blue</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">Southern</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 6 - 5:00 PM</span>
+                <span class="team-name">Del Mar White</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">Southern B</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 13 - 2:00 PM</span>
+                <span class="team-name">Shores Black</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">Odin B</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 14 - 4:00 PM</span>
+                <span class="team-name">Shores Gold</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">NSD Stars</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 16 - 7:00 PM</span>
+                <span class="team-name">Odin A</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">Shores White</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 17 - BBMAC #2 - 5:00 PM</span>
+                <span class="team-name">Shores Black</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">NSD Stars</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 18 - BBMAC #2 - 6:00 PM</span>
+                <span class="team-name">Shores Gold</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">Odin B</span>
+            </div>
+
+            <div class="date-header">Saturday, June 14 - GRANITE HILLS</div>
+
+            <div class="match">
+                <span class="match-info">Game 8 - 8:00 AM</span>
+                <span class="team-name">Poway</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">NADO</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 11 - 10:45 AM</span>
+                <span class="team-name">LJ United A</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">Poway</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 12 - 11:40 AM</span>
+                <span class="team-name">LJ United B</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">NADO</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 19 - 8:55 AM</span>
+                <span class="team-name">CBAD Black</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">Shores White</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 20 - 9:50 AM</span>
+                <span class="team-name">Odin A</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">CBAD Silver</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 22 - 12:35 PM</span>
+                <span class="team-name">NSD Stars</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">Odin B</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 23 - 1:30 PM</span>
+                <span class="team-name">CBAD Black</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">Odin A</span>
+            </div>
+
+            <div class="match">
+                <span class="match-info">Game 24 - 2:25 PM</span>
+                <span class="team-name">Shores White</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">CBAD Silver</span>
+            </div>
+
+            <h3 style="text-align: center; color: #dc2626; margin-top: 20px;">NO CONTEST Games (Same Club)</h3>
+            <div style="text-align: center; color: #666;">
+                <p>Game 7: LJ United A vs LJ United B (5-0 NO CONTEST)</p>
+                <p>Game 9: Del Mar Blue vs Del Mar White (5-0 NO CONTEST)</p>
+                <p>Game 10: Southern vs Southern B (5-0 NO CONTEST)</p>
+                <p>Game 15: CBAD Black vs CBAD Silver (5-0 NO CONTEST)</p>
+                <p>Game 21: Shores Black vs Shores Gold (5-0 NO CONTEST)</p>
+            </div>
+        </div>
+
+        <h2>Re-Bracket Phase</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 20px;">
+            After group stage, teams are re-seeded based on their group placement
+        </p>
+
+        <div class="rebracket-container">
+            <div class="rebracket">
+                <h3>Bracket AA</h3>
+                <div class="position">1st Place - Group A</div>
+                <div class="position">1st Place - Group B</div>
+                <div class="position">1st Place - Group C</div>
+                <div class="position">1st Place - Group D</div>
+            </div>
+
+            <div class="rebracket">
+                <h3>Bracket BB</h3>
+                <div class="position">2nd Place - Group A</div>
+                <div class="position">2nd Place - Group B</div>
+                <div class="position">2nd Place - Group C</div>
+                <div class="position">2nd Place - Group D</div>
+            </div>
+
+            <div class="rebracket">
+                <h3>Bracket CC</h3>
+                <div class="position">3rd Place - Group A</div>
+                <div class="position">3rd Place - Group B</div>
+                <div class="position">3rd Place - Group C</div>
+                <div class="position">3rd Place - Group D</div>
+            </div>
+
+            <div class="rebracket">
+                <h3>Bracket DD</h3>
+                <div class="position">4th Place - Group A</div>
+                <div class="position">4th Place - Group B</div>
+                <div class="position">4th Place - Group C</div>
+                <div class="position">4th Place - Group D</div>
+            </div>
+        </div>
+
+        <div class="matches-section">
+            <h2>Re-Bracket Matches</h2>
+
+            <div class="date-header">Saturday, June 14 (Evening) - GRANITE HILLS</div>
+
+            <h3 style="color: #059669;">Bracket AA</h3>
+            <div class="match">
+                <span class="match-info">Game 25 - 4:20 PM</span>
+                <span class="team-name">AA2</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">AA3</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 26 - 5:20 PM</span>
+                <span class="team-name">AA1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">AA4</span>
+            </div>
+
+            <h3 style="color: #059669;">Bracket BB</h3>
+            <div class="match">
+                <span class="match-info">Game 27 - 6:20 PM</span>
+                <span class="team-name">BB2</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">BB3</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 28 - 7:20 PM</span>
+                <span class="team-name">BB1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">BB4</span>
+            </div>
+
+            <h3 style="color: #059669;">Bracket CC</h3>
+            <div class="match">
+                <span class="match-info">Game 29 - GH #2 - 4:20 PM</span>
+                <span class="team-name">CC2</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">CC3</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 30 - GH #2 - 5:20 PM</span>
+                <span class="team-name">CC1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">CC4</span>
+            </div>
+
+            <h3 style="color: #059669;">Bracket DD</h3>
+            <div class="match">
+                <span class="match-info">Game 31 - GH #2 - 6:20 PM</span>
+                <span class="team-name">DD2</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">DD3</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 32 - GH #2 - 7:20 PM</span>
+                <span class="team-name">DD1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">DD4</span>
+            </div>
+
+            <div class="date-header">Sunday, June 15 - GRANITE HILLS</div>
+
+            <h3 style="color: #059669;">Bracket AA (Pool 1)</h3>
+            <div class="match">
+                <span class="match-info">Game 33 - 8:00 AM</span>
+                <span class="team-name">AA2</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">AA4</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 34 - 9:00 AM</span>
+                <span class="team-name">AA1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">AA3</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 37 - 12:00 PM</span>
+                <span class="team-name">AA3</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">AA4</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 38 - 1:00 PM</span>
+                <span class="team-name">AA1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">AA2</span>
+            </div>
+
+            <h3 style="color: #059669;">Bracket BB (Pool 2)</h3>
+            <div class="match">
+                <span class="match-info">Game 35 - 10:00 AM</span>
+                <span class="team-name">BB2</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">BB4</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 36 - 11:00 AM</span>
+                <span class="team-name">BB1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">BB3</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 39 - 2:00 PM</span>
+                <span class="team-name">BB3</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">BB4</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 40 - 3:00 PM</span>
+                <span class="team-name">BB1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">BB2</span>
+            </div>
+
+            <h3 style="color: #059669;">Bracket CC (Pool 2)</h3>
+            <div class="match">
+                <span class="match-info">Game 43 - GH #2 - 8:00 AM</span>
+                <span class="team-name">CC2</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">CC4</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 44 - GH #2 - 9:00 AM</span>
+                <span class="team-name">CC1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">CC3</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 47 - GH #2 - 12:00 PM</span>
+                <span class="team-name">CC3</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">CC4</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 48 - GH #2 - 1:00 PM</span>
+                <span class="team-name">CC1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">CC2</span>
+            </div>
+
+            <h3 style="color: #059669;">Bracket DD (Pool 2)</h3>
+            <div class="match">
+                <span class="match-info">Game 45 - GH #2 - 10:00 AM</span>
+                <span class="team-name">DD2</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">DD4</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 46 - GH #2 - 11:00 AM</span>
+                <span class="team-name">DD1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">DD3</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 49 - GH #2 - 2:00 PM</span>
+                <span class="team-name">DD3</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">DD4</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 50 - GH #2 - 3:00 PM</span>
+                <span class="team-name">DD1</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">DD2</span>
+            </div>
+        </div>
+
+        <div class="placement-games">
+            <h3>Final Placement Games</h3>
+            <div class="match">
+                <span class="match-info">Game 41 - Sunday 6:00 PM</span>
+                <span class="team-name">4th in AA</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">1st in BB</span>
+                <span style="color: #059669; font-weight: bold;">(4th Place Game)</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 42 - Sunday 7:00 PM</span>
+                <span class="team-name">4th in BB</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">1st in CC</span>
+                <span style="color: #059669; font-weight: bold;">(8th Place Game)</span>
+            </div>
+            <div class="match">
+                <span class="match-info">Game 51 - GH #2 - Sunday 6:00 PM</span>
+                <span class="team-name">4th in CC</span>
+                <span class="score">-</span>
+                <span class="vs">vs</span>
+                <span class="score">-</span>
+                <span class="team-name">1st in DD</span>
+                <span style="color: #059669; font-weight: bold;">(12th Place Game)</span>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #e0f2fe; border-radius: 8px;">
+            <h3 style="color: #1e3a8a;">Tournament Format Summary</h3>
+            <ul style="line-height: 1.8;">
+                <li><strong>Group Stage:</strong> 16 teams divided into 4 groups play round-robin</li>
+                <li><strong>Re-Bracket:</strong> Teams are re-seeded based on group placement:
+                    <ul>
+                        <li>AA Bracket: All 1st place teams compete for places 1-4</li>
+                        <li>BB Bracket: All 2nd place teams compete for places 5-8</li>
+                        <li>CC Bracket: All 3rd place teams compete for places 9-12</li>
+                        <li>DD Bracket: All 4th place teams compete for places 13-16</li>
+                    </ul>
+                </li>
+                <li><strong>Final Placement:</strong> Cross-bracket games determine final rankings</li>
+                <li><strong>Venues:</strong> BBMAC (Friday), Granite Hills (Saturday-Sunday)</li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
