@@ -15,6 +15,7 @@ This is a static website for water polo tournaments, specifically for the San Di
 ### 16U Boys Junior Olympics Qualification Tournament (June 13-15, 2025)
 
 - Reference of the official google drice sheet as datasource: https://docs.google.com/spreadsheets/d/1C_yU7MyVHzL1_rubWOHVqAeDto9BApOgw7MarJzQoLk/edit?gid=0#gid=0 "16U BOYS" sheet
+- the specific sheet can be fetched directly in csv format here: https://docs.google.com/spreadsheets/d/1C_yU7MyVHzL1_rubWOHVqAeDto9BApOgw7MarJzQoLk/export?format=csv&gid=0#gid=0 - use this url to process the tournament official live data
 - The data is public and updated regularly
 
 ### Locations
