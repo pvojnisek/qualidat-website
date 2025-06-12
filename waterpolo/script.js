@@ -55,84 +55,84 @@
             const teamMatches = {
                 // Group Stage matches
                 'Del Mar Blue': [
-                    { date: '6/13/2025 - 9:00 AM', venue: 'BBMAC #1', opponent: 'Del Mar White', score: '5-0', result: 'win', type: 'No Contest' },
-                    { date: '6/13/2025 - 2:00 PM', venue: 'BBMAC #1', opponent: 'Southern', score: 'TBD', result: 'pending', type: 'Group A' },
-                    { date: '6/14/2025 - 10:00 AM', venue: 'Granite Hills #1', opponent: 'Southern B', score: 'TBD', result: 'pending', type: 'Group A' }
+                    { date: '6/13/2025 - Opt Out', venue: 'No Game', opponent: 'Southern B', score: '5-0', result: 'win', type: 'Opt Out' },
+                    { date: '6/13/2025 - 6:00 PM', venue: 'BBMAC #1', opponent: 'Southern', score: 'TBD', result: 'pending', type: 'Group A' },
+                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Del Mar White', score: '5-0', result: 'win', type: 'No Contest' }
                 ],
                 'Del Mar White': [
-                    { date: '6/13/2025 - 9:00 AM', venue: 'BBMAC #1', opponent: 'Del Mar Blue', score: '0-5', result: 'loss', type: 'No Contest' },
                     { date: '6/13/2025 - 1:00 PM', venue: 'BBMAC #1', opponent: 'Southern', score: 'TBD', result: 'pending', type: 'Group A' },
-                    { date: '6/14/2025 - 11:00 AM', venue: 'Granite Hills #1', opponent: 'Southern B', score: 'TBD', result: 'pending', type: 'Group A' }
+                    { date: '6/13/2025 - 5:00 PM', venue: 'BBMAC #1', opponent: 'Southern B', score: 'TBD', result: 'pending', type: 'Group A' },
+                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Del Mar Blue', score: '0-5', result: 'loss', type: 'No Contest' }
                 ],
                 'Southern': [
-                    { date: '6/13/2025 - 10:00 AM', venue: 'BBMAC #1', opponent: 'Southern B', score: '5-0', result: 'win', type: 'No Contest' },
                     { date: '6/13/2025 - 1:00 PM', venue: 'BBMAC #1', opponent: 'Del Mar White', score: 'TBD', result: 'pending', type: 'Group A' },
-                    { date: '6/13/2025 - 2:00 PM', venue: 'BBMAC #1', opponent: 'Del Mar Blue', score: 'TBD', result: 'pending', type: 'Group A' }
+                    { date: '6/13/2025 - 6:00 PM', venue: 'BBMAC #1', opponent: 'Del Mar Blue', score: 'TBD', result: 'pending', type: 'Group A' },
+                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Southern B', score: '5-0', result: 'win', type: 'No Contest' }
                 ],
                 'Southern B': [
-                    { date: '6/13/2025 - 10:00 AM', venue: 'BBMAC #1', opponent: 'Southern', score: '0-5', result: 'loss', type: 'No Contest' },
-                    { date: '6/14/2025 - 10:00 AM', venue: 'Granite Hills #1', opponent: 'Del Mar Blue', score: 'TBD', result: 'pending', type: 'Group A' },
-                    { date: '6/14/2025 - 11:00 AM', venue: 'Granite Hills #1', opponent: 'Del Mar White', score: 'TBD', result: 'pending', type: 'Group A' }
+                    { date: '6/13/2025 - Opt Out', venue: 'No Game', opponent: 'Del Mar Blue', score: '0-5', result: 'loss', type: 'Opt Out' },
+                    { date: '6/13/2025 - 5:00 PM', venue: 'BBMAC #1', opponent: 'Del Mar White', score: 'TBD', result: 'pending', type: 'Group A' },
+                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Southern', score: '0-5', result: 'loss', type: 'No Contest' }
                 ],
                 'LJ United A': [
-                    { date: '6/13/2025 - 11:00 AM', venue: 'BBMAC #1', opponent: 'LJ United B', score: '5-0', result: 'win', type: 'No Contest' },
-                    { date: '6/13/2025 - 3:00 PM', venue: 'BBMAC #1', opponent: 'Poway', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/14/2025 - 9:00 AM', venue: 'Granite Hills #1', opponent: 'NADO', score: 'TBD', result: 'pending', type: 'Group B' }
+                    { date: '6/13/2025 - Opt Out', venue: 'No Game', opponent: 'NADO', score: '5-0', result: 'win', type: 'Opt Out' },
+                    { date: '6/14/2025 - 10:45 AM', venue: 'Granite Hills #1', opponent: 'Poway', score: 'TBD', result: 'pending', type: 'Group B' },
+                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'LJ United B', score: '5-0', result: 'win', type: 'No Contest' }
                 ],
                 'LJ United B': [
-                    { date: '6/13/2025 - 11:00 AM', venue: 'BBMAC #1', opponent: 'LJ United A', score: '0-5', result: 'loss', type: 'No Contest' },
-                    { date: '6/13/2025 - 4:00 PM', venue: 'BBMAC #1', opponent: 'Poway', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/14/2025 - 8:00 AM', venue: 'Granite Hills #1', opponent: 'NADO', score: 'TBD', result: 'pending', type: 'Group B' }
+                    { date: '6/13/2025 - 3:00 PM', venue: 'BBMAC #1', opponent: 'Poway', score: 'TBD', result: 'pending', type: 'Group B' },
+                    { date: '6/14/2025 - 11:40 AM', venue: 'Granite Hills #1', opponent: 'NADO', score: 'TBD', result: 'pending', type: 'Group B' },
+                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'LJ United A', score: '0-5', result: 'loss', type: 'No Contest' }
                 ],
                 'Poway': [
-                    { date: '6/13/2025 - 3:00 PM', venue: 'BBMAC #1', opponent: 'LJ United A', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/13/2025 - 4:00 PM', venue: 'BBMAC #1', opponent: 'LJ United B', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/14/2025 - 12:00 PM', venue: 'Granite Hills #1', opponent: 'NADO', score: 'TBD', result: 'pending', type: 'Group B' }
+                    { date: '6/13/2025 - 3:00 PM', venue: 'BBMAC #1', opponent: 'LJ United B', score: 'TBD', result: 'pending', type: 'Group B' },
+                    { date: '6/14/2025 - 8:00 AM', venue: 'Granite Hills #1', opponent: 'NADO', score: 'TBD', result: 'pending', type: 'Group B' },
+                    { date: '6/14/2025 - 10:45 AM', venue: 'Granite Hills #1', opponent: 'LJ United A', score: 'TBD', result: 'pending', type: 'Group B' }
                 ],
                 'NADO': [
-                    { date: '6/14/2025 - 8:00 AM', venue: 'Granite Hills #1', opponent: 'LJ United B', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/14/2025 - 9:00 AM', venue: 'Granite Hills #1', opponent: 'LJ United A', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/14/2025 - 12:00 PM', venue: 'Granite Hills #1', opponent: 'Poway', score: 'TBD', result: 'pending', type: 'Group B' }
+                    { date: '6/13/2025 - Opt Out', venue: 'No Game', opponent: 'LJ United A', score: '0-5', result: 'loss', type: 'Opt Out' },
+                    { date: '6/14/2025 - 8:00 AM', venue: 'Granite Hills #1', opponent: 'Poway', score: 'TBD', result: 'pending', type: 'Group B' },
+                    { date: '6/14/2025 - 11:40 AM', venue: 'Granite Hills #1', opponent: 'LJ United B', score: 'TBD', result: 'pending', type: 'Group B' }
                 ],
                 'Shores Black': [
-                    { date: '6/13/2025 - 12:00 PM', venue: 'BBMAC #2', opponent: 'Shores Gold', score: '5-0', result: 'win', type: 'No Contest' },
+                    { date: '6/13/2025 - 2:00 PM', venue: 'BBMAC #1', opponent: 'Odin B', score: 'TBD', result: 'pending', type: 'Group C' },
                     { date: '6/13/2025 - 5:00 PM', venue: 'BBMAC #2', opponent: 'NSD Stars', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/14/2025 - 1:00 PM', venue: 'Granite Hills #2', opponent: 'Odin B', score: 'TBD', result: 'pending', type: 'Group C' }
+                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Shores Gold', score: '5-0', result: 'win', type: 'No Contest' }
                 ],
                 'Shores Gold': [
-                    { date: '6/13/2025 - 12:00 PM', venue: 'BBMAC #2', opponent: 'Shores Black', score: '0-5', result: 'loss', type: 'No Contest' },
-                    { date: '6/13/2025 - 6:00 PM', venue: 'BBMAC #2', opponent: 'NSD Stars', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/14/2025 - 2:00 PM', venue: 'Granite Hills #2', opponent: 'Odin B', score: 'TBD', result: 'pending', type: 'Group C' }
+                    { date: '6/13/2025 - 4:00 PM', venue: 'BBMAC #1', opponent: 'NSD Stars', score: 'TBD', result: 'pending', type: 'Group C' },
+                    { date: '6/13/2025 - 6:00 PM', venue: 'BBMAC #2', opponent: 'Odin B', score: 'TBD', result: 'pending', type: 'Group C' },
+                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Shores Black', score: '0-5', result: 'loss', type: 'No Contest' }
                 ],
                 'NSD Stars': [
+                    { date: '6/13/2025 - 4:00 PM', venue: 'BBMAC #1', opponent: 'Shores Gold', score: 'TBD', result: 'pending', type: 'Group C' },
                     { date: '6/13/2025 - 5:00 PM', venue: 'BBMAC #2', opponent: 'Shores Black', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/13/2025 - 6:00 PM', venue: 'BBMAC #2', opponent: 'Shores Gold', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/14/2025 - 3:00 PM', venue: 'Granite Hills #2', opponent: 'Odin B', score: 'TBD', result: 'pending', type: 'Group C' }
+                    { date: '6/14/2025 - 12:35 PM', venue: 'Granite Hills #1', opponent: 'Odin B', score: 'TBD', result: 'pending', type: 'Group C' }
                 ],
                 'Odin B': [
-                    { date: '6/14/2025 - 1:00 PM', venue: 'Granite Hills #2', opponent: 'Shores Black', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/14/2025 - 2:00 PM', venue: 'Granite Hills #2', opponent: 'Shores Gold', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/14/2025 - 3:00 PM', venue: 'Granite Hills #2', opponent: 'NSD Stars', score: 'TBD', result: 'pending', type: 'Group C' }
+                    { date: '6/13/2025 - 2:00 PM', venue: 'BBMAC #1', opponent: 'Shores Black', score: 'TBD', result: 'pending', type: 'Group C' },
+                    { date: '6/13/2025 - 6:00 PM', venue: 'BBMAC #2', opponent: 'Shores Gold', score: 'TBD', result: 'pending', type: 'Group C' },
+                    { date: '6/14/2025 - 12:35 PM', venue: 'Granite Hills #1', opponent: 'NSD Stars', score: 'TBD', result: 'pending', type: 'Group C' }
                 ],
                 'CBAD Black': [
-                    { date: '6/13/2025 - 7:00 PM', venue: 'BBMAC #2', opponent: 'CBAD Silver', score: '5-0', result: 'win', type: 'No Contest' },
-                    { date: '6/14/2025 - 4:00 PM', venue: 'Granite Hills #2', opponent: 'Odin A', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - 5:00 PM', venue: 'Granite Hills #2', opponent: 'Shores White', score: 'TBD', result: 'pending', type: 'Group D' }
+                    { date: '6/14/2025 - 8:55 AM', venue: 'Granite Hills #1', opponent: 'Shores White', score: 'TBD', result: 'pending', type: 'Group D' },
+                    { date: '6/14/2025 - 1:30 PM', venue: 'Granite Hills #1', opponent: 'Odin A', score: 'TBD', result: 'pending', type: 'Group D' },
+                    { date: '6/14/2025 - No Contest', venue: 'Same Club', opponent: 'CBAD Silver', score: '5-0', result: 'win', type: 'No Contest' }
                 ],
                 'CBAD Silver': [
-                    { date: '6/13/2025 - 7:00 PM', venue: 'BBMAC #2', opponent: 'CBAD Black', score: '0-5', result: 'loss', type: 'No Contest' },
-                    { date: '6/14/2025 - 6:00 PM', venue: 'Granite Hills #2', opponent: 'Odin A', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - 7:00 PM', venue: 'Granite Hills #2', opponent: 'Shores White', score: 'TBD', result: 'pending', type: 'Group D' }
+                    { date: '6/14/2025 - 9:50 AM', venue: 'Granite Hills #1', opponent: 'Odin A', score: 'TBD', result: 'pending', type: 'Group D' },
+                    { date: '6/14/2025 - 2:25 PM', venue: 'Granite Hills #1', opponent: 'Shores White', score: 'TBD', result: 'pending', type: 'Group D' },
+                    { date: '6/14/2025 - No Contest', venue: 'Same Club', opponent: 'CBAD Black', score: '0-5', result: 'loss', type: 'No Contest' }
                 ],
                 'Odin A': [
-                    { date: '6/14/2025 - 4:00 PM', venue: 'Granite Hills #2', opponent: 'CBAD Black', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - 6:00 PM', venue: 'Granite Hills #2', opponent: 'CBAD Silver', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/15/2025 - 8:00 AM', venue: 'Granite Hills #1', opponent: 'Shores White', score: 'TBD', result: 'pending', type: 'Group D' }
+                    { date: '6/13/2025 - 7:00 PM', venue: 'BBMAC #1', opponent: 'Shores White', score: 'TBD', result: 'pending', type: 'Group D' },
+                    { date: '6/14/2025 - 9:50 AM', venue: 'Granite Hills #1', opponent: 'CBAD Silver', score: 'TBD', result: 'pending', type: 'Group D' },
+                    { date: '6/14/2025 - 1:30 PM', venue: 'Granite Hills #1', opponent: 'CBAD Black', score: 'TBD', result: 'pending', type: 'Group D' }
                 ],
                 'Shores White': [
-                    { date: '6/14/2025 - 5:00 PM', venue: 'Granite Hills #2', opponent: 'CBAD Black', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - 7:00 PM', venue: 'Granite Hills #2', opponent: 'CBAD Silver', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/15/2025 - 8:00 AM', venue: 'Granite Hills #1', opponent: 'Odin A', score: 'TBD', result: 'pending', type: 'Group D' }
+                    { date: '6/13/2025 - 7:00 PM', venue: 'BBMAC #1', opponent: 'Odin A', score: 'TBD', result: 'pending', type: 'Group D' },
+                    { date: '6/14/2025 - 8:55 AM', venue: 'Granite Hills #1', opponent: 'CBAD Black', score: 'TBD', result: 'pending', type: 'Group D' },
+                    { date: '6/14/2025 - 2:25 PM', venue: 'Granite Hills #1', opponent: 'CBAD Silver', score: 'TBD', result: 'pending', type: 'Group D' }
                 ]
             };
 
