@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 JO Quals 16U Boys</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="../qualidat_logo.jpg" alt="QualiDat Logo" class="logo">
+        <h1>2025 Junior Olympics Qualifications - 16U Boys</h1>
+    </header>
+    <main>
+        <p><a href="index.html">Back to Tournaments</a></p>
+        <p>This tournament is for 16U Boys teams aiming to qualify for the Junior Olympics. Results will be updated here as they become available.</p>
+
+        <section id="schedule">
+            <h2>Tournament Schedule</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Venue</th>
+                        <th>Team 1</th>
+                        <th>Team 2</th>
+                        <th>Score</th>
+                        <th>Status</th>
+                        <th>Game ID</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-body">
+                    <!-- Games will be dynamically loaded here by script.js -->
+                </tbody>
+            </table>
+        </section>
+
+        <section id="standings">
+            <h2>Tournament Standings</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Team</th>
+                        <th>Played</th>
+                        <th>Wins</th>
+                        <th>Losses</th>
+                        <th>Ties</th>
+                        <th>Points</th>
+                        <th>Goal Difference</th>
+                    </tr>
+                </thead>
+                <tbody id="standings-body">
+                    <!-- Standings will be dynamically loaded here by script.js -->
+                </tbody>
+            </table>
+        </section>
+        <p>Last updated: <span id="last-updated">N/A</span></p>
+    </main>
+    <footer>
+        <p>&copy; 2024 QualiDat. All rights reserved.</p>
+    </footer>
+    <script>
+        // Specific configuration for this tournament
+        const tournamentID = '20250613_16U_JOs_Quals';
+        const tournamentTitle = '2025 JO Quals 16U Boys';
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
