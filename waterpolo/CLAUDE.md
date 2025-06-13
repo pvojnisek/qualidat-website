@@ -1,13 +1,10 @@
-
-TODO: We are working on the Julior Olympics qualification html page. I still found bugs in match data! Please review all matches carefully! (I clicked on Shres Black and checked the matches. First match is against Odin B at 2pm 13th June). other example: Shores Black vs. Shores Gold will not play, so there must be no date/time or vanue.
-
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-This is a static website for water polo tournaments, specifically for the San Diego Shores 16U team's Summer Campaign 2025. The site showcases tournament schedules, results, and provides detailed information about water polo events. In the key matches sections, focus on San Diego Shores teams.
+This is a static website (microsite under /waterpolo/) for water polo tournaments, specifically for the San Diego Shores 16U team's Summer Campaign 2025. The site showcases tournament schedules, results, and provides detailed information about water polo events. In the key matches sections, focus on San Diego Shores teams.
 
 
 ## Tournament information
@@ -38,6 +35,8 @@ Re-bcacket
   - BB - 2nd A, 2nd B, 2nd C, 2nd D
   - CC - 3rd A, 3rd B, 3rd C, 3rd D
   - DD - 4th A, 4th B, 4th C, 4th D
+
+Championship winner will be the winner of the AA group. (AA: 1-4 places, BB: 5-8 places, CC: 9-12 places, DD: 13-16 places)
 
 ### Sections on the webpage (in order)
 - Tournament information
@@ -97,4 +96,4 @@ Tournament files follow the pattern: `YYYYMMDD_tournament_description.html` (e.g
 
 ## Browser Compatibility
 
-The site uses modern CSS features like CSS Grid, Flexbox, and CSS custom properties. JavaScript uses modern DOM APIs and should work in all current browsers.
+The site uses modern CSS features like CSS Grid, Flexbox, and CSS custom properties. JavaScript uses modern DOM APIs and should work in all current browsers. Designed to work on mobile phone and computer dispalys also.

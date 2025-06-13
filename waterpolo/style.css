@@ -153,10 +153,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
-        .standing-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
 
         .standing-item:nth-child(1) { border-left-color: #ffd700; background: linear-gradient(90deg, #ffd700, #ffed4a); color: #8b5a00; }
         .standing-item:nth-child(2) { border-left-color: #c0c0c0; background: linear-gradient(90deg, #c0c0c0, #e2e8f0); color: #4a5568; }
@@ -455,7 +451,7 @@
         }
 
         .collapsible-content.active {
-            max-height: 2000px;
+            max-height: 5000px;
             transition: max-height 0.5s ease-in;
         }
 
