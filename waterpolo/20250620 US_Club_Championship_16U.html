@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 U16 Boys Water Polo US Club Championship</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="hero">
+        <h1>🏆 2025 U16 Boys Water Polo</h1>
+        <p class="subtitle">US Club Championship</p>
+        <div class="memorial">
+            <p><strong>June 20-22, 2025</strong></p>
+            <p>Riverside Poly • Ramona HS • Norco HS • Santiago HS</p>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- Tournament Information -->
+        <div class="content-section">
+            <div class="section-header">📋 Tournament Information</div>
+            <div class="section-content">
+                <div class="tournament-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="team-count">16</div>
+                        <div class="stat-label">Teams</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="match-count">48</div>
+                        <div class="stat-label">Matches</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="venue-count">4</div>
+                        <div class="stat-label">Venues</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Days</div>
+                    </div>
+                </div>
+                <div class="memorial-story">
+                    <h3>🏆 US Club Championship Tournament</h3>
+                    <p>The premier 16U Boys Water Polo championship tournament featuring 16 elite teams competing across four pools (A, B, C, D) in a comprehensive bracket format. Teams advance through pool play into crossover elimination rounds, culminating in placement matches that determine final tournament standings.</p>
+                    <p>This prestigious tournament showcases the finest youth water polo talent from across the region, with matches held at premier aquatic facilities throughout Southern California over three competitive days.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            🏊‍♂️ Loading tournament data...
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <!-- Pools Section -->
+        <div class="content-section">
+            <div class="section-header">🏊‍♂️ Tournament Pools</div>
+            <div class="section-content">
+                <div class="standings-grid" id="pools-container">
+                    <!-- Pools will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- All Tournament Matches -->
+        <div class="content-section">
+            <div class="section-header">📅 All Tournament Matches - Complete Schedule</div>
+            <div class="section-content">
+                <div style="overflow-x: auto; margin-top: 20px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #0077be 0%, #00a8cc 100%); color: white;">
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Game</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Date</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Time</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Venue</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Team 1</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Score</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Team 2</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Phase/Bracket</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matches-tbody">
+                            <!-- Matches will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <p><strong>2025 U16 Boys Water Polo - US Club Championship</strong></p>
+            <p>June 20-22, 2025 • Riverside Poly • Ramona HS • Norco HS • Santiago HS • California</p>
+            <p>Building champions through competition and teamwork 🏆</p>
+        </div>
+    </div>
+
+    <script>
+        // Tournament data (embedded to work within CSP constraints)
+        // To connect to live Google Sheets, replace this with:
+        // const CSV_URL = 'https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/export?format=csv&gid=0';
+        // and use fetch(CSV_URL) in loadTournamentData()
+        
+        const csvData = `DATE,LOCATION,TIME,WHITE TEAM,S,DARK TEAM,S,COMMENTS
+6/20/2025,RIVERSIDE POLY #1,4:30 PM,A1 - SD SHORES BLACK,,A4 - SUPREME,,bracket
+6/20/2025,RIVERSIDE POLY #1,5:30 PM,B1 - NORTH IRVINE,,B4 - PASADENA,,bracket
+6/20/2025,RIVERSIDE POLY #1,6:30 PM,C1 - CARLSBAD,,C3 - CLOVIS,,bracket
+6/20/2025,RIVERSIDE POLY #1,7:30 PM,A2 - POWAY VALLEY,,A4 - SUPREME,,bracket
+6/20/2025,RIVERSIDE POLY #1,8:30 PM,B1 - NORTH IRVINE,,B3 - SOCAL,,bracket
+6/20/2025,RAMONA HS,4:30 PM,A2 - POWAY VALLEY,,A3 - KERN PREMIER,,bracket
+6/20/2025,RAMONA HS,5:30 PM,B2 - ROSE BOWL,,B3 - SOCAL,,bracket
+6/20/2025,RAMONA HS,6:30 PM,C2 - CHAWP,,C4 - TEMPLE CITY,,bracket
+6/20/2025,RAMONA HS,7:30 PM,A1 - SD SHORES BLACK,,A3 - KERN PREMIER,,bracket
+6/20/2025,RAMONA HS,8:30 PM,B2 - ROSE BOWL,,B4 - PASADENA,,bracket
+6/20/2025,NORCO HS,8:00 AM,D2 - COMMERCE,,D3 - SD SHORES GOLD,,bracket
+6/20/2025,NORCO HS,9:00 AM,D1 - THUNDER,,D4 - ELITE,,bracket
+6/20/2025,NORCO HS,10:00 AM,C2 - CHAWP,,C3 - CLOVIS,,bracket
+6/20/2025,NORCO HS,11:00 AM,C1 - CARLSBAD,,C4 - TEMPLE CITY,,bracket
+6/20/2025,NORCO HS,12:00 PM,D1 - THUNDER,,D4 - ELITE,,bracket
+6/20/2025,NORCO HS,1:00 PM,D2 - COMMERCE,,D3 - SD SHORES GOLD,,bracket
+6/21/2025,RIVERSIDE POLY #1,8:00 AM,A1 - SD SHORES BLACK,,A2 - POWAY VALLEY,,
+6/21/2025,RIVERSIDE POLY #1,9:00 AM,A3 - KERN PREMIER,,A4 - SUPREME,,
+6/21/2025,RIVERSIDE POLY #1,10:00 AM,C1 - CARLSBAD,,C2 - CHAWP,,
+6/21/2025,RIVERSIDE POLY #1,11:00 AM,C3 - CLOVIS,,C4 - TEMPLE CITY,,
+6/21/2025,RIVERSIDE POLY #1,12:00 PM,E1 -1st A -,,E2 - 2nd B -,,
+6/21/2025,RIVERSIDE POLY #1,1:00 PM,F1 -1st B -,,F2 -2nd A -,,
+6/21/2025,RIVERSIDE POLY #1,2:00 PM,G1 - 1st C -,,G2 - 2nd D -,,
+6/21/2025,RIVERSIDE POLY #1,3:00 PM,H1 - 1st D -,,H2 - 2nd C -,,
+6/21/2025,RAMONA HS,8:00 AM,B1 - NORTH IRVINE,,B2 - ROSE BOWL,,
+6/21/2025,RAMONA HS,9:00 AM,B3 - SOCAL,,B4 - PASADENA,,
+6/21/2025,RAMONA HS,10:00 AM,D1 - THUNDER,,D2 - COMMERCE,,
+6/21/2025,RAMONA HS,11:00 AM,D3 - SD SHORES GOLD,,D4 - ELITE,,
+6/21/2025,RAMONA HS,12:00 PM,J1- 3rd A -,,J2 - 4th B -,,
+6/21/2025,RAMONA HS,1:00 PM,K1- 3rd B -,,K2 - 4th A -,,
+6/21/2025,RAMONA HS,2:00 PM,L1 - 3rd C -,,L2 - 4th D -,,
+6/21/2025,RAMONA HS,3:00 PM,I1 - 3rd D -,,I2 - 4th C -,,
+6/22/2025,RIVERSIDE POLY #1,8:00 AM,O1 - 2nd E -,,O2 - 2nd H -,,
+6/22/2025,RIVERSIDE POLY #1,9:00 AM,R1 - 1st K -,,R2 - 1st L -,,
+6/22/2025,RIVERSIDE POLY #1,10:00 AM,M1 - 1st E -,,M2 - 1st H -,,
+6/22/2025,RIVERSIDE POLY #1,11:00 AM,S1 - 2nd J -,,S2 - 2nd I -,,
+6/22/2025,RIVERSIDE POLY #1,12:00 PM,W1 - 1st O -,,W2 - 1st P -,5th,
+6/22/2025,RIVERSIDE POLY #1,1:00 PM,Y1 - 1st Q -,,Y2 - 1st R -,9th,
+6/22/2025,RIVERSIDE POLY #1,2:00 PM,AA1 - 1st S -,,AA2 - 1st T -,11th,
+6/22/2025,RAMONA HS,8:00 AM,P1 - 2nd F -,,P2 - 2nd G -,,
+6/22/2025,RAMONA HS,9:00 AM,Q1 - 1st J -,,Q2 - 1st I -,,
+6/22/2025,RAMONA HS,10:00 AM,N1 - 1st F -,,N2 - 1st G -,,
+6/22/2025,RAMONA HS,11:00 AM,T1 - 2nd K -,,T2 - 2nd L -,,
+6/22/2025,RAMONA HS,12:00 PM,X1 - 2nd O -,,X2 - 2nd P -,7th,
+6/22/2025,RAMONA HS,1:00 PM,Z1 - 2nd Q -,,Z2 - 2nd R -,11th,
+6/22/2025,RAMONA HS,2:00 PM,BB1 - 2nd S -,,BB2 - 2nd T -,15th,
+6/22/2025,SANTIAGO HS,1:00 PM,V1 - 2nd M -,,V2 - 2nd N -,3rd,
+6/22/2025,SANTIAGO HS,2:00 PM,U1 - 1st M -,,U2 - 1st N -,1st,`;
+        
+        let tournamentData = {};
+
+
+        // Parse CSV data
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim()) {
+                    const values = parseCSVLine(lines[i]);
+                    if (values.length >= headers.length) {
+                        const row = {};
+                        headers.forEach((header, index) => {
+                            row[header] = values[index] || '';
+                        });
+                        data.push(row);
+                    }
+                }
+            }
+            return data;
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"' && (i === 0 || line[i-1] === ',')) {
+                    inQuotes = true;
+                } else if (char === '"' && inQuotes) {
+                    inQuotes = false;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
+        // Clean team name (extract code and name)
+        function cleanTeamName(teamName) {
+            if (!teamName || teamName.trim() === '') {
+                return { code: "", name: "" };
+            }
+            
+            const match = teamName.trim().match(/^([A-Z0-9]+(?:\s*-\s*\w+)*)\s*-\s*(.+)$/);
+            if (match) {
+                return { code: match[1].trim(), name: match[2].trim() };
+            }
+            return { code: "", name: teamName.trim() };
+        }
+
+        // Determine match phase
+        function determineMatchPhase(comments, whiteTeam, darkTeam) {
+            const commentsLower = comments.toLowerCase();
+            if (commentsLower.includes('bracket')) return "Pool Play";
+            if (['1st', '2nd', '3rd', '4th'].some(term => commentsLower.includes(term))) return "Crossover";
+            if (commentsLower.includes('final') || ['1st', '3rd', '5th', '7th', '9th', '11th', '13th', '15th'].some(term => comments.includes(term))) return "Finals";
+            if (['A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B3', 'B4', 'C1', 'C2', 'C3', 'C4', 'D1', 'D2', 'D3', 'D4'].some(code => 
+                whiteTeam.includes(code) || darkTeam.includes(code))) return "Pool Play";
+            return "Bracket Play";
+        }
+
+        // Process tournament data
+        function processTournamentData(csvData) {
+            const matches = [];
+            const allTeams = new Set();
+            const venues = new Set();
+
+            csvData.forEach((row, index) => {
+                if (!row.DATE || row.DATE.trim() === '' || row.DATE.includes('DATE')) return;
+                
+                const whiteTeamRaw = (row['WHITE TEAM'] || '').trim();
+                const darkTeamRaw = (row['DARK TEAM'] || '').trim();
+                if (!whiteTeamRaw || !darkTeamRaw) return;
+                
+                const whiteTeam = cleanTeamName(whiteTeamRaw);
+                const darkTeam = cleanTeamName(darkTeamRaw);
+                
+                allTeams.add(whiteTeam.name);
+                allTeams.add(darkTeam.name);
+                venues.add((row.LOCATION || '').trim());
+                
+                matches.push({
+                    match_id: index + 1,
+                    date: (row.DATE || '').trim(),
+                    time: (row.TIME || '').trim(),
+                    venue: (row.LOCATION || '').trim(),
+                    white_team: whiteTeam,
+                    dark_team: darkTeam,
+                    phase: determineMatchPhase(row.COMMENTS || '', whiteTeamRaw, darkTeamRaw),
+                    comments: (row.COMMENTS || '').trim()
+                });
+            });
+
+            // Filter actual teams (remove placeholders)
+            const actualTeams = Array.from(allTeams).filter(team => 
+                !team.includes('st ') && !team.endsWith(' -') && team !== ''
+            );
+
+            // Extract pools based on known tournament structure
+            const pools = {
+                A: ['SD SHORES BLACK', 'POWAY VALLEY', 'KERN PREMIER', 'SUPREME'],
+                B: ['NORTH IRVINE', 'ROSE BOWL', 'SOCAL', 'PASADENA'], 
+                C: ['CARLSBAD', 'CHAWP', 'CLOVIS', 'TEMPLE CITY'],
+                D: ['THUNDER', 'COMMERCE', 'SD SHORES GOLD', 'ELITE']
+            };
+
+            return {
+                teams: actualTeams.sort(),
+                venues: Array.from(venues).filter(v => v).sort(),
+                pools: pools,
+                matches: matches
+            };
+        }
+
+        // Display pools
+        function displayPools(pools) {
+            const container = document.getElementById('pools-container');
+            container.innerHTML = '';
+
+            Object.entries(pools).forEach(([poolName, teams]) => {
+                if (teams.length > 0) {
+                    const standingsTable = document.createElement('div');
+                    standingsTable.className = 'standings-table';
+                    
+                    standingsTable.innerHTML = `
+                        <h3>Pool ${poolName}</h3>
+                        <div class="standings-list">
+                            ${teams.map((team, index) => `
+                                <div class="standing-item">
+                                    <span class="position">${poolName}${index + 1}</span>
+                                    <span class="team-name">${team}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    
+                    container.appendChild(standingsTable);
+                }
+            });
+        }
+
+        // Display matches in table format
+        function displayMatches(matches) {
+            const tbody = document.getElementById('matches-tbody');
+            tbody.innerHTML = '';
+
+            // Sort matches by match_id to show in chronological order
+            matches.sort((a, b) => a.match_id - b.match_id);
+
+            matches.forEach(match => {
+                const row = document.createElement('tr');
+                
+                // Determine status color
+                let statusColor = '#1976d2'; // Blue for scheduled
+                if (match.phase.toLowerCase().includes('final')) {
+                    statusColor = '#d32f2f'; // Red for finals
+                }
+
+                // Determine if teams are placeholders
+                const isPlaceholder = match.white_team.name.includes(' -') || match.dark_team.name.includes(' -');
+                
+                row.innerHTML = `
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${match.match_id}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.date}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #0077be;">${match.time}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.venue}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: left; ${isPlaceholder ? 'font-style: italic; color: #666;' : ''}">${match.white_team.code ? match.white_team.code + ' - ' : ''}${match.white_team.name}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; font-size: 1.1rem;">- vs -</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: left; ${isPlaceholder ? 'font-style: italic; color: #666;' : ''}">${match.dark_team.code ? match.dark_team.code + ' - ' : ''}${match.dark_team.name}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center; background: #f8f9ff; color: #0077be; font-weight: 500;">${match.phase}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                        <span style="display: inline-block; width: 8px; height: 8px; background: ${statusColor}; border-radius: 50%; margin-right: 6px;"></span>
+                        <span style="font-size: 0.9rem; color: ${statusColor};">SCHEDULED</span>
+                    </td>
+                `;
+
+                // Highlight key matches
+                if (match.comments && (match.comments.includes('1st') || match.comments.includes('3rd') || match.comments.includes('5th'))) {
+                    row.style.background = 'linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%)';
+                    row.style.border = '2px solid #f39c12';
+                }
+
+                // Highlight San Diego Shores teams
+                if (match.white_team.name.includes('SHORES') || match.dark_team.name.includes('SHORES')) {
+                    row.style.background = 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)';
+                    row.style.border = '2px solid #2196f3';
+                }
+
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load and display tournament data
+        function loadTournamentData() {
+            try {
+                const csvRows = parseCSV(csvData);
+                tournamentData = processTournamentData(csvRows);
+                
+                // Update stats
+                document.getElementById('team-count').textContent = tournamentData.teams.length;
+                document.getElementById('match-count').textContent = tournamentData.matches.length;
+                document.getElementById('venue-count').textContent = tournamentData.venues.length;
+                
+                // Display data
+                displayPools(tournamentData.pools);
+                displayMatches(tournamentData.matches);
+                
+            } catch (error) {
+                console.error('Error loading tournament data:', error);
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = `Error loading tournament data: ${error.message}`;
+            }
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadTournamentData);
+    </script>
+</body>
+</html>
