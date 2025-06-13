@@ -18,9 +18,9 @@ I need you to update the 16U Boys Junior Olympics Qualification tournament page 
    - Use bash curl command with -L flag to follow redirects: 
      `curl -L -s "https://docs.google.com/spreadsheets/d/1C_yU7MyVHzL1_rubWOHVqAeDto9BApOgw7MarJzQoLk/export?format=csv&gid=0"`
 
-2. **Read Current Tournament Page**:
-   - Read the file `waterpolo/20250613_16U_JOs_Quals.html`
-   - Focus on the embedded JavaScript data in window.TOURNAMENT_DATA.matches array (lines 72-736)
+2. **Read Current Tournament Data**:
+   - Read the file `waterpolo/jos_quali_matches.json` - this is the primary data source for the website
+   - Also check the embedded JavaScript data in `waterpolo/20250613_16U_JOs_Quals.html` window.TOURNAMENT_DATA.matches array (lines 72-736)
 
 3. **Compare and Identify Changes**:
    - Look for matches with updated scores (CSV shows scores in columns 5 and 8)
@@ -35,6 +35,7 @@ I need you to update the 16U Boys Junior Olympics Qualification tournament page 
      - status from "SCHEDULED" to "COMPLETED"
    - Preserve all other match data (game_number, date, time, venue, teams, phase, notes)
    - Do not add or remove matches unless they appear/disappear from the source
+   - **IMPORTANT**: Update BOTH files - jos_quali_matches.json AND the embedded data in 20250613_16U_JOs_Quals.html
 
 5. **CSV Data Format Reference**:
    - Game numbers are in format "Game # X" in column 4
@@ -49,7 +50,7 @@ I need you to update the 16U Boys Junior Olympics Qualification tournament page 
    - "OPT OUT" - Team opted out, auto-forfeit (5-0)
    - "NO CONTEST" - Same club teams, auto-forfeit (5-0)
 
-Please update only the changed match data in the tournament page and confirm what updates were made.
+Please update only the changed match data in BOTH the jos_quali_matches.json file and the tournament HTML page, then confirm what updates were made.
 ```
 
 ## Manual Update Process
@@ -76,12 +77,14 @@ If you need to update manually:
    - Test the page loads correctly in a browser
 
 ## File Locations
-- **Tournament Page**: `20250613_16U_JOs_Quals.html`
+- **Primary Data Source**: `jos_quali_matches.json` (main data file loaded by website)
+- **Tournament Page**: `20250613_16U_JOs_Quals.html` (has embedded backup data)
 - **CSS Styles**: `style.css`
 - **JavaScript**: `script.js`
 
 ## Data Structure Notes
-- Tournament data is embedded in JavaScript as `window.TOURNAMENT_DATA`
+- Primary data source: `jos_quali_matches.json` (JSON format)
+- Backup data embedded in HTML as `window.TOURNAMENT_DATA` (JavaScript object)
 - Matches array contains 51 total games across 3 days
 - Groups A, B, C, D for initial bracket, then AA, BB, CC, DD for re-bracket
 - San Diego Shores teams: "Shores Black", "Shores Gold", "Shores White"
