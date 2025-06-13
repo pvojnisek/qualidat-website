@@ -1,228 +1,703 @@
+// Tournament data loading and processing
+let tournamentData = null;
+
+async function loadTournamentData() {
+    try {
+        // Try to load from external JSON first (works when served via HTTP)
+        const response = await fetch('jos_quali_matches.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        tournamentData = await response.json();
+        console.log('✅ Tournament data loaded from external JSON:', tournamentData);
+    } catch (error) {
+        console.warn('⚠️ Failed to load external JSON, using embedded data:', error.message);
+        
+        // Fallback to embedded data (works for file:// protocol)
+        if (window.TOURNAMENT_DATA) {
+            tournamentData = window.TOURNAMENT_DATA;
+            console.log('✅ Tournament data loaded from embedded source:', tournamentData);
+        } else {
+            console.error('❌ No embedded data available');
+            const tbody = document.getElementById('matches-tbody');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="padding: 20px; text-align: center; color: #d32f2f;">
+                            ❌ Error: No tournament data available. Please check the console for details.
+                        </td>
+                    </tr>`;
+            }
+            return;
+        }
+    }
+    
+    // Proceed with populating the page
+    try {
+        populateMatchTable();
+        populateGroupStandings();
+        populateReBrackets();
+        populatePlacementMatches();
+        console.log('✅ Page populated successfully');
+    } catch (error) {
+        console.error('❌ Error populating page:', error);
+    }
+}
+
+function populateMatchTable() {
+    const tbody = document.getElementById('matches-tbody');
+    if (!tbody || !tournamentData) {
+        console.error('Missing tbody element or tournament data');
+        return;
+    }
+
+    let html = '';
+    
+    // Group stage matches
+    html += `
+        <tr style="background: #f8f9fa;">
+            <td colspan="9" style="padding: 15px; text-align: center; font-weight: bold; color: #0077be; font-size: 1.1rem; border: 1px solid #ddd;">🏊‍♂️ GROUP STAGE MATCHES</td>
+        </tr>`;
+
+    // Group matches by date and venue
+    const groupMatches = tournamentData.matches.filter(match => match.phase && match.phase.startsWith('Group'));
+    
+    let currentDate = '';
+    let currentVenue = '';
+    
+    groupMatches.forEach(match => {
+        const matchDate = match.date;
+        const matchVenue = match.venue;
+        
+        if (matchDate !== currentDate || matchVenue !== currentVenue) {
+            currentDate = matchDate;
+            currentVenue = matchVenue;
+            const formattedDate = new Date(currentDate).toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const venueDisplay = matchVenue ? matchVenue.replace(/_/g, ' ') : 'TBD';
+            html += `
+                <tr style="background: #e3f2fd;">
+                    <td colspan="9" style="padding: 10px; text-align: center; font-weight: bold; color: #0077be; border: 1px solid #ddd;">${formattedDate} - ${venueDisplay}</td>
+                </tr>`;
+        }
+        
+        const rowStyle = match.status === 'OPT OUT' || match.status === 'NO CONTEST' ? 
+            'background: #ffe0e0;' : 'background: #f9f9f9;';
+        
+        const score = match.score1 !== null && match.score2 !== null ? 
+            `${match.score1}-${match.score2}` : '- vs -';
+        
+        const statusColor = match.status === 'SCHEDULED' ? '#1976d2' : '#d32f2f';
+        const venueDisplay = match.venue ? match.venue.replace(/_/g, ' ') : 'TBD';
+        
+        html += `
+            <tr style="${rowStyle}">
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${match.game_number}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.date}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.time || '-'}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${venueDisplay}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; ${match.score1 > match.score2 ? 'font-weight: bold; color: #2e7d32;' : ''}">${match.team1}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #d32f2f;">${score}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; ${match.score2 > match.score1 ? 'font-weight: bold; color: #2e7d32;' : ''}">${match.team2}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.phase}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: ${statusColor}; font-weight: bold;">${match.status}</td>
+            </tr>`;
+    });
+
+    // Re-bracket matches
+    html += `
+        <tr style="background: #f8f9fa;">
+            <td colspan="9" style="padding: 15px; text-align: center; font-weight: bold; color: #0077be; font-size: 1.1rem; border: 1px solid #ddd;">🏆 RE-BRACKET MATCHES</td>
+        </tr>`;
+
+    const rebracketMatches = tournamentData.matches.filter(match => match.phase && match.phase.startsWith('Re-bracket'));
+    
+    currentDate = '';
+    currentVenue = '';
+    
+    rebracketMatches.forEach(match => {
+        const matchDate = match.date;
+        const matchVenue = match.venue;
+        
+        if (matchDate !== currentDate || matchVenue !== currentVenue) {
+            currentDate = matchDate;
+            currentVenue = matchVenue;
+            const formattedDate = new Date(currentDate).toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const venueDisplay = matchVenue ? matchVenue.replace(/_/g, ' ') : 'TBD';
+            html += `
+                <tr style="background: #e3f2fd;">
+                    <td colspan="9" style="padding: 10px; text-align: center; font-weight: bold; color: #0077be; border: 1px solid #ddd;">${formattedDate} - ${venueDisplay}</td>
+                </tr>`;
+        }
+        
+        const score = match.score1 !== null && match.score2 !== null ? 
+            `${match.score1}-${match.score2}` : '- vs -';
+        
+        const venueDisplay = match.venue ? match.venue.replace(/_/g, ' ') : 'TBD';
+        
+        html += `
+            <tr style="background: #f9f9f9;">
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${match.game_number}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.date}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.time || '-'}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${venueDisplay}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team1}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #d32f2f;">${score}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team2}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.phase}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: #1976d2; font-weight: bold;">${match.status}</td>
+            </tr>`;
+    });
+
+    // Championship matches
+    html += `
+        <tr style="background: #f8f9fa;">
+            <td colspan="9" style="padding: 15px; text-align: center; font-weight: bold; color: #0077be; font-size: 1.1rem; border: 1px solid #ddd;">🏆 CHAMPIONSHIP & PLACEMENT MATCHES</td>
+        </tr>`;
+
+    const championshipMatches = tournamentData.matches.filter(match => match.phase === 'Championship');
+    
+    championshipMatches.forEach(match => {
+        const score = match.score1 !== null && match.score2 !== null ? 
+            `${match.score1}-${match.score2}` : '- vs -';
+        
+        const venueDisplay = match.venue ? match.venue.replace(/_/g, ' ') : 'TBD';
+        
+        html += `
+            <tr style="background: #fff3e0;">
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${match.game_number}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.date}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.time || '-'}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${venueDisplay}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team1}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #d32f2f;">${score}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team2}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #ff9800;">${match.phase}${match.notes ? ' - ' + match.notes : ''}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: #1976d2; font-weight: bold;">${match.status}</td>
+            </tr>`;
+    });
+
+    tbody.innerHTML = html;
+    console.log('Match table populated successfully');
+}
+
+function populateGroupStandings() {
+    // This function would update group standings based on match results
+    // For now, keeping the existing static structure
+    console.log('Group standings function called');
+}
+
+function populateReBrackets() {
+    // This function would update re-bracket standings based on group results
+    // For now, keeping the existing static structure
+    console.log('Re-brackets function called');
+}
+
+function populatePlacementMatches() {
+    // This function would update placement match cards
+    // For now, keeping the existing static structure
+    console.log('Placement matches function called');
+}
+
 // Add some interactive animations
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animate stats on scroll
-            const statNumbers = document.querySelectorAll('.stat-number');
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, starting tournament data load...');
+    
+    // Load tournament data first
+    loadTournamentData();
+    
+    // Animate stats on scroll
+    const statNumbers = document.querySelectorAll('.stat-number');
 
-            const animateStats = () => {
-                statNumbers.forEach(stat => {
-                    const rect = stat.getBoundingClientRect();
-                    if (rect.top < window.innerHeight && rect.bottom > 0) {
-                        if (!stat.classList.contains('animated')) {
-                            stat.classList.add('animated');
-                            const finalValue = parseFloat(stat.textContent);
-                            let currentValue = 0;
-                            const increment = finalValue / 50;
+    const animateStats = () => {
+        statNumbers.forEach(stat => {
+            const rect = stat.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                if (!stat.classList.contains('animated')) {
+                    stat.classList.add('animated');
+                    const finalValue = parseFloat(stat.textContent);
+                    let currentValue = 0;
+                    const increment = finalValue / 50;
 
-                            const timer = setInterval(() => {
-                                currentValue += increment;
-                                if (currentValue >= finalValue) {
-                                    currentValue = finalValue;
-                                    clearInterval(timer);
-                                }
-                                stat.textContent = Math.floor(currentValue * 10) / 10;
-                            }, 20);
+                    const timer = setInterval(() => {
+                        currentValue += increment;
+                        if (currentValue >= finalValue) {
+                            currentValue = finalValue;
+                            clearInterval(timer);
                         }
-                    }
-                });
-            };
-
-            window.addEventListener('scroll', animateStats);
-            animateStats(); // Run once on load
-
-            // Add hover effects to cards
-            const cards = document.querySelectorAll('.match-card, .fact-card, .stat-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px) scale(1.02)';
-                });
-
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-
-            // Collapsible functionality
-            const collapsibles = document.querySelectorAll('.collapsible');
-            collapsibles.forEach(collapsible => {
-                collapsible.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                    const content = this.nextElementSibling;
-                    content.classList.toggle('active');
-                });
-            });
-
-            // Team matches data
-            const teamMatches = {
-                // Group Stage matches
-                'Del Mar Blue': [
-                    { date: '6/13/2025 - Opt Out', venue: 'No Game', opponent: 'Southern B', score: '5-0', result: 'win', type: 'Opt Out' },
-                    { date: '6/13/2025 - 6:00 PM', venue: 'BBMAC #1', opponent: 'Southern', score: 'TBD', result: 'pending', type: 'Group A' },
-                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Del Mar White', score: '5-0', result: 'win', type: 'No Contest' }
-                ],
-                'Del Mar White': [
-                    { date: '6/13/2025 - 1:00 PM', venue: 'BBMAC #1', opponent: 'Southern', score: 'TBD', result: 'pending', type: 'Group A' },
-                    { date: '6/13/2025 - 5:00 PM', venue: 'BBMAC #1', opponent: 'Southern B', score: 'TBD', result: 'pending', type: 'Group A' },
-                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Del Mar Blue', score: '0-5', result: 'loss', type: 'No Contest' }
-                ],
-                'Southern': [
-                    { date: '6/13/2025 - 1:00 PM', venue: 'BBMAC #1', opponent: 'Del Mar White', score: 'TBD', result: 'pending', type: 'Group A' },
-                    { date: '6/13/2025 - 6:00 PM', venue: 'BBMAC #1', opponent: 'Del Mar Blue', score: 'TBD', result: 'pending', type: 'Group A' },
-                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Southern B', score: '5-0', result: 'win', type: 'No Contest' }
-                ],
-                'Southern B': [
-                    { date: '6/13/2025 - Opt Out', venue: 'No Game', opponent: 'Del Mar Blue', score: '0-5', result: 'loss', type: 'Opt Out' },
-                    { date: '6/13/2025 - 5:00 PM', venue: 'BBMAC #1', opponent: 'Del Mar White', score: 'TBD', result: 'pending', type: 'Group A' },
-                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Southern', score: '0-5', result: 'loss', type: 'No Contest' }
-                ],
-                'LJ United A': [
-                    { date: '6/13/2025 - Opt Out', venue: 'No Game', opponent: 'NADO', score: '5-0', result: 'win', type: 'Opt Out' },
-                    { date: '6/14/2025 - 10:45 AM', venue: 'Granite Hills #1', opponent: 'Poway', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'LJ United B', score: '5-0', result: 'win', type: 'No Contest' }
-                ],
-                'LJ United B': [
-                    { date: '6/13/2025 - 3:00 PM', venue: 'BBMAC #1', opponent: 'Poway', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/14/2025 - 11:40 AM', venue: 'Granite Hills #1', opponent: 'NADO', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'LJ United A', score: '0-5', result: 'loss', type: 'No Contest' }
-                ],
-                'Poway': [
-                    { date: '6/13/2025 - 3:00 PM', venue: 'BBMAC #1', opponent: 'LJ United B', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/14/2025 - 8:00 AM', venue: 'Granite Hills #1', opponent: 'NADO', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/14/2025 - 10:45 AM', venue: 'Granite Hills #1', opponent: 'LJ United A', score: 'TBD', result: 'pending', type: 'Group B' }
-                ],
-                'NADO': [
-                    { date: '6/13/2025 - Opt Out', venue: 'No Game', opponent: 'LJ United A', score: '0-5', result: 'loss', type: 'Opt Out' },
-                    { date: '6/14/2025 - 8:00 AM', venue: 'Granite Hills #1', opponent: 'Poway', score: 'TBD', result: 'pending', type: 'Group B' },
-                    { date: '6/14/2025 - 11:40 AM', venue: 'Granite Hills #1', opponent: 'LJ United B', score: 'TBD', result: 'pending', type: 'Group B' }
-                ],
-                'Shores Black': [
-                    { date: '6/13/2025 - 2:00 PM', venue: 'BBMAC #1', opponent: 'Odin B', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/13/2025 - 5:00 PM', venue: 'BBMAC #2', opponent: 'NSD Stars', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Shores Gold', score: '5-0', result: 'win', type: 'No Contest' }
-                ],
-                'Shores Gold': [
-                    { date: '6/13/2025 - 4:00 PM', venue: 'BBMAC #1', opponent: 'NSD Stars', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/13/2025 - 6:00 PM', venue: 'BBMAC #2', opponent: 'Odin B', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/13/2025 - No Contest', venue: 'Same Club', opponent: 'Shores Black', score: '0-5', result: 'loss', type: 'No Contest' }
-                ],
-                'NSD Stars': [
-                    { date: '6/13/2025 - 4:00 PM', venue: 'BBMAC #1', opponent: 'Shores Gold', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/13/2025 - 5:00 PM', venue: 'BBMAC #2', opponent: 'Shores Black', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/14/2025 - 12:35 PM', venue: 'Granite Hills #1', opponent: 'Odin B', score: 'TBD', result: 'pending', type: 'Group C' }
-                ],
-                'Odin B': [
-                    { date: '6/13/2025 - 2:00 PM', venue: 'BBMAC #1', opponent: 'Shores Black', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/13/2025 - 6:00 PM', venue: 'BBMAC #2', opponent: 'Shores Gold', score: 'TBD', result: 'pending', type: 'Group C' },
-                    { date: '6/14/2025 - 12:35 PM', venue: 'Granite Hills #1', opponent: 'NSD Stars', score: 'TBD', result: 'pending', type: 'Group C' }
-                ],
-                'CBAD Black': [
-                    { date: '6/14/2025 - 8:55 AM', venue: 'Granite Hills #1', opponent: 'Shores White', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - 1:30 PM', venue: 'Granite Hills #1', opponent: 'Odin A', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - No Contest', venue: 'Same Club', opponent: 'CBAD Silver', score: '5-0', result: 'win', type: 'No Contest' }
-                ],
-                'CBAD Silver': [
-                    { date: '6/14/2025 - 9:50 AM', venue: 'Granite Hills #1', opponent: 'Odin A', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - 2:25 PM', venue: 'Granite Hills #1', opponent: 'Shores White', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - No Contest', venue: 'Same Club', opponent: 'CBAD Black', score: '0-5', result: 'loss', type: 'No Contest' }
-                ],
-                'Odin A': [
-                    { date: '6/13/2025 - 7:00 PM', venue: 'BBMAC #1', opponent: 'Shores White', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - 9:50 AM', venue: 'Granite Hills #1', opponent: 'CBAD Silver', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - 1:30 PM', venue: 'Granite Hills #1', opponent: 'CBAD Black', score: 'TBD', result: 'pending', type: 'Group D' }
-                ],
-                'Shores White': [
-                    { date: '6/13/2025 - 7:00 PM', venue: 'BBMAC #1', opponent: 'Odin A', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - 8:55 AM', venue: 'Granite Hills #1', opponent: 'CBAD Black', score: 'TBD', result: 'pending', type: 'Group D' },
-                    { date: '6/14/2025 - 2:25 PM', venue: 'Granite Hills #1', opponent: 'CBAD Silver', score: 'TBD', result: 'pending', type: 'Group D' }
-                ]
-            };
-
-            // Modal functionality
-            const modal = document.getElementById('teamMatchesModal');
-            const modalTeamName = document.getElementById('modalTeamName');
-            const teamMatchesList = document.getElementById('teamMatchesList');
-            const closeBtn = document.querySelector('.close');
-
-            // Click handlers for bracket teams
-            const clickableTeams = document.querySelectorAll('.clickable-team');
-            clickableTeams.forEach(team => {
-                team.addEventListener('click', function() {
-                    const teamName = this.dataset.team;
-                    const group = this.dataset.group;
-                    showTeamMatches(teamName, `Group ${group} Matches`);
-                });
-            });
-
-            // Click handlers for re-bracket teams
-            const clickableRebracket = document.querySelectorAll('.clickable-rebracket');
-            clickableRebracket.forEach(team => {
-                team.addEventListener('click', function() {
-                    const bracket = this.dataset.bracket;
-                    const position = this.dataset.position;
-                    showRebracketMatches(bracket, position);
-                });
-            });
-
-            function showTeamMatches(teamName, phase) {
-                modalTeamName.textContent = `${teamName} - ${phase}`;
-                const matches = teamMatches[teamName] || [];
-                
-                if (matches.length === 0) {
-                    teamMatchesList.innerHTML = '<p style="text-align: center; color: #666;">No matches found for this team.</p>';
-                } else {
-                    teamMatchesList.innerHTML = matches.map(match => `
-                        <div class="team-match">
-                            <div class="match-info">
-                                <span class="match-date">${match.date}</span>
-                                <span class="match-venue">${match.venue}</span>
-                            </div>
-                            <div class="match-result">
-                                <span class="opponent">vs ${match.opponent}</span>
-                                <span class="score ${match.result} ${match.type === 'No Contest' ? 'no-contest' : ''}">${match.score}</span>
-                            </div>
-                            ${match.type ? `<div style="font-size: 0.8rem; color: #666; margin-top: 5px;">${match.type}</div>` : ''}
-                        </div>
-                    `).join('');
+                        stat.textContent = Math.floor(currentValue * 10) / 10;
+                    }, 20);
                 }
-                modal.style.display = 'block';
             }
-
-            function showRebracketMatches(bracket, position) {
-                modalTeamName.textContent = `Bracket ${bracket}${position} - Re-bracket Matches`;
-                teamMatchesList.innerHTML = `
-                    <div class="team-match">
-                        <div class="match-info">
-                            <span class="match-date">6/14/2025 - 4:20 PM</span>
-                            <span class="match-venue">Granite Hills #1</span>
-                        </div>
-                        <div class="match-result">
-                            <span class="opponent">vs ${bracket}${position === '1' ? '4' : position === '2' ? '3' : position === '3' ? '2' : '1'}</span>
-                            <span class="score pending">TBD</span>
-                        </div>
-                        <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">Re-bracket Semi-final</div>
-                    </div>
-                    <div class="team-match">
-                        <div class="match-info">
-                            <span class="match-date">6/15/2025 - 10:00 AM</span>
-                            <span class="match-venue">Granite Hills #1</span>
-                        </div>
-                        <div class="match-result">
-                            <span class="opponent">Bracket ${bracket} Final</span>
-                            <span class="score pending">TBD</span>
-                        </div>
-                        <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">Bracket Final</div>
-                    </div>
-                `;
-                modal.style.display = 'block';
-            }
-
-            // Close modal functionality
-            closeBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-            });
-
-            window.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
         });
+    };
+
+    window.addEventListener('scroll', animateStats);
+    animateStats(); // Run once on load
+
+    // Add hover effects to cards
+    const cards = document.querySelectorAll('.match-card, .fact-card, .stat-card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px) scale(1.02)';
+        });
+
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // Collapsible functionality
+    const collapsibles = document.querySelectorAll('.collapsible');
+    collapsibles.forEach(collapsible => {
+        collapsible.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            content.classList.toggle('active');
+        });
+    });
+
+    // Team card click functionality
+    setupTeamClickHandlers();
+});
+
+function setupTeamClickHandlers() {
+    // Handle group stage team clicks
+    const clickableTeams = document.querySelectorAll('.clickable-team');
+    clickableTeams.forEach(teamElement => {
+        teamElement.addEventListener('click', function() {
+            const teamName = this.dataset.team;
+            const groupName = this.dataset.group;
+            showTeamMatches(teamName, groupName);
+        });
+    });
+
+    // Handle re-bracket clicks
+    const clickableRebrackets = document.querySelectorAll('.clickable-rebracket');
+    clickableRebrackets.forEach(rebracketElement => {
+        rebracketElement.addEventListener('click', function() {
+            const bracket = this.dataset.bracket;
+            const position = this.dataset.position;
+            showRebracketMatches(bracket, position);
+        });
+    });
+}
+
+function showTeamMatches(teamName, groupName) {
+    if (!tournamentData || !tournamentData.matches) {
+        console.error('Tournament data not available');
+        return;
+    }
+
+    // Filter matches for this team
+    const teamMatches = tournamentData.matches.filter(match => 
+        match.team1 === teamName || match.team2 === teamName
+    );
+
+    if (teamMatches.length === 0) {
+        alert(`No matches found for ${teamName}`);
+        return;
+    }
+
+    // Create and show popup
+    createMatchPopup(teamName, groupName, teamMatches);
+}
+
+function showRebracketMatches(bracket, position) {
+    if (!tournamentData || !tournamentData.matches) {
+        console.error('Tournament data not available');
+        return;
+    }
+
+    // Create the re-bracket team identifier (e.g., "AA1", "BB2", etc.)
+    const bracketTeam = bracket + position;
+    
+    // Filter matches for this bracket position
+    const bracketMatches = tournamentData.matches.filter(match => 
+        match.team1 === bracketTeam || match.team2 === bracketTeam
+    );
+
+    if (bracketMatches.length === 0) {
+        // Show info popup explaining the bracket system
+        showBracketInfoPopup(bracket, position);
+        return;
+    }
+
+    // Create and show popup
+    const bracketName = `Bracket ${bracket} Position ${position}`;
+    createMatchPopup(bracketTeam, bracketName, bracketMatches);
+}
+
+function showBracketInfoPopup(bracket, position) {
+    // Remove existing popup if any
+    const existingPopup = document.getElementById('team-match-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    const bracketDescriptions = {
+        'AA': 'Championship Bracket (Places 1-4)',
+        'BB': 'Classic Bracket (Places 5-8)', 
+        'CC': 'Invitational Bracket (Places 9-12)',
+        'DD': 'Participation Bracket (Places 13-16)'
+    };
+
+    const positionDescriptions = {
+        '1': 'Group A Winner',
+        '2': 'Group B Winner', 
+        '3': 'Group C Winner',
+        '4': 'Group D Winner'
+    };
+
+    if (bracket === 'BB') {
+        positionDescriptions['1'] = 'Group A Runner-up';
+        positionDescriptions['2'] = 'Group B Runner-up';
+        positionDescriptions['3'] = 'Group C Runner-up';
+        positionDescriptions['4'] = 'Group D Runner-up';
+    } else if (bracket === 'CC') {
+        positionDescriptions['1'] = 'Group A 3rd Place';
+        positionDescriptions['2'] = 'Group B 3rd Place';
+        positionDescriptions['3'] = 'Group C 3rd Place';
+        positionDescriptions['4'] = 'Group D 3rd Place';
+    } else if (bracket === 'DD') {
+        positionDescriptions['1'] = 'Group A 4th Place';
+        positionDescriptions['2'] = 'Group B 4th Place';
+        positionDescriptions['3'] = 'Group C 4th Place';
+        positionDescriptions['4'] = 'Group D 4th Place';
+    }
+
+    // Create popup overlay
+    const popupOverlay = document.createElement('div');
+    popupOverlay.id = 'team-match-popup';
+    popupOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease-in-out;
+    `;
+
+    // Create popup content
+    const popupContent = document.createElement('div');
+    popupContent.style.cssText = `
+        background: white;
+        border-radius: 12px;
+        max-width: 500px;
+        padding: 0;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        position: relative;
+        animation: slideIn 0.3s ease-in-out;
+    `;
+
+    popupContent.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+        ">
+            <h2 style="margin: 0; font-size: 1.5rem;">🏆 ${bracketDescriptions[bracket]}</h2>
+            <p style="margin: 5px 0 0 0; opacity: 0.9;">Position ${bracket}${position} • ${positionDescriptions[position]}</p>
+            <button id="close-popup" style="
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                background: rgba(255,255,255,0.2);
+                border: none;
+                color: white;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">×</button>
+        </div>
+        <div style="padding: 20px;">
+            <h3 style="color: #ff9800; margin: 0 0 15px 0;">Re-bracket System</h3>
+            <p style="margin: 0 0 15px 0; color: #666; line-height: 1.6;">
+                After group stage completion, teams are re-seeded based on their group placement into four competitive brackets:
+            </p>
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px; font-size: 0.9rem;">
+                    <div style="font-weight: bold; color: #ff9800;">AA Bracket:</div>
+                    <div>1st place teams (Championship)</div>
+                    <div style="font-weight: bold; color: #2196f3;">BB Bracket:</div>
+                    <div>2nd place teams (Classic)</div>
+                    <div style="font-weight: bold; color: #4caf50;">CC Bracket:</div>
+                    <div>3rd place teams (Invitational)</div>
+                    <div style="font-weight: bold; color: #9c27b0;">DD Bracket:</div>
+                    <div>4th place teams (Participation)</div>
+                </div>
+            </div>
+            <p style="margin: 0; color: #666; font-size: 0.9rem; font-style: italic;">
+                This position will be filled by the ${positionDescriptions[position].toLowerCase()} once group stage is completed.
+            </p>
+        </div>
+    `;
+
+    popupOverlay.appendChild(popupContent);
+    document.body.appendChild(popupOverlay);
+
+    // Add event listeners
+    document.getElementById('close-popup').addEventListener('click', closeMatchPopup);
+    popupOverlay.addEventListener('click', function(e) {
+        if (e.target === popupOverlay) {
+            closeMatchPopup();
+        }
+    });
+
+    // Add escape key listener
+    const escapeHandler = function(e) {
+        if (e.key === 'Escape') {
+            closeMatchPopup();
+            document.removeEventListener('keydown', escapeHandler);
+        }
+    };
+    document.addEventListener('keydown', escapeHandler);
+}
+
+function createMatchPopup(teamName, groupName, matches) {
+    // Remove existing popup if any
+    const existingPopup = document.getElementById('team-match-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    // Create popup overlay
+    const popupOverlay = document.createElement('div');
+    popupOverlay.id = 'team-match-popup';
+    popupOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease-in-out;
+    `;
+
+    // Create popup content
+    const popupContent = document.createElement('div');
+    popupContent.style.cssText = `
+        background: white;
+        border-radius: 12px;
+        max-width: 90%;
+        max-height: 90%;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        position: relative;
+        animation: slideIn 0.3s ease-in-out;
+    `;
+
+    // Create header
+    const header = document.createElement('div');
+    header.style.cssText = `
+        background: linear-gradient(135deg, #0077be 0%, #00a8cc 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px 12px 0 0;
+        position: relative;
+    `;
+
+    header.innerHTML = `
+        <h2 style="margin: 0; font-size: 1.5rem;">🏊‍♂️ ${teamName}</h2>
+        <p style="margin: 5px 0 0 0; opacity: 0.9;">Group ${groupName} • ${matches.length} matches</p>
+        <button id="close-popup" style="
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">×</button>
+    `;
+
+    // Create matches content
+    const matchesContent = document.createElement('div');
+    matchesContent.style.cssText = `
+        padding: 20px;
+        max-height: 400px;
+        overflow-y: auto;
+    `;
+
+    // Group matches by phase
+    const groupedMatches = {};
+    matches.forEach(match => {
+        const phase = match.phase;
+        if (!groupedMatches[phase]) {
+            groupedMatches[phase] = [];
+        }
+        groupedMatches[phase].push(match);
+    });
+
+    // Generate matches HTML
+    let matchesHTML = '';
+    Object.keys(groupedMatches).forEach(phase => {
+        matchesHTML += `
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #0077be; margin: 0 0 10px 0; padding-bottom: 5px; border-bottom: 2px solid #e3f2fd;">${phase}</h3>
+        `;
+        
+        groupedMatches[phase].forEach(match => {
+            const isTeam1 = match.team1 === teamName;
+            const opponent = isTeam1 ? match.team2 : match.team1;
+            const teamScore = isTeam1 ? match.score1 : match.score2;
+            const opponentScore = isTeam1 ? match.score2 : match.score1;
+            
+            let scoreDisplay = '- vs -';
+            let resultClass = '';
+            let resultIcon = '';
+            
+            if (teamScore !== null && opponentScore !== null) {
+                scoreDisplay = `${teamScore}-${opponentScore}`;
+                if (teamScore > opponentScore) {
+                    resultClass = 'win';
+                    resultIcon = '🏆';
+                } else if (teamScore < opponentScore) {
+                    resultClass = 'loss';
+                    resultIcon = '❌';
+                } else {
+                    resultClass = 'tie';
+                    resultIcon = '🤝';
+                }
+            }
+
+            const statusColor = match.status === 'SCHEDULED' ? '#1976d2' : 
+                               match.status === 'OPT OUT' ? '#d32f2f' : 
+                               match.status === 'NO CONTEST' ? '#ff9800' : '#2e7d32';
+
+            matchesHTML += `
+                <div style="
+                    background: ${resultClass === 'win' ? '#e8f5e8' : resultClass === 'loss' ? '#ffeaea' : '#f9f9f9'};
+                    border: 1px solid ${resultClass === 'win' ? '#4caf50' : resultClass === 'loss' ? '#f44336' : '#ddd'};
+                    border-radius: 8px;
+                    padding: 12px;
+                    margin-bottom: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                ">
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold; color: #0077be; margin-bottom: 4px;">
+                            ${resultIcon} Game ${match.game_number}
+                        </div>
+                        <div style="font-size: 0.9rem; color: #666;">
+                            ${match.date} ${match.time ? '• ' + match.time : ''} 
+                            ${match.venue ? '• ' + match.venue.replace(/_/g, ' ') : ''}
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin: 0 15px;">
+                        <div style="font-weight: bold; font-size: 1.1rem;">vs ${opponent}</div>
+                        <div style="font-weight: bold; color: ${statusColor}; font-size: 1.2rem;">
+                            ${scoreDisplay}
+                        </div>
+                    </div>
+                    <div style="text-align: right; min-width: 80px;">
+                        <div style="
+                            background: ${statusColor};
+                            color: white;
+                            padding: 4px 8px;
+                            border-radius: 12px;
+                            font-size: 0.8rem;
+                            font-weight: bold;
+                        ">${match.status}</div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        matchesHTML += `</div>`;
+    });
+
+    matchesContent.innerHTML = matchesHTML;
+
+    // Assemble popup
+    popupContent.appendChild(header);
+    popupContent.appendChild(matchesContent);
+    popupOverlay.appendChild(popupContent);
+
+    // Add styles for animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: scale(0.8) translateY(-20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Add to document
+    document.body.appendChild(popupOverlay);
+
+    // Add event listeners
+    document.getElementById('close-popup').addEventListener('click', closeMatchPopup);
+    popupOverlay.addEventListener('click', function(e) {
+        if (e.target === popupOverlay) {
+            closeMatchPopup();
+        }
+    });
+
+    // Add escape key listener
+    const escapeHandler = function(e) {
+        if (e.key === 'Escape') {
+            closeMatchPopup();
+            document.removeEventListener('keydown', escapeHandler);
+        }
+    };
+    document.addEventListener('keydown', escapeHandler);
+}
+
+function closeMatchPopup() {
+    const popup = document.getElementById('team-match-popup');
+    if (popup) {
+        popup.style.animation = 'fadeOut 0.2s ease-in-out';
+        setTimeout(() => {
+            popup.remove();
+        }, 200);
+    }
+}
+
+// Add fadeOut animation
+const fadeOutStyle = document.createElement('style');
+fadeOutStyle.textContent = `
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+`;
+document.head.appendChild(fadeOutStyle);

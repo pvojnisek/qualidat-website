@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,769 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>16U Boys Water Polo - Junior Olympics Qualification</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        // Tournament data embedded to avoid CORS issues
+        window.TOURNAMENT_DATA = {
+        "tournament": {
+                "name": "16U Boys Water Polo - Junior Olympics Qualification",
+                "dates": "June 13-15, 2025",
+                "venues": {
+                        "BBMAC": "Brian Bent Memorial Aquatics Complex",
+                        "GRANITE_HILLS": "Granite Hills High School"
+                }
+        },
+        "groups": {
+                "A": [
+                        "Del Mar Blue",
+                        "Del Mar White",
+                        "Southern",
+                        "Southern B"
+                ],
+                "B": [
+                        "LJ United A",
+                        "Poway",
+                        "LJ United B",
+                        "NADO"
+                ],
+                "C": [
+                        "Shores Black",
+                        "Shores Gold",
+                        "NSD Stars",
+                        "Odin B"
+                ],
+                "D": [
+                        "CBAD Black",
+                        "Odin A",
+                        "Shores White",
+                        "CBAD Silver"
+                ]
+        },
+        "re_bracket": {
+                "AA": [
+                        "1st A",
+                        "1st B",
+                        "1st C",
+                        "1st D"
+                ],
+                "BB": [
+                        "2nd A",
+                        "2nd B",
+                        "2nd C",
+                        "2nd D"
+                ],
+                "CC": [
+                        "3rd A",
+                        "3rd B",
+                        "3rd C",
+                        "3rd D"
+                ],
+                "DD": [
+                        "4th A",
+                        "4th B",
+                        "4th C",
+                        "4th D"
+                ]
+        },
+        "matches": [
+                {
+                        "game_number": 1,
+                        "date": "6/13/2025",
+                        "time": null,
+                        "venue": "BBMAC",
+                        "team1": "Del Mar Blue",
+                        "team2": "Southern B",
+                        "score1": 5,
+                        "score2": 0,
+                        "phase": "Group A",
+                        "status": "OPT OUT",
+                        "notes": "Opt Out"
+                },
+                {
+                        "game_number": 2,
+                        "date": "6/13/2025",
+                        "time": "1:00 PM",
+                        "venue": "BBMAC",
+                        "team1": "Del Mar White",
+                        "team2": "Southern",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group A",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 3,
+                        "date": "6/13/2025",
+                        "time": null,
+                        "venue": "BBMAC",
+                        "team1": "LJ United A",
+                        "team2": "NADO",
+                        "score1": 5,
+                        "score2": 0,
+                        "phase": "Group B",
+                        "status": "OPT OUT",
+                        "notes": "Opt Out"
+                },
+                {
+                        "game_number": 4,
+                        "date": "6/13/2025",
+                        "time": "3:00 PM",
+                        "venue": "BBMAC",
+                        "team1": "Poway",
+                        "team2": "LJ United B",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group B",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 5,
+                        "date": "6/13/2025",
+                        "time": "6:00 PM",
+                        "venue": "BBMAC",
+                        "team1": "Del Mar Blue",
+                        "team2": "Southern",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group A",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 6,
+                        "date": "6/13/2025",
+                        "time": "5:00 PM",
+                        "venue": "BBMAC",
+                        "team1": "Del Mar White",
+                        "team2": "Southern B",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group A",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 7,
+                        "date": "6/13/2025",
+                        "time": null,
+                        "venue": null,
+                        "team1": "LJ United A",
+                        "team2": "LJ United B",
+                        "score1": 5,
+                        "score2": 0,
+                        "phase": "Group B",
+                        "status": "NO CONTEST",
+                        "notes": "NO CONTEST"
+                },
+                {
+                        "game_number": 8,
+                        "date": "6/14/2025",
+                        "time": "8:00 AM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "Poway",
+                        "team2": "NADO",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group B",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 9,
+                        "date": "6/13/2025",
+                        "time": null,
+                        "venue": null,
+                        "team1": "Del Mar Blue",
+                        "team2": "Del Mar White",
+                        "score1": 5,
+                        "score2": 0,
+                        "phase": "Group A",
+                        "status": "NO CONTEST",
+                        "notes": "NO CONTEST"
+                },
+                {
+                        "game_number": 10,
+                        "date": "6/13/2025",
+                        "time": null,
+                        "venue": null,
+                        "team1": "Southern",
+                        "team2": "Southern B",
+                        "score1": 5,
+                        "score2": 0,
+                        "phase": "Group A",
+                        "status": "NO CONTEST",
+                        "notes": "NO CONTEST"
+                },
+                {
+                        "game_number": 11,
+                        "date": "6/14/2025",
+                        "time": "10:45 AM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "LJ United A",
+                        "team2": "Poway",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group B",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 12,
+                        "date": "6/14/2025",
+                        "time": "11:40 AM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "LJ United B",
+                        "team2": "NADO",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group B",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 13,
+                        "date": "6/13/2025",
+                        "time": "2:00 PM",
+                        "venue": "BBMAC",
+                        "team1": "Shores Black",
+                        "team2": "Odin B",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group C",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 14,
+                        "date": "6/13/2025",
+                        "time": "4:00 PM",
+                        "venue": "BBMAC",
+                        "team1": "Shores Gold",
+                        "team2": "NSD Stars",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group C",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 15,
+                        "date": "6/13/2025",
+                        "time": null,
+                        "venue": null,
+                        "team1": "CBAD Black",
+                        "team2": "CBAD Silver",
+                        "score1": 5,
+                        "score2": 0,
+                        "phase": "Group D",
+                        "status": "NO CONTEST",
+                        "notes": "NO CONTEST"
+                },
+                {
+                        "game_number": 16,
+                        "date": "6/13/2025",
+                        "time": "7:00 PM",
+                        "venue": "BBMAC",
+                        "team1": "Odin A",
+                        "team2": "Shores White",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group D",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 17,
+                        "date": "6/13/2025",
+                        "time": "5:00 PM",
+                        "venue": "BBMAC #2",
+                        "team1": "Shores Black",
+                        "team2": "NSD Stars",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group C",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 18,
+                        "date": "6/13/2025",
+                        "time": "6:00 PM",
+                        "venue": "BBMAC #2",
+                        "team1": "Shores Gold",
+                        "team2": "Odin B",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group C",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 19,
+                        "date": "6/14/2025",
+                        "time": "8:55 AM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "CBAD Black",
+                        "team2": "Shores White",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group D",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 20,
+                        "date": "6/14/2025",
+                        "time": "9:50 AM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "Odin A",
+                        "team2": "CBAD Silver",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group D",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 21,
+                        "date": "6/13/2025",
+                        "time": null,
+                        "venue": null,
+                        "team1": "Shores Black",
+                        "team2": "Shores Gold",
+                        "score1": 5,
+                        "score2": 0,
+                        "phase": "Group C",
+                        "status": "NO CONTEST",
+                        "notes": "NO CONTEST"
+                },
+                {
+                        "game_number": 22,
+                        "date": "6/14/2025",
+                        "time": "12:35 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "NSD Stars",
+                        "team2": "Odin B",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group C",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 23,
+                        "date": "6/14/2025",
+                        "time": "1:30 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "CBAD Black",
+                        "team2": "Odin A",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group D",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 24,
+                        "date": "6/14/2025",
+                        "time": "2:25 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "Shores White",
+                        "team2": "CBAD Silver",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Group D",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 25,
+                        "date": "6/14/2025",
+                        "time": "4:20 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "AA2",
+                        "team2": "AA3",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket AA",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 26,
+                        "date": "6/14/2025",
+                        "time": "5:20 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "AA1",
+                        "team2": "AA4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket AA",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 27,
+                        "date": "6/14/2025",
+                        "time": "6:20 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "BB2",
+                        "team2": "BB3",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket BB",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 28,
+                        "date": "6/14/2025",
+                        "time": "7:20 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "BB1",
+                        "team2": "BB4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket BB",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 29,
+                        "date": "6/14/2025",
+                        "time": "4:20 PM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "CC2",
+                        "team2": "CC3",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket CC",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 30,
+                        "date": "6/14/2025",
+                        "time": "5:20 PM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "CC1",
+                        "team2": "CC4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket CC",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 31,
+                        "date": "6/14/2025",
+                        "time": "6:20 PM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "DD2",
+                        "team2": "DD3",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket DD",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 32,
+                        "date": "6/14/2025",
+                        "time": "7:20 PM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "DD1",
+                        "team2": "DD4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket DD",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 33,
+                        "date": "6/15/2025",
+                        "time": "8:00 AM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "AA2",
+                        "team2": "AA4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket AA",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 34,
+                        "date": "6/15/2025",
+                        "time": "9:00 AM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "AA1",
+                        "team2": "AA3",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket AA",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 35,
+                        "date": "6/15/2025",
+                        "time": "10:00 AM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "BB2",
+                        "team2": "BB4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket BB",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 36,
+                        "date": "6/15/2025",
+                        "time": "11:00 AM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "BB1",
+                        "team2": "BB3",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket BB",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 37,
+                        "date": "6/15/2025",
+                        "time": "12:00 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "AA3",
+                        "team2": "AA4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket AA",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 38,
+                        "date": "6/15/2025",
+                        "time": "1:00 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "AA1",
+                        "team2": "AA2",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket AA",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 39,
+                        "date": "6/15/2025",
+                        "time": "2:00 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "BB3",
+                        "team2": "BB4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket BB",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 40,
+                        "date": "6/15/2025",
+                        "time": "3:00 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "BB1",
+                        "team2": "BB2",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket BB",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 41,
+                        "date": "6/15/2025",
+                        "time": "6:00 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "4th in AA",
+                        "team2": "1st BB",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Championship",
+                        "status": "SCHEDULED",
+                        "notes": "4th Place"
+                },
+                {
+                        "game_number": 42,
+                        "date": "6/15/2025",
+                        "time": "7:00 PM",
+                        "venue": "GRANITE_HILLS",
+                        "team1": "4th in BB",
+                        "team2": "1st CC",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Championship",
+                        "status": "SCHEDULED",
+                        "notes": "8th Place"
+                },
+                {
+                        "game_number": 43,
+                        "date": "6/15/2025",
+                        "time": "8:00 AM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "CC2",
+                        "team2": "CC4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket CC",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 44,
+                        "date": "6/15/2025",
+                        "time": "9:00 AM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "CC1",
+                        "team2": "CC3",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket CC",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 45,
+                        "date": "6/15/2025",
+                        "time": "10:00 AM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "DD2",
+                        "team2": "DD4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket DD",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 46,
+                        "date": "6/15/2025",
+                        "time": "11:00 AM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "DD1",
+                        "team2": "DD3",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket DD",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 47,
+                        "date": "6/15/2025",
+                        "time": "12:00 PM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "CC3",
+                        "team2": "CC4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket CC",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 48,
+                        "date": "6/15/2025",
+                        "time": "1:00 PM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "CC1",
+                        "team2": "CC2",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket CC",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 49,
+                        "date": "6/15/2025",
+                        "time": "2:00 PM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "DD3",
+                        "team2": "DD4",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket DD",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 50,
+                        "date": "6/15/2025",
+                        "time": "3:00 PM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "DD1",
+                        "team2": "DD2",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Re-bracket DD",
+                        "status": "SCHEDULED",
+                        "notes": null
+                },
+                {
+                        "game_number": 51,
+                        "date": "6/15/2025",
+                        "time": "6:00 PM",
+                        "venue": "GRANITE_HILLS #2",
+                        "team1": "4th CC",
+                        "team2": "1st DD",
+                        "score1": null,
+                        "score2": null,
+                        "phase": "Championship",
+                        "status": "SCHEDULED",
+                        "notes": "12th Place"
+                }
+        ],
+        "placement": {
+                "1": "Championship",
+                "2": "Championship",
+                "3": "Championship",
+                "4": "Championship",
+                "5": "Classic",
+                "6": "Classic",
+                "7": "Classic",
+                "8": "Classic",
+                "9": "Invitational",
+                "10": "Invitational",
+                "11": "Invitational",
+                "12": "DNQ",
+                "13": "DNQ",
+                "14": "DNQ",
+                "15": "DNQ",
+                "16": "DNQ"
+        }
+};
+
+        
+        // Load tournament data from external JSON or embedded data
+        async function loadTournamentDataFromJSON() {
+            try {
+                const response = await fetch('jos_quali_matches.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.warn('Failed to load external JSON, using embedded data if available:', error);
+                return window.TOURNAMENT_DATA;
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="hero">
@@ -40,21 +804,21 @@
                     <div class="standings-table">
                         <h3>Group A</h3>
                         <div class="standings-list">
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="Del Mar Blue" data-group="A" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="Del Mar Blue" data-group="A">Del Mar Blue</span>
+                                <span class="team-name">Del Mar Blue</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="Del Mar White" data-group="A" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="Del Mar White" data-group="A">Del Mar White</span>
+                                <span class="team-name">Del Mar White</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="Southern" data-group="A" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="Southern" data-group="A">Southern</span>
+                                <span class="team-name">Southern</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="Southern B" data-group="A" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="Southern B" data-group="A">Southern B</span>
+                                <span class="team-name">Southern B</span>
                             </div>
                         </div>
                     </div>
@@ -62,21 +826,21 @@
                     <div class="standings-table">
                         <h3>Group B</h3>
                         <div class="standings-list">
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="LJ United A" data-group="B" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="LJ United A" data-group="B">LJ United A</span>
+                                <span class="team-name">LJ United A</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="Poway" data-group="B" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="Poway" data-group="B">Poway</span>
+                                <span class="team-name">Poway</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="LJ United B" data-group="B" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="LJ United B" data-group="B">LJ United B</span>
+                                <span class="team-name">LJ United B</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="NADO" data-group="B" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="NADO" data-group="B">NADO</span>
+                                <span class="team-name">NADO</span>
                             </div>
                         </div>
                     </div>
@@ -84,21 +848,21 @@
                     <div class="standings-table">
                         <h3>Group C</h3>
                         <div class="standings-list">
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="Shores Black" data-group="C" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="Shores Black" data-group="C">Shores Black</span>
+                                <span class="team-name">Shores Black</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="Shores Gold" data-group="C" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="Shores Gold" data-group="C">Shores Gold</span>
+                                <span class="team-name">Shores Gold</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="NSD Stars" data-group="C" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="NSD Stars" data-group="C">NSD Stars</span>
+                                <span class="team-name">NSD Stars</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="Odin B" data-group="C" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="Odin B" data-group="C">Odin B</span>
+                                <span class="team-name">Odin B</span>
                             </div>
                         </div>
                     </div>
@@ -106,21 +870,21 @@
                     <div class="standings-table">
                         <h3>Group D</h3>
                         <div class="standings-list">
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="CBAD Black" data-group="D" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="CBAD Black" data-group="D">CBAD Black</span>
+                                <span class="team-name">CBAD Black</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="Odin A" data-group="D" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="Odin A" data-group="D">Odin A</span>
+                                <span class="team-name">Odin A</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="Shores White" data-group="D" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="Shores White" data-group="D">Shores White</span>
+                                <span class="team-name">Shores White</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-team" data-team="CBAD Silver" data-group="D" style="cursor: pointer;">
                                 <span class="position">•</span>
-                                <span class="team-name clickable-team" data-team="CBAD Silver" data-group="D">CBAD Silver</span>
+                                <span class="team-name">CBAD Silver</span>
                             </div>
                         </div>
                     </div>
@@ -129,318 +893,6 @@
         </div>
 
 
-        <!-- Bracket Matches -->
-        <div class="content-section">
-            <button class="collapsible">📋 Bracket Matches - All Group Stage Games</button>
-            <div class="collapsible-content">
-                <div class="all-matches-grid">
-                    <div style="grid-column: 1/-1; text-align: center; font-weight: bold; color: #0077be; margin-bottom: 15px;">Friday, June 13 - BBMAC</div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 1 - Opt Out</span>
-                            <span>Same Club - No Game</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span class="winner">Del Mar Blue</span>
-                            <span class="compact-score">5 - 0</span>
-                            <span>Southern B (Opt Out)</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 2 - 1:00 PM</span>
-                            <span>6/13/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Del Mar White</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>Southern</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 3 - Opt Out</span>
-                            <span>Same Club - No Game</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span class="winner">LJ United A</span>
-                            <span class="compact-score">5 - 0</span>
-                            <span>NADO (Opt Out)</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 7 - No Contest</span>
-                            <span>Same Club - No Game</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span class="winner">LJ United A</span>
-                            <span class="compact-score">5 - 0</span>
-                            <span>LJ United B (No Contest)</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 9 - No Contest</span>
-                            <span>Same Club - No Game</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span class="winner">Del Mar Blue</span>
-                            <span class="compact-score">5 - 0</span>
-                            <span>Del Mar White (No Contest)</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 10 - No Contest</span>
-                            <span>Same Club - No Game</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span class="winner">Southern</span>
-                            <span class="compact-score">5 - 0</span>
-                            <span>Southern B (No Contest)</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 15 - No Contest</span>
-                            <span>Same Club - No Game</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span class="winner">CBAD Black</span>
-                            <span class="compact-score">5 - 0</span>
-                            <span>CBAD Silver (No Contest)</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 21 - No Contest</span>
-                            <span>Same Club - No Game</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span class="winner">Shores Black</span>
-                            <span class="compact-score">5 - 0</span>
-                            <span>Shores Gold (No Contest)</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 4 - 3:00 PM</span>
-                            <span>6/13/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Poway</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>LJ United B</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 5 - 6:00 PM</span>
-                            <span>6/13/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Del Mar Blue</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>Southern</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 6 - 5:00 PM</span>
-                            <span>6/13/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Del Mar White</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>Southern B</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 13 - 2:00 PM</span>
-                            <span>6/13/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Shores Black</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>Odin B</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 14 - 4:00 PM</span>
-                            <span>6/13/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Shores Gold</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>NSD Stars</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 16 - 7:00 PM</span>
-                            <span>6/13/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Odin A</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>Shores White</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 17 - BBMAC #2 - 5:00 PM</span>
-                            <span>6/13/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Shores Black</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>NSD Stars</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 18 - BBMAC #2 - 6:00 PM</span>
-                            <span>6/13/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Shores Gold</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>Odin B</span>
-                        </div>
-                    </div>
-
-                    <div style="grid-column: 1/-1; text-align: center; font-weight: bold; color: #0077be; margin: 20px 0 15px 0;">Saturday, June 14 - GRANITE HILLS</div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 8 - 8:00 AM</span>
-                            <span>6/14/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Poway</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>NADO</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 11 - 10:45 AM</span>
-                            <span>6/14/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>LJ United A</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>Poway</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 12 - 11:40 AM</span>
-                            <span>6/14/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>LJ United B</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>NADO</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 19 - 8:55 AM</span>
-                            <span>6/14/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>CBAD Black</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>Shores White</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 20 - 9:50 AM</span>
-                            <span>6/14/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Odin A</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>CBAD Silver</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 22 - 12:35 PM</span>
-                            <span>6/14/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>NSD Stars</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>Odin B</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 23 - 1:30 PM</span>
-                            <span>6/14/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>CBAD Black</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>Odin A</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 24 - 2:25 PM</span>
-                            <span>6/14/2025</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>Shores White</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>CBAD Silver</span>
-                        </div>
-                    </div>
-
-                    <div style="grid-column: 1/-1; text-align: center; margin: 20px 0;">
-                        <h4 style="color: #dc2626; margin-bottom: 10px;">NO CONTEST Games (Same Club/Opt Out)</h4>
-                        <div style="color: #666; font-size: 0.9rem;">
-                            <p>Game 1: Del Mar Blue vs Southern B (5-0 OPT OUT)</p>
-                            <p>Game 3: LJ United A vs NADO (5-0 OPT OUT)</p>
-                            <p>Game 7: LJ United A vs LJ United B (5-0 NO CONTEST)</p>
-                            <p>Game 9: Del Mar Blue vs Del Mar White (5-0 NO CONTEST)</p>
-                            <p>Game 10: Southern vs Southern B (5-0 NO CONTEST)</p>
-                            <p>Game 15: CBAD Black vs CBAD Silver (5-0 NO CONTEST)</p>
-                            <p>Game 21: Shores Black vs Shores Gold (5-0 NO CONTEST)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Re-bracket -->
         <div class="content-section">
@@ -454,21 +906,21 @@
                     <div class="standings-table">
                         <h3>Bracket AA (Places 1-4)</h3>
                         <div class="standings-list">
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="AA" data-position="1" style="cursor: pointer;">
                                 <span class="position">AA1</span>
-                                <span class="team-name clickable-rebracket" data-bracket="AA" data-position="1">1st Place - Group A</span>
+                                <span class="team-name">1st Place - Group A</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="AA" data-position="2" style="cursor: pointer;">
                                 <span class="position">AA2</span>
-                                <span class="team-name clickable-rebracket" data-bracket="AA" data-position="2">1st Place - Group B</span>
+                                <span class="team-name">1st Place - Group B</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="AA" data-position="3" style="cursor: pointer;">
                                 <span class="position">AA3</span>
-                                <span class="team-name clickable-rebracket" data-bracket="AA" data-position="3">1st Place - Group C</span>
+                                <span class="team-name">1st Place - Group C</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="AA" data-position="4" style="cursor: pointer;">
                                 <span class="position">AA4</span>
-                                <span class="team-name clickable-rebracket" data-bracket="AA" data-position="4">1st Place - Group D</span>
+                                <span class="team-name">1st Place - Group D</span>
                             </div>
                         </div>
                     </div>
@@ -476,21 +928,21 @@
                     <div class="standings-table">
                         <h3>Bracket BB (Places 5-8)</h3>
                         <div class="standings-list">
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="BB" data-position="1" style="cursor: pointer;">
                                 <span class="position">BB1</span>
-                                <span class="team-name clickable-rebracket" data-bracket="BB" data-position="1">2nd Place - Group A</span>
+                                <span class="team-name">2nd Place - Group A</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="BB" data-position="2" style="cursor: pointer;">
                                 <span class="position">BB2</span>
-                                <span class="team-name clickable-rebracket" data-bracket="BB" data-position="2">2nd Place - Group B</span>
+                                <span class="team-name">2nd Place - Group B</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="BB" data-position="3" style="cursor: pointer;">
                                 <span class="position">BB3</span>
-                                <span class="team-name clickable-rebracket" data-bracket="BB" data-position="3">2nd Place - Group C</span>
+                                <span class="team-name">2nd Place - Group C</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="BB" data-position="4" style="cursor: pointer;">
                                 <span class="position">BB4</span>
-                                <span class="team-name clickable-rebracket" data-bracket="BB" data-position="4">2nd Place - Group D</span>
+                                <span class="team-name">2nd Place - Group D</span>
                             </div>
                         </div>
                     </div>
@@ -498,21 +950,21 @@
                     <div class="standings-table">
                         <h3>Bracket CC (Places 9-12)</h3>
                         <div class="standings-list">
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="CC" data-position="1" style="cursor: pointer;">
                                 <span class="position">CC1</span>
-                                <span class="team-name clickable-rebracket" data-bracket="CC" data-position="1">3rd Place - Group A</span>
+                                <span class="team-name">3rd Place - Group A</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="CC" data-position="2" style="cursor: pointer;">
                                 <span class="position">CC2</span>
-                                <span class="team-name clickable-rebracket" data-bracket="CC" data-position="2">3rd Place - Group B</span>
+                                <span class="team-name">3rd Place - Group B</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="CC" data-position="3" style="cursor: pointer;">
                                 <span class="position">CC3</span>
-                                <span class="team-name clickable-rebracket" data-bracket="CC" data-position="3">3rd Place - Group C</span>
+                                <span class="team-name">3rd Place - Group C</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="CC" data-position="4" style="cursor: pointer;">
                                 <span class="position">CC4</span>
-                                <span class="team-name clickable-rebracket" data-bracket="CC" data-position="4">3rd Place - Group D</span>
+                                <span class="team-name">3rd Place - Group D</span>
                             </div>
                         </div>
                     </div>
@@ -520,21 +972,21 @@
                     <div class="standings-table">
                         <h3>Bracket DD (Places 13-16)</h3>
                         <div class="standings-list">
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="DD" data-position="1" style="cursor: pointer;">
                                 <span class="position">DD1</span>
-                                <span class="team-name clickable-rebracket" data-bracket="DD" data-position="1">4th Place - Group A</span>
+                                <span class="team-name">4th Place - Group A</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="DD" data-position="2" style="cursor: pointer;">
                                 <span class="position">DD2</span>
-                                <span class="team-name clickable-rebracket" data-bracket="DD" data-position="2">4th Place - Group B</span>
+                                <span class="team-name">4th Place - Group B</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="DD" data-position="3" style="cursor: pointer;">
                                 <span class="position">DD3</span>
-                                <span class="team-name clickable-rebracket" data-bracket="DD" data-position="3">4th Place - Group C</span>
+                                <span class="team-name">4th Place - Group C</span>
                             </div>
-                            <div class="standing-item">
+                            <div class="standing-item clickable-rebracket" data-bracket="DD" data-position="4" style="cursor: pointer;">
                                 <span class="position">DD4</span>
-                                <span class="team-name clickable-rebracket" data-bracket="DD" data-position="4">4th Place - Group D</span>
+                                <span class="team-name">4th Place - Group D</span>
                             </div>
                         </div>
                     </div>
@@ -542,213 +994,23 @@
             </div>
         </div>
 
-        <!-- Re-bracket Matches -->
+
+
+        <!-- Placement Games -->
         <div class="content-section">
-            <button class="collapsible">🏆 Re-bracket Matches - Phase 2 Games</button>
-            <div class="collapsible-content">
+            <div class="section-header">🥉 Placement Games - Final Rankings</div>
+            <div class="section-content">
+                <div class="memorial-story">
+                    <h3>Tournament Placement Matches</h3>
+                    <p>Critical games determining final tournament positions across all competitive levels. These matches establish official rankings and Junior Olympics qualification status for participating teams.</p>
+                </div>
                 <div class="all-matches-grid">
-                    <!-- Saturday Evening -->
-                    <div style="grid-column: 1/-1; text-align: center; font-weight: bold; color: #0077be; margin: 20px 0 15px 0;">Saturday, June 14 (Evening) - GRANITE HILLS</div>
+                    <div style="grid-column: 1/-1; text-align: center; font-weight: bold; color: #0077be; margin: 20px 0 15px 0;">Sunday Evening - Championship Matches</div>
                     
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 25 - 4:20 PM</span>
-                            <span>Bracket AA</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>AA2</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>AA3</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 26 - 5:20 PM</span>
-                            <span>Bracket AA</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>AA1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>AA4</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 27 - 6:20 PM</span>
-                            <span>Bracket BB</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>BB2</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>BB3</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 28 - 7:20 PM</span>
-                            <span>Bracket BB</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>BB1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>BB4</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 29 - 4:20 PM</span>
-                            <span>Bracket CC</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>CC2</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>CC3</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 30 - 5:20 PM</span>
-                            <span>Bracket CC</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>CC1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>CC4</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 31 - 6:20 PM</span>
-                            <span>Bracket DD</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>DD2</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>DD3</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 32 - 7:20 PM</span>
-                            <span>Bracket DD</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>DD1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>DD4</span>
-                        </div>
-                    </div>
-
-                    <!-- Sunday Games -->
-                    <div style="grid-column: 1/-1; text-align: center; font-weight: bold; color: #0077be; margin: 20px 0 15px 0;">Sunday, June 15 - GRANITE HILLS</div>
-                    
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 33 - 8:00 AM</span>
-                            <span>Bracket AA</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>AA2</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>AA4</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 34 - 9:00 AM</span>
-                            <span>Bracket AA</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>AA1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>AA3</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 35 - 10:00 AM</span>
-                            <span>Bracket BB</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>BB2</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>BB4</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 36 - 11:00 AM</span>
-                            <span>Bracket BB</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>BB1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>BB3</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 37 - 12:00 PM</span>
-                            <span>Bracket AA</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>AA3</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>AA4</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 38 - 1:00 PM</span>
-                            <span>Bracket AA</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>AA1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>AA2</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 39 - 2:00 PM</span>
-                            <span>Bracket BB</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>BB3</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>BB4</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 40 - 3:00 PM</span>
-                            <span>Bracket BB</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>BB1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>BB2</span>
-                        </div>
-                    </div>
-
                     <div class="compact-match">
                         <div class="compact-header">
                             <span>Game 41 - 6:00 PM</span>
-                            <span>4th Place Game</span>
+                            <span>🏅 4th Place Game</span>
                         </div>
                         <div class="compact-teams">
                             <span>4th in AA</span>
@@ -760,7 +1022,7 @@
                     <div class="compact-match">
                         <div class="compact-header">
                             <span>Game 42 - 7:00 PM</span>
-                            <span>8th Place Game</span>
+                            <span>🏅 8th Place Game</span>
                         </div>
                         <div class="compact-teams">
                             <span>4th in BB</span>
@@ -768,157 +1030,95 @@
                             <span>1st in CC</span>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Championship Matches -->
-        <div class="content-section">
-            <div class="section-header">🏆 Championship & Final Matches - Granite Hills #2</div>
-            <div class="section-content">
-                <div class="all-matches-grid">
-                    <!-- Sunday Championship Games - Second Venue -->
-                    <div style="grid-column: 1/-1; text-align: center; font-weight: bold; color: #0077be; margin: 20px 0 15px 0;">Sunday, June 15 - GRANITE HILLS #2</div>
-                    
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 43 - 8:00 AM</span>
-                            <span>Bracket CC</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>CC2</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>CC4</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 44 - 9:00 AM</span>
-                            <span>Bracket CC</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>CC1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>CC3</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 45 - 10:00 AM</span>
-                            <span>Bracket DD</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>DD2</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>DD4</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 46 - 11:00 AM</span>
-                            <span>Bracket DD</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>DD1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>DD3</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 47 - 12:00 PM</span>
-                            <span>Bracket CC</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>CC3</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>CC4</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 48 - 1:00 PM</span>
-                            <span>Bracket CC</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>CC1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>CC2</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 49 - 2:00 PM</span>
-                            <span>Bracket DD</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>DD3</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>DD4</span>
-                        </div>
-                    </div>
-
-                    <div class="compact-match">
-                        <div class="compact-header">
-                            <span>Game 50 - 3:00 PM</span>
-                            <span>Bracket DD</span>
-                        </div>
-                        <div class="compact-teams">
-                            <span>DD1</span>
-                            <span class="compact-score">- vs -</span>
-                            <span>DD2</span>
-                        </div>
-                    </div>
 
                     <div class="compact-match">
                         <div class="compact-header">
                             <span>Game 51 - 6:00 PM</span>
-                            <span>12th Place Game</span>
+                            <span>🏅 12th Place Game</span>
                         </div>
                         <div class="compact-teams">
-                            <span>4th CC</span>
+                            <span>4th in CC</span>
                             <span class="compact-score">- vs -</span>
-                            <span>1st DD</span>
+                            <span>1st in DD</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Statistics -->
+        <!-- Championship Match -->
         <div class="content-section">
-            <div class="section-header">📊 Tournament Statistics</div>
+            <div class="section-header">🏆 Tournament Championship</div>
             <div class="section-content">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-number">51</span>
-                        <span class="stat-label">Total Games</span>
+                <div class="memorial-story">
+                    <h3>Junior Olympics Qualification Championship</h3>
+                    <p>The ultimate match determining the tournament champion and automatic Junior Olympics qualification. The winner of Bracket AA claims the title and secures their spot at the national championship.</p>
+                </div>
+                <div class="all-matches-grid">
+                    <div style="grid-column: 1/-1; text-align: center; font-weight: bold; color: #dc2626; margin: 20px 0 15px 0; font-size: 1.2rem;">🏆 CHAMPIONSHIP FINAL 🏆</div>
+                    
+                    <div class="compact-match" style="border: 3px solid #dc2626; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);">
+                        <div class="compact-header" style="background: #dc2626; color: white; font-weight: bold;">
+                            <span>🏆 CHAMPIONSHIP GAME - TBD</span>
+                            <span>1st Place - Junior Olympics Qualification</span>
+                        </div>
+                        <div class="compact-teams" style="font-weight: bold; font-size: 1.1rem;">
+                            <span>Winner of AA</span>
+                            <span class="compact-score" style="color: #dc2626;">- vs -</span>
+                            <span>Runner-up of AA</span>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <span class="stat-number">16</span>
-                        <span class="stat-label">Teams</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number">3</span>
-                        <span class="stat-label">Days</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number">4</span>
-                        <span class="stat-label">Groups</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number">4</span>
-                        <span class="stat-label">Re-brackets</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number">4</span>
-                        <span class="stat-label">Pools</span>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- All Tournament Matches -->
+        <div class="content-section">
+            <button class="collapsible">📅 All Tournament Matches - Complete Schedule</button>
+            <div class="collapsible-content">
+                <div style="overflow-x: auto; margin-top: 20px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #0077be 0%, #00a8cc 100%); color: white;">
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Game</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Date</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Time</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Venue</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Team 1</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Score</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Team 2</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Phase/Bracket</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matches-tbody">
+                            <!-- Matches will be loaded dynamically from jos_quali_matches.json -->
+
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;">
+                    <h4 style="color: #dc2626; margin-bottom: 15px; text-align: center;">📋 Match Status Legend</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.9rem;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="display: inline-block; width: 12px; height: 12px; background: #1976d2; border-radius: 50%;"></span>
+                            <span><strong>SCHEDULED</strong> - Match to be played</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="display: inline-block; width: 12px; height: 12px; background: #d32f2f; border-radius: 50%;"></span>
+                            <span><strong>NO CONTEST</strong> - Same club teams</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="display: inline-block; width: 12px; height: 12px; background: #d32f2f; border-radius: 50%;"></span>
+                            <span><strong>OPT OUT</strong> - Team opted out</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="display: inline-block; width: 12px; height: 12px; background: #2e7d32; border-radius: 50%;"></span>
+                            <span><strong>Winner</strong> - Bold team name</span>
+                        </div>
                     </div>
                 </div>
             </div>
