@@ -187,7 +187,29 @@
       "score2": 0,
       "phase": "Group C",
       "status": "COMPLETED",
-      "notes": null
+      "notes": null,
+      "videos": [
+        {
+          "quarter": "Q1",
+          "url": "https://youtu.be/0ZMirckqmmQ?si=W6poOUCYQjy1WHrn",
+          "title": "SD Shores Black vs ODIN B - Q1"
+        },
+        {
+          "quarter": "Q2", 
+          "url": "https://youtu.be/XTzXxmc82Nk?si=rTQeAw31b6MdzCNf",
+          "title": "SD Shores Black vs ODIN B - Q2"
+        },
+        {
+          "quarter": "Q3",
+          "url": "https://youtu.be/WxiiKWTiboQ?si=AqM08ye_-ZAvMFrM", 
+          "title": "SD Shores Black vs ODIN B - Q3"
+        },
+        {
+          "quarter": "Q4",
+          "url": "https://youtu.be/-8Qq811WlDg?si=-MjIoZdoIHtEZ7Gv",
+          "title": "SD Shores Black vs ODIN B - Q4"
+        }
+      ]
     },
     {
       "game_number": 14,
