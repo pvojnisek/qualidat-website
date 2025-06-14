@@ -79,10 +79,10 @@
       "venue": "BBMAC",
       "team1": "Del Mar Blue",
       "team2": "Southern",
-      "score1": null,
-      "score2": null,
+      "score1": 16,
+      "score2": 6,
       "phase": "Group A",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": null
     },
     {
@@ -244,10 +244,10 @@
       "venue": "BBMAC",
       "team1": "Odin A",
       "team2": "Shores White",
-      "score1": null,
-      "score2": null,
+      "score1": 18,
+      "score2": 0,
       "phase": "Group D",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": null
     },
     {
@@ -261,7 +261,29 @@
       "score2": 0,
       "phase": "Group C",
       "status": "COMPLETED",
-      "notes": null
+      "notes": null,
+      "videos": [
+        {
+          "quarter": "Q1",
+          "url": "https://youtu.be/_ItgFgvJCMQ?si=jzCSU1WQfNcIwdOR",
+          "title": "Shores Black vs NSD Stars - Q1"
+        },
+        {
+          "quarter": "Q2", 
+          "url": "https://youtu.be/2sPeeSaoEYQ?si=CHY8gj94bXLtQ7JW",
+          "title": "Shores Black vs NSD Stars - Q2"
+        },
+        {
+          "quarter": "Q3",
+          "url": "https://youtu.be/WsV0y-X9mYY?si=6kytUMsjD9sA8GIL", 
+          "title": "Shores Black vs NSD Stars - Q3"
+        },
+        {
+          "quarter": "Q4",
+          "url": "https://youtu.be/BGa0ysIarfY?si=l8HD_XDcv3zQ0roy",
+          "title": "Shores Black vs NSD Stars - Q4"
+        }
+      ]
     },
     {
       "game_number": 18,
@@ -270,10 +292,10 @@
       "venue": "BBMAC #2",
       "team1": "Shores Gold",
       "team2": "Odin B",
-      "score1": null,
-      "score2": null,
+      "score1": 14,
+      "score2": 4,
       "phase": "Group C",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": null
     },
     {
