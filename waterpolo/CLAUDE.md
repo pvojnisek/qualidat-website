@@ -97,6 +97,27 @@ Document contains SD Shores Black team match recordings with YouTube links:
 - the specific sheet can be fetched directly in csv format here: https://docs.google.com/spreadsheets/d/1C_yU7MyVHzL1_rubWOHVqAeDto9BApOgw7MarJzQoLk/export?format=csv&gid=0#gid=0 - use this url to process the tournament official live data
 - The data is public and updated regularly
 
+#### Updating Tournament Results from Google Sheets
+
+To fetch and update tournament results from the official Google Sheet, use this curl command:
+
+```bash
+curl -L "https://docs.google.com/spreadsheets/d/1C_yU7MyVHzL1_rubWOHVqAeDto9BApOgw7MarJzQoLk/export?format=csv&gid=0" 2>/dev/null
+```
+
+**How to identify completed matches from CSV data:**
+- Look for rows with game numbers (e.g., "Game # 4", "Game # 6")
+- Check for scores in columns S (score1) and S (score2) - if both have numeric values, the match is completed
+- Parse team names from "Whites Caps" (team1) and "Dark Caps" (team2) columns
+- Update both `jos_quali_matches.json` and `20250613_16U_JOs_Quals.html` files with:
+  - `score1` and `score2` values
+  - `status` changed from "SCHEDULED" to "COMPLETED"
+
+**CSV Data Format:**
+- Column structure: DATE, LOCATION, TIME, [Game #], Whites Caps, S, VS, Dark Caps, S, NOTES
+- Completed matches have numeric scores in the S columns
+- Game numbers are in format "Game # X" where X is the game number
+
 ### Locations
 
 - BBMAC: Brian Bent Memorial Aquatics Complex (location: MRVC+33 Coronado, California)
