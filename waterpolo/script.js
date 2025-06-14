@@ -38,6 +38,7 @@ async function loadTournamentData() {
         populateGroupStandings();
         populateReBrackets();
         populatePlacementMatches();
+        displayGroupVideos();
         console.log('✅ Page populated successfully');
     } catch (error) {
         console.error('❌ Error populating page:', error);
@@ -56,7 +57,7 @@ function populateMatchTable() {
     // Group stage matches
     html += `
         <tr style="background: #f8f9fa;">
-            <td colspan="9" style="padding: 15px; text-align: center; font-weight: bold; color: #0077be; font-size: 1.1rem; border: 1px solid #ddd;">🏊‍♂️ GROUP STAGE MATCHES</td>
+            <td colspan="10" style="padding: 15px; text-align: center; font-weight: bold; color: #0077be; font-size: 1.1rem; border: 1px solid #ddd;">🏊‍♂️ GROUP STAGE MATCHES</td>
         </tr>`;
 
     // Group matches by date and venue
@@ -81,7 +82,7 @@ function populateMatchTable() {
             const venueDisplay = matchVenue ? matchVenue.replace(/_/g, ' ') : 'TBD';
             html += `
                 <tr style="background: #e3f2fd;">
-                    <td colspan="9" style="padding: 10px; text-align: center; font-weight: bold; color: #0077be; border: 1px solid #ddd;">${formattedDate} - ${venueDisplay}</td>
+                    <td colspan="10" style="padding: 10px; text-align: center; font-weight: bold; color: #0077be; border: 1px solid #ddd;">${formattedDate} - ${venueDisplay}</td>
                 </tr>`;
         }
         
@@ -94,6 +95,16 @@ function populateMatchTable() {
         const statusColor = match.status === 'SCHEDULED' ? '#1976d2' : '#d32f2f';
         const venueDisplay = match.venue ? match.venue.replace(/_/g, ' ') : 'TBD';
         
+        // Video links column
+        let videoHTML = '-';
+        if (match.videos && match.videos.length > 0) {
+            videoHTML = '<div style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;">';
+            match.videos.forEach(video => {
+                videoHTML += `<a href="${video.url}" target="_blank" style="display: inline-block; padding: 2px 6px; background: #dc2626; color: white; text-decoration: none; border-radius: 3px; font-size: 0.7rem; font-weight: bold;">${video.quarter}</a>`;
+            });
+            videoHTML += '</div>';
+        }
+        
         html += `
             <tr style="${rowStyle}">
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${match.game_number}</td>
@@ -105,13 +116,14 @@ function populateMatchTable() {
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; ${match.score2 > match.score1 ? 'font-weight: bold; color: #2e7d32;' : ''}">${match.team2}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.phase}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: ${statusColor}; font-weight: bold;">${match.status}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${videoHTML}</td>
             </tr>`;
     });
 
     // Re-bracket matches
     html += `
         <tr style="background: #f8f9fa;">
-            <td colspan="9" style="padding: 15px; text-align: center; font-weight: bold; color: #0077be; font-size: 1.1rem; border: 1px solid #ddd;">🏆 RE-BRACKET MATCHES</td>
+            <td colspan="10" style="padding: 15px; text-align: center; font-weight: bold; color: #0077be; font-size: 1.1rem; border: 1px solid #ddd;">🏆 RE-BRACKET MATCHES</td>
         </tr>`;
 
     const rebracketMatches = tournamentData.matches.filter(match => match.phase && match.phase.startsWith('Re-bracket'));
@@ -135,7 +147,7 @@ function populateMatchTable() {
             const venueDisplay = matchVenue ? matchVenue.replace(/_/g, ' ') : 'TBD';
             html += `
                 <tr style="background: #e3f2fd;">
-                    <td colspan="9" style="padding: 10px; text-align: center; font-weight: bold; color: #0077be; border: 1px solid #ddd;">${formattedDate} - ${venueDisplay}</td>
+                    <td colspan="10" style="padding: 10px; text-align: center; font-weight: bold; color: #0077be; border: 1px solid #ddd;">${formattedDate} - ${venueDisplay}</td>
                 </tr>`;
         }
         
@@ -143,6 +155,16 @@ function populateMatchTable() {
             `${match.score1}-${match.score2}` : '- vs -';
         
         const venueDisplay = match.venue ? match.venue.replace(/_/g, ' ') : 'TBD';
+        
+        // Video links column
+        let videoHTML = '-';
+        if (match.videos && match.videos.length > 0) {
+            videoHTML = '<div style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;">';
+            match.videos.forEach(video => {
+                videoHTML += `<a href="${video.url}" target="_blank" style="display: inline-block; padding: 2px 6px; background: #dc2626; color: white; text-decoration: none; border-radius: 3px; font-size: 0.7rem; font-weight: bold;">${video.quarter}</a>`;
+            });
+            videoHTML += '</div>';
+        }
         
         html += `
             <tr style="background: #f9f9f9;">
@@ -155,13 +177,14 @@ function populateMatchTable() {
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team2}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.phase}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: #1976d2; font-weight: bold;">${match.status}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${videoHTML}</td>
             </tr>`;
     });
 
     // Championship matches
     html += `
         <tr style="background: #f8f9fa;">
-            <td colspan="9" style="padding: 15px; text-align: center; font-weight: bold; color: #0077be; font-size: 1.1rem; border: 1px solid #ddd;">🏆 CHAMPIONSHIP & PLACEMENT MATCHES</td>
+            <td colspan="10" style="padding: 15px; text-align: center; font-weight: bold; color: #0077be; font-size: 1.1rem; border: 1px solid #ddd;">🏆 CHAMPIONSHIP & PLACEMENT MATCHES</td>
         </tr>`;
 
     const championshipMatches = tournamentData.matches.filter(match => match.phase === 'Championship');
@@ -171,6 +194,16 @@ function populateMatchTable() {
             `${match.score1}-${match.score2}` : '- vs -';
         
         const venueDisplay = match.venue ? match.venue.replace(/_/g, ' ') : 'TBD';
+        
+        // Video links column
+        let videoHTML = '-';
+        if (match.videos && match.videos.length > 0) {
+            videoHTML = '<div style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;">';
+            match.videos.forEach(video => {
+                videoHTML += `<a href="${video.url}" target="_blank" style="display: inline-block; padding: 2px 6px; background: #dc2626; color: white; text-decoration: none; border-radius: 3px; font-size: 0.7rem; font-weight: bold;">${video.quarter}</a>`;
+            });
+            videoHTML += '</div>';
+        }
         
         html += `
             <tr style="background: #fff3e0;">
@@ -183,6 +216,7 @@ function populateMatchTable() {
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team2}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #ff9800;">${match.phase}${match.notes ? ' - ' + match.notes : ''}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: #1976d2; font-weight: bold;">${match.status}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${videoHTML}</td>
             </tr>`;
     });
 
@@ -206,6 +240,50 @@ function populatePlacementMatches() {
     // This function would update placement match cards
     // For now, keeping the existing static structure
     console.log('Placement matches function called');
+}
+
+function displayGroupVideos() {
+    if (!tournamentData || !tournamentData.matches) {
+        console.error('Tournament data not available for video display');
+        return;
+    }
+    
+    const groupCVideos = document.getElementById('group-c-videos');
+    if (!groupCVideos) {
+        console.warn('Group C videos container not found');
+        return;
+    }
+    
+    // Find matches with videos for Group C teams
+    const groupCMatches = tournamentData.matches.filter(match => 
+        (match.phase === 'Group C' || 
+         ['Shores Black', 'Shores Gold', 'NSD Stars', 'Odin B'].includes(match.team1) ||
+         ['Shores Black', 'Shores Gold', 'NSD Stars', 'Odin B'].includes(match.team2)) &&
+        match.videos && match.videos.length > 0
+    );
+    
+    if (groupCMatches.length > 0) {
+        let videoHTML = '<div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #0077be;"><h4 style="margin: 0 0 10px 0; color: #0077be; font-size: 0.9rem;">🎥 Match Videos</h4>';
+        
+        groupCMatches.forEach(match => {
+            videoHTML += `<div style="margin-bottom: 10px;">`;
+            videoHTML += `<div style="font-weight: bold; margin-bottom: 5px; font-size: 0.85rem;">${match.team1} vs ${match.team2} (Game ${match.game_number})</div>`;
+            videoHTML += `<div style="display: flex; flex-wrap: wrap; gap: 8px;">`;
+            
+            match.videos.forEach(video => {
+                videoHTML += `<a href="${video.url}" target="_blank" style="display: inline-block; padding: 4px 8px; background: #dc2626; color: white; text-decoration: none; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">${video.quarter}</a>`;
+            });
+            
+            videoHTML += `</div></div>`;
+        });
+        
+        videoHTML += '</div>';
+        groupCVideos.innerHTML = videoHTML;
+        console.log('✅ Group videos displayed successfully');
+    } else {
+        groupCVideos.innerHTML = '';
+        console.log('No videos found for Group C teams');
+    }
 }
 
 // Add some interactive animations

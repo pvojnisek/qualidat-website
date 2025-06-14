@@ -6,6 +6,88 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a static website (microsite under /waterpolo/) for water polo tournaments, specifically for the San Diego Shores 16U team's Summer Campaign 2025. The site showcases tournament schedules, results, and provides detailed information about water polo events. In the key matches sections, focus on San Diego Shores teams.
 
+## Video Content Management
+
+The tournament pages now feature **dynamic video integration** that automatically displays YouTube video links for recorded matches. Videos appear in two locations:
+1. **Under the relevant team brackets** (e.g., Group C for SD Shores teams)
+2. **In the complete match table** (Videos column)
+
+### How to Add Videos During Tournament
+
+To add new videos to any tournament page, follow these steps:
+
+#### Method 1: Update JSON Data File (Recommended)
+1. **Edit the tournament JSON file** (e.g., `jos_quali_matches.json`)
+2. **Find the match** you want to add videos to by `game_number`
+3. **Add a `videos` array** to the match object:
+
+```json
+{
+  "game_number": 13,
+  "date": "6/13/2025",
+  "team1": "Shores Black",
+  "team2": "Odin B",
+  "score1": 20,
+  "score2": 0,
+  "status": "COMPLETED",
+  "videos": [
+    {
+      "quarter": "Q1",
+      "url": "https://youtu.be/VIDEO_ID_HERE",
+      "title": "Team1 vs Team2 - Q1"
+    },
+    {
+      "quarter": "Q2", 
+      "url": "https://youtu.be/VIDEO_ID_HERE",
+      "title": "Team1 vs Team2 - Q2"
+    }
+  ]
+}
+```
+
+#### Method 2: Update HTML Embedded Data (Alternative)
+1. **Edit the tournament HTML file** (e.g., `20250613_16U_JOs_Quals.html`)
+2. **Find the match in the `window.TOURNAMENT_DATA.matches` array**
+3. **Add the same `videos` array structure** as shown above
+
+#### Video Object Format
+Each video in the `videos` array should have:
+- **`quarter`**: Display name (e.g., "Q1", "Q2", "Q3", "Q4", "Full", "Highlights")
+- **`url`**: Full YouTube URL (e.g., `https://youtu.be/VIDEO_ID`)
+- **`title`**: Descriptive title for accessibility
+
+### Video Display Features
+
+**Automatic Display**: Once videos are added to the data, they automatically appear:
+- **Bracket sections**: Videos show under relevant team groups with match details
+- **Match table**: Clickable red buttons (Q1, Q2, etc.) in the Videos column
+- **Team popups**: Videos appear when clicking on team names in brackets
+
+**Dynamic Updates**: No code changes needed - just update the JSON data and videos appear instantly.
+
+### Current Video Sources
+
+#### Videos from Donald Nelson
+Document contains SD Shores Black team match recordings with YouTube links:
+- **Source**: https://docs.google.com/document/d/14Q1lVQQbu2w1qPZsN-6UN3NeZhFSjXT2YhX0J-WXlto/export?format=txt
+- **Content**: Match videos organized by tournament and opponent
+- **Usage**: Extract YouTube URLs and match them to tournament games
+
+#### Example: Current Videos Added
+**SD Shores Black vs ODIN B (Game 13)**:
+- Q1: https://youtu.be/0ZMirckqmmQ?si=W6poOUCYQjy1WHrn
+- Q2: https://youtu.be/XTzXxmc82Nk?si=rTQeAw31b6MdzCNf  
+- Q3: https://youtu.be/WxiiKWTiboQ?si=AqM08ye_-ZAvMFrM
+- Q4: https://youtu.be/-8Qq811WlDg?si=-MjIoZdoIHtEZ7Gv
+
+### Best Practices
+
+1. **Prioritize current tournament videos** over archived matches
+2. **Use consistent quarter naming** (Q1, Q2, Q3, Q4)
+3. **Include full YouTube URLs** with any tracking parameters
+4. **Focus on SD Shores teams** but include videos for any relevant matches
+5. **Test video links** before adding to ensure they work
+6. **Update both JSON and HTML** if using embedded data as fallback
 
 ## Tournament information
 
@@ -70,6 +152,9 @@ The CSS uses a cohesive water polo theme with:
 ## JavaScript Features
 
 The script.js handles:
+- **Dynamic video integration**: Automatically displays YouTube video links in brackets and match tables
+- **Interactive match popups**: Click team names to see all their matches with video links
+- **Tournament data loading**: Supports both external JSON files and embedded data
 - Animated stat counters that count up when scrolled into view
 - Hover effects for cards (match-card, fact-card, stat-card)
 - Collapsible content functionality for tournament details
