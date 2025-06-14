@@ -171,6 +171,30 @@
             margin-left: 15px;
         }
 
+        .team-record {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #0077be;
+            background: rgba(0, 119, 190, 0.1);
+            padding: 4px 8px;
+            border-radius: 12px;
+            margin-right: 10px;
+        }
+
+        .team-stats {
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .group-summary {
+            padding: 10px 20px;
+            background: rgba(0, 119, 190, 0.05);
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+            color: #6c757d;
+        }
+
         .matches-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));

@@ -812,6 +812,7 @@
                 return window.TOURNAMENT_DATA;
             }
         }
+
     </script>
 </head>
 <body>
@@ -842,97 +843,14 @@
 
         <!-- Bracket -->
         <div class="content-section">
-            <div class="section-header">🏊‍♂️ Group Stage Bracket</div>
+            <div class="section-header">🏊‍♂️ Group Stage Standings</div>
             <div class="section-content">
-                <div class="standings-grid">
-                    <div class="standings-table">
-                        <h3>Group A</h3>
-                        <div class="standings-list">
-                            <div class="standing-item clickable-team" data-team="Del Mar Blue" data-group="A" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">Del Mar Blue</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="Del Mar White" data-group="A" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">Del Mar White</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="Southern" data-group="A" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">Southern</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="Southern B" data-group="A" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">Southern B</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="standings-table">
-                        <h3>Group B</h3>
-                        <div class="standings-list">
-                            <div class="standing-item clickable-team" data-team="LJ United A" data-group="B" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">LJ United A</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="Poway" data-group="B" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">Poway</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="LJ United B" data-group="B" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">LJ United B</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="NADO" data-group="B" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">NADO</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="standings-table">
-                        <h3>Group C</h3>
-                        <div class="standings-list">
-                            <div class="standing-item clickable-team" data-team="Shores Black" data-group="C" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">Shores Black</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="Shores Gold" data-group="C" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">Shores Gold</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="NSD Stars" data-group="C" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">NSD Stars</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="Odin B" data-group="C" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">Odin B</span>
-                            </div>
-                        </div>
-                        <div id="group-c-videos" class="group-videos"></div>
-                    </div>
-
-                    <div class="standings-table">
-                        <h3>Group D</h3>
-                        <div class="standings-list">
-                            <div class="standing-item clickable-team" data-team="CBAD Black" data-group="D" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">CBAD Black</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="Odin A" data-group="D" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">Odin A</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="Shores White" data-group="D" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">Shores White</span>
-                            </div>
-                            <div class="standing-item clickable-team" data-team="CBAD Silver" data-group="D" style="cursor: pointer;">
-                                <span class="position">•</span>
-                                <span class="team-name">CBAD Silver</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="memorial-story">
+                    <h3>Current Group Standings</h3>
+                    <p>Rankings based on completed matches. Teams are ranked by match points (3 for win, 1 for tie), then goal differential, then goals scored. Group winners advance to Championship bracket (AA), runners-up to Classic bracket (BB).</p>
+                </div>
+                <div class="standings-grid" id="group-standings-container">
+                    <!-- Standings will be dynamically populated here -->
                 </div>
             </div>
         </div>
