@@ -92,7 +92,6 @@ function populateMatchTable() {
         const score = match.score1 !== null && match.score2 !== null ? 
             `${match.score1}-${match.score2}` : '- vs -';
         
-        const statusColor = match.status === 'SCHEDULED' ? '#1976d2' : '#d32f2f';
         const venueDisplay = match.venue ? match.venue.replace(/_/g, ' ') : 'TBD';
         
         // Video links column
@@ -115,7 +114,7 @@ function populateMatchTable() {
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #d32f2f;">${score}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; ${match.score2 > match.score1 ? 'font-weight: bold; color: #2e7d32;' : ''}">${match.team2}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.phase}</td>
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: ${statusColor}; font-weight: bold;">${match.status}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;" class="status-${match.status.toLowerCase().replace(/\s+/g, '-')}">${match.status}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${videoHTML}</td>
             </tr>`;
     });
@@ -176,7 +175,7 @@ function populateMatchTable() {
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #d32f2f;">${score}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team2}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.phase}</td>
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: #1976d2; font-weight: bold;">${match.status}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;" class="status-${match.status.toLowerCase().replace(/\s+/g, '-')}">${match.status}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${videoHTML}</td>
             </tr>`;
     });
@@ -215,7 +214,7 @@ function populateMatchTable() {
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #d32f2f;">${score}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team2}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #ff9800;">${match.phase}${match.notes ? ' - ' + match.notes : ''}</td>
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: #1976d2; font-weight: bold;">${match.status}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;" class="status-${match.status.toLowerCase().replace(/\s+/g, '-')}">${match.status}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${videoHTML}</td>
             </tr>`;
     });
