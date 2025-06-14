@@ -224,9 +224,169 @@ function populateMatchTable() {
 }
 
 function populateGroupStandings() {
-    // This function would update group standings based on match results
-    // For now, keeping the existing static structure
-    console.log('Group standings function called');
+    const container = document.getElementById('group-standings-container');
+    if (!container || !tournamentData) {
+        console.error('Missing standings container or tournament data');
+        return;
+    }
+
+    try {
+        // Calculate standings using the embedded functions from the HTML
+        const standings = calculateGroupStandings(tournamentData.matches, tournamentData.groups);
+        
+        // Generate HTML for each group
+        let html = '';
+        const groups = ['A', 'B', 'C', 'D'];
+        
+        groups.forEach(groupLetter => {
+            html += generateStandingsHTML(standings, groupLetter, groupLetter);
+        });
+        
+        container.innerHTML = html;
+        
+        // Re-attach event listeners for team clicks
+        setupTeamClickHandlers();
+        
+        console.log('✅ Group standings populated successfully');
+    } catch (error) {
+        console.error('❌ Error populating group standings:', error);
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #d32f2f;">
+                <h3>⚠️ Error Loading Standings</h3>
+                <p>Unable to calculate current standings. Please refresh the page.</p>
+            </div>
+        `;
+    }
+}
+
+// Calculate standings for each group based on match results
+function calculateGroupStandings(matches, groups) {
+    const standings = {};
+    
+    // Initialize standings for each group
+    Object.keys(groups).forEach(groupName => {
+        standings[groupName] = {};
+        groups[groupName].forEach(team => {
+            standings[groupName][team] = {
+                team: team,
+                played: 0,
+                wins: 0,
+                losses: 0,
+                ties: 0,
+                points: 0,
+                goalsFor: 0,
+                goalsAgainst: 0,
+                goalDifferential: 0,
+                position: 0
+            };
+        });
+    });
+
+    // Process all matches with scores (COMPLETED, OPT OUT, NO CONTEST)
+    matches.forEach(match => {
+        if (match.status === 'COMPLETED' || match.status === 'OPT OUT' || match.status === 'NO CONTEST') {
+            const phase = match.phase;
+            const groupName = phase.replace('Group ', '');
+            
+            if (standings[groupName] && match.score1 !== null && match.score2 !== null) {
+                const team1 = match.team1;
+                const team2 = match.team2;
+                const score1 = match.score1;
+                const score2 = match.score2;
+
+                // Only process if both teams are in the group
+                if (standings[groupName][team1] && standings[groupName][team2]) {
+                    // Update match statistics
+                    standings[groupName][team1].played++;
+                    standings[groupName][team2].played++;
+                    standings[groupName][team1].goalsFor += score1;
+                    standings[groupName][team1].goalsAgainst += score2;
+                    standings[groupName][team2].goalsFor += score2;
+                    standings[groupName][team2].goalsAgainst += score1;
+
+                    // Determine winner and update records
+                    if (score1 > score2) {
+                        standings[groupName][team1].wins++;
+                        standings[groupName][team1].points += 3;
+                        standings[groupName][team2].losses++;
+                    } else if (score2 > score1) {
+                        standings[groupName][team2].wins++;
+                        standings[groupName][team2].points += 3;
+                        standings[groupName][team1].losses++;
+                    } else {
+                        standings[groupName][team1].ties++;
+                        standings[groupName][team2].ties++;
+                        standings[groupName][team1].points += 1;
+                        standings[groupName][team2].points += 1;
+                    }
+                }
+            }
+        }
+    });
+
+    // Calculate goal differential and sort teams
+    Object.keys(standings).forEach(groupName => {
+        Object.keys(standings[groupName]).forEach(team => {
+            standings[groupName][team].goalDifferential = 
+                standings[groupName][team].goalsFor - standings[groupName][team].goalsAgainst;
+        });
+
+        // Convert to array and sort
+        const teamsArray = Object.values(standings[groupName]);
+        teamsArray.sort((a, b) => {
+            // Sort by points first
+            if (b.points !== a.points) return b.points - a.points;
+            // Then by goal differential
+            if (b.goalDifferential !== a.goalDifferential) return b.goalDifferential - a.goalDifferential;
+            // Then by goals for
+            if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+            // Finally by team name
+            return a.team.localeCompare(b.team);
+        });
+
+        // Update positions
+        teamsArray.forEach((team, index) => {
+            team.position = index + 1;
+            standings[groupName][team.team] = team;
+        });
+    });
+
+    return standings;
+}
+
+// Generate HTML for standings display
+function generateStandingsHTML(standings, groupName, groupLetter) {
+    const teams = Object.values(standings[groupName]).sort((a, b) => a.position - b.position);
+    
+    return `
+        <div class="standings-table">
+            <h3>Group ${groupLetter}</h3>
+            <div class="standings-list">
+                ${teams.map((team, index) => `
+                    <div class="standing-item clickable-team" data-team="${team.team}" data-group="${groupLetter}" style="cursor: pointer;">
+                        <span class="position">${getPositionIcon(index + 1)}</span>
+                        <span class="team-name">${team.team}</span>
+                        <span class="team-record">${team.wins}-${team.losses}${team.ties > 0 ? '-' + team.ties : ''}</span>
+                        <span class="team-stats">GD: ${team.goalDifferential > 0 ? '+' : ''}${team.goalDifferential}</span>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="group-summary">
+                <small>W-L Record | GD: Goal Differential</small>
+            </div>
+            ${groupLetter === 'C' ? '<div id="group-c-videos" class="group-videos"></div>' : ''}
+        </div>
+    `;
+}
+
+// Get position icon based on rank
+function getPositionIcon(position) {
+    switch(position) {
+        case 1: return '🥇';
+        case 2: return '🥈';
+        case 3: return '🥉';
+        default: return '•';
+    }
 }
 
 function populateReBrackets() {
