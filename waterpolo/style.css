@@ -822,6 +822,33 @@
     color: white;
 }
 
+/* Status colors for match table */
+#matches-tbody td[class*="status-"] { /* General style for all status cells if needed */
+    font-weight: bold;
+}
+
+#matches-tbody .status-completed {
+    color: #2e7d32; /* Green */
+}
+
+#matches-tbody .status-scheduled {
+    color: #1976d2; /* Blue */
+}
+
+#matches-tbody .status-opt-out {
+    color: #d32f2f; /* Red */
+}
+
+#matches-tbody .status-no-contest {
+    color: #ff9800; /* Orange */
+}
+
+/* Fallback for any other statuses that might not have a specific class or were missed */
+#matches-tbody td[class*="status-"] {
+    /* Default color if no specific status class matches, could be black or inherit */
+    /* color: #333333; */ /* Example: Dark grey if not specified by a more specific rule */
+}
+
 .video-btn-small {
     display: inline-block;
     padding: 3px 8px;
