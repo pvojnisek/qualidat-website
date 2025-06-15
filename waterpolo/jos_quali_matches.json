@@ -574,10 +574,10 @@
       "venue": "GRANITE_HILLS",
       "team1": "Del Mar Blue",
       "team2": "LJ United A",
-      "score1": null,
-      "score2": null,
+      "score1": 12,
+      "score2": 13,
       "phase": "Re-bracket AA",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": "AA1 vs AA2"
     },
     {
