@@ -28,6 +28,12 @@ async function loadTournamentData() {
                         </td>
                     </tr>`;
             }
+            
+            // Also show error in champions section
+            const championsContainer = document.getElementById('champions-matches-container');
+            if (championsContainer) {
+                championsContainer.innerHTML = '<p style="text-align: center; color: #d32f2f; padding: 20px;">❌ Error: No tournament data available. Please check the console for details.</p>';
+            }
             return;
         }
     }
@@ -43,6 +49,13 @@ async function loadTournamentData() {
         console.log('✅ Page populated successfully');
     } catch (error) {
         console.error('❌ Error populating page:', error);
+        
+        // Try champions section again in case it failed
+        try {
+            populateChampionsSection();
+        } catch (champError) {
+            console.error('❌ Error populating champions section on retry:', champError);
+        }
     }
 }
 
@@ -448,10 +461,18 @@ function displayGroupVideos() {
 
 function populateChampionsSection() {
     const container = document.getElementById('champions-matches-container');
-    if (!container || !tournamentData) {
-        console.error('Missing champions container or tournament data');
+    if (!container) {
+        console.error('❌ Champions container not found');
         return;
     }
+    
+    if (!tournamentData) {
+        console.error('❌ Tournament data not available for champions section');
+        container.innerHTML = '<p style="text-align: center; color: #d32f2f; padding: 20px;">⚠️ Tournament data not loaded. Please refresh the page.</p>';
+        return;
+    }
+    
+    console.log('✅ Loading champions section with data:', tournamentData);
 
     const championTeam = 'Shores Black';
     
@@ -638,6 +659,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load tournament data first
     loadTournamentData();
+    
+    // Backup mechanism - try to populate champions section after a delay
+    setTimeout(function() {
+        const container = document.getElementById('champions-matches-container');
+        if (container && (!container.innerHTML || container.innerHTML.trim() === '')) {
+            console.log('🔄 Retrying champions section after delay...');
+            if (window.TOURNAMENT_DATA && !tournamentData) {
+                tournamentData = window.TOURNAMENT_DATA;
+                console.log('✅ Using embedded data for delayed retry');
+            }
+            populateChampionsSection();
+        }
+    }, 2000); // Retry after 2 seconds
     
     // Animate stats on scroll
     const statNumbers = document.querySelectorAll('.stat-number');
