@@ -1237,3 +1237,66 @@ fadeOutStyle.textContent = `
     }
 `;
 document.head.appendChild(fadeOutStyle);
+
+// Team photo zoom functionality
+function zoomImage(img) {
+    // Create overlay if it doesn't exist
+    let overlay = document.querySelector('.photo-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'photo-overlay';
+        
+        // Create close button
+        const closeBtn = document.createElement('div');
+        closeBtn.className = 'close-btn';
+        closeBtn.innerHTML = '×';
+        closeBtn.onclick = closeZoom;
+        
+        // Create zoomed image
+        const zoomedImg = document.createElement('img');
+        zoomedImg.src = img.src;
+        zoomedImg.alt = img.alt;
+        
+        overlay.appendChild(closeBtn);
+        overlay.appendChild(zoomedImg);
+        document.body.appendChild(overlay);
+        
+        // Close on click outside image
+        overlay.onclick = function(e) {
+            if (e.target === overlay) {
+                closeZoom();
+            }
+        };
+        
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && overlay.classList.contains('show')) {
+                closeZoom();
+            }
+        });
+    } else {
+        // Update existing overlay with new image
+        const zoomedImg = overlay.querySelector('img');
+        zoomedImg.src = img.src;
+        zoomedImg.alt = img.alt;
+    }
+    
+    // Show overlay with animation
+    setTimeout(() => {
+        overlay.classList.add('show');
+    }, 10);
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+}
+
+function closeZoom() {
+    const overlay = document.querySelector('.photo-overlay');
+    if (overlay) {
+        overlay.classList.remove('show');
+        // Don't set display: none since CSS handles it
+    }
+    
+    // Restore body scroll
+    document.body.style.overflow = '';
+}
