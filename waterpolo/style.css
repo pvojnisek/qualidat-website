@@ -971,3 +971,49 @@
     text-decoration: none;
     color: white;
 }
+
+/* Photo Gallery Link Styles */
+.photo-gallery-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin: 15px auto 20px auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.photo-gallery-link:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    color: white;
+}
+
+.photo-gallery-link::before {
+    content: "📸";
+    font-size: 1.1rem;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Responsive adjustments for photo gallery link */
+@media (max-width: 768px) {
+    .photo-gallery-link {
+        padding: 10px 16px;
+        font-size: 0.8rem;
+        margin: 10px auto 15px auto;
+    }
+    
+    .photo-gallery-link::before {
+        font-size: 1rem;
+    }
+}
