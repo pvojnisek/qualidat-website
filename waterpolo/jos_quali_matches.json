@@ -387,7 +387,29 @@
       "score2": 11,
       "phase": "Re-bracket AA",
       "status": "COMPLETED",
-      "notes": "AA2 vs AA3"
+      "notes": "AA2 vs AA3",
+      "videos": [
+        {
+          "quarter": "Q1",
+          "url": "https://youtu.be/coTvRepb75g?si=-n0wYasLEEKJnACX",
+          "title": "LJ United A vs Shores Black - Q1"
+        },
+        {
+          "quarter": "Q2", 
+          "url": "https://youtu.be/SVl-uMyhcig?si=R2x_pLt_5q66H-AF",
+          "title": "LJ United A vs Shores Black - Q2"
+        },
+        {
+          "quarter": "Q3",
+          "url": "https://youtu.be/IjIEHXC7We0?si=MsM67GCwpBpYkqA0", 
+          "title": "LJ United A vs Shores Black - Q3"
+        },
+        {
+          "quarter": "Q4",
+          "url": "https://youtu.be/QDFiQj8MzSk?si=CsBRPN4DiOjkWgHu",
+          "title": "LJ United A vs Shores Black - Q4"
+        }
+      ]
     },
     {
       "game_number": 26,
