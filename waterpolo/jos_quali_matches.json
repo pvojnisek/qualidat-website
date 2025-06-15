@@ -587,10 +587,10 @@
       "venue": "GRANITE_HILLS",
       "team1": "Shores Gold",
       "team2": "Odin A",
-      "score1": null,
-      "score2": null,
+      "score1": 4,
+      "score2": 13,
       "phase": "Re-bracket BB",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": "BB3 vs BB4"
     },
     {
@@ -751,10 +751,10 @@
     }
   ],
   "placement": {
-    "1": "Championship",
-    "2": "Championship",
-    "3": "Championship",
-    "4": "Championship",
+    "1": "Shores Black",
+    "2": "Del Mar Blue", 
+    "3": "LJ United A",
+    "4": "CBAD Black",
     "5": "Classic",
     "6": "Classic",
     "7": "Classic",
@@ -767,5 +767,35 @@
     "14": "DNQ",
     "15": "DNQ",
     "16": "DNQ"
+  },
+  "aa_final_standings": {
+    "1": {
+      "team": "Shores Black",
+      "record": "2-1",
+      "goal_differential": "+12",
+      "goals_for": 37,
+      "goals_against": 25
+    },
+    "2": {
+      "team": "Del Mar Blue", 
+      "record": "2-1",
+      "goal_differential": "+9",
+      "goals_for": 37,
+      "goals_against": 28
+    },
+    "3": {
+      "team": "LJ United A",
+      "record": "2-1", 
+      "goal_differential": "+2",
+      "goals_for": 32,
+      "goals_against": 30
+    },
+    "4": {
+      "team": "CBAD Black",
+      "record": "0-3",
+      "goal_differential": "-23",
+      "goals_for": 15,
+      "goals_against": 38
+    }
   }
 }
