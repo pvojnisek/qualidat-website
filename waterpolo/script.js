@@ -39,6 +39,7 @@ async function loadTournamentData() {
         populateReBrackets();
         populatePlacementMatches();
         displayGroupVideos();
+        populateChampionsSection();
         console.log('✅ Page populated successfully');
     } catch (error) {
         console.error('❌ Error populating page:', error);
@@ -443,6 +444,192 @@ function displayGroupVideos() {
         groupCVideos.innerHTML = '';
         console.log('No videos found for Group C teams');
     }
+}
+
+function populateChampionsSection() {
+    const container = document.getElementById('champions-matches-container');
+    if (!container || !tournamentData) {
+        console.error('Missing champions container or tournament data');
+        return;
+    }
+
+    const championTeam = 'Shores Black';
+    
+    // Filter matches for Shores Black
+    const teamMatches = tournamentData.matches.filter(match => 
+        match.team1 === championTeam || match.team2 === championTeam
+    );
+
+    if (teamMatches.length === 0) {
+        container.innerHTML = '<p>No matches found for the champion team.</p>';
+        return;
+    }
+
+    // Group matches by phase
+    const groupedMatches = {};
+    teamMatches.forEach(match => {
+        const phase = match.phase;
+        if (!groupedMatches[phase]) {
+            groupedMatches[phase] = [];
+        }
+        groupedMatches[phase].push(match);
+    });
+
+    // Generate matches HTML
+    let matchesHTML = '';
+    
+    // Sort phases to show group stage first, then re-bracket
+    const phaseOrder = ['Group C', 'Re-bracket AA', 'Championship'];
+    const sortedPhases = Object.keys(groupedMatches).sort((a, b) => {
+        const aIndex = phaseOrder.indexOf(a);
+        const bIndex = phaseOrder.indexOf(b);
+        if (aIndex === -1 && bIndex === -1) return a.localeCompare(b);
+        if (aIndex === -1) return 1;
+        if (bIndex === -1) return -1;
+        return aIndex - bIndex;
+    });
+
+    sortedPhases.forEach(phase => {
+        matchesHTML += `
+            <div style="margin-bottom: 25px;">
+                <h3 style="color: #ff9800; margin: 0 0 15px 0; padding: 10px 15px; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 8px; border-left: 4px solid #ff9800;">${phase}</h3>
+                <div style="display: grid; gap: 15px;">
+        `;
+        
+        groupedMatches[phase].forEach(match => {
+            const isTeam1 = match.team1 === championTeam;
+            const opponent = isTeam1 ? match.team2 : match.team1;
+            const teamScore = isTeam1 ? match.score1 : match.score2;
+            const opponentScore = isTeam1 ? match.score2 : match.score1;
+            
+            let scoreDisplay = '- vs -';
+            let resultClass = '';
+            let resultIcon = '';
+            
+            if (teamScore !== null && opponentScore !== null) {
+                scoreDisplay = `${teamScore}-${opponentScore}`;
+                if (teamScore > opponentScore) {
+                    resultClass = 'win';
+                    resultIcon = '🏆';
+                } else if (teamScore < opponentScore) {
+                    resultClass = 'loss';
+                    resultIcon = '❌';
+                } else {
+                    resultClass = 'tie';
+                    resultIcon = '🤝';
+                }
+            } else if (match.status === 'SCHEDULED') {
+                resultIcon = '📅';
+            }
+
+            const statusColor = match.status === 'SCHEDULED' ? '#1976d2' : 
+                               match.status === 'OPT OUT' ? '#d32f2f' : 
+                               match.status === 'NO CONTEST' ? '#ff9800' : '#2e7d32';
+
+            // Add video links if available
+            let videoHTML = '';
+            if (match.videos && match.videos.length > 0) {
+                videoHTML = `
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">
+                        <div style="font-weight: bold; margin-bottom: 8px; color: #dc2626; font-size: 0.9rem;">🎥 Match Videos:</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            ${match.videos.map(video => 
+                                `<a href="${video.url}" target="_blank" style="
+                                    display: inline-block; 
+                                    padding: 6px 12px; 
+                                    background: #dc2626; 
+                                    color: white; 
+                                    text-decoration: none; 
+                                    border-radius: 6px; 
+                                    font-size: 0.8rem; 
+                                    font-weight: bold;
+                                    transition: background 0.2s;
+                                " onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">${video.quarter}</a>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            matchesHTML += `
+                <div style="
+                    background: ${resultClass === 'win' ? 'linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%)' : 
+                                resultClass === 'loss' ? 'linear-gradient(135deg, #ffeaea 0%, #ffcdd2 100%)' : 
+                                'linear-gradient(135deg, #f9f9f9 0%, #e0e0e0 100%)'};
+                    border: 2px solid ${resultClass === 'win' ? '#4caf50' : resultClass === 'loss' ? '#f44336' : '#bdbdbd'};
+                    border-radius: 8px;
+                    padding: 12px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    transition: transform 0.2s, box-shadow 0.2s;
+                    max-width: 100%;
+                " onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'" 
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
+                    
+                    <!-- Compact Layout -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                        <!-- Game Info -->
+                        <div style="flex: 0 0 auto;">
+                            <div style="font-size: 1rem; font-weight: bold; color: #ff9800;">
+                                ${resultIcon} Game ${match.game_number}
+                            </div>
+                            <div style="font-size: 0.8rem; color: #666;">
+                                📅 ${match.date} ${match.time ? '• ' + match.time : ''} 📍 ${match.venue ? match.venue.replace(/_/g, ' ') : 'TBD'}
+                            </div>
+                        </div>
+                        
+                        <!-- Teams & Score -->
+                        <div style="flex: 1 1 auto; text-align: center; min-width: 200px;">
+                            <div style="font-weight: bold; font-size: 1rem; margin-bottom: 4px;">
+                                ${championTeam} <span style="color: #666;">vs</span> ${opponent}
+                            </div>
+                            <div style="display: inline-flex; align-items: center; gap: 8px;">
+                                <div style="font-weight: bold; color: ${statusColor}; font-size: 1.1rem; background: white; padding: 4px 8px; border-radius: 6px; border: 2px solid ${statusColor};">
+                                    ${scoreDisplay}
+                                </div>
+                                <div style="
+                                    background: ${statusColor};
+                                    color: white;
+                                    padding: 4px 8px;
+                                    border-radius: 12px;
+                                    font-size: 0.7rem;
+                                    font-weight: bold;
+                                    text-transform: uppercase;
+                                ">${match.status}</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Videos on same row if available -->
+                        ${match.videos && match.videos.length > 0 ? `
+                            <div style="flex: 0 0 auto;">
+                                <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                    ${match.videos.map(video => 
+                                        `<a href="${video.url}" target="_blank" style="
+                                            display: inline-block; 
+                                            padding: 4px 8px; 
+                                            background: #dc2626; 
+                                            color: white; 
+                                            text-decoration: none; 
+                                            border-radius: 4px; 
+                                            font-size: 0.7rem; 
+                                            font-weight: bold;
+                                            transition: background 0.2s;
+                                        " onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">${video.quarter}</a>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${match.notes ? `<div style="margin-top: 8px; padding: 8px; background: rgba(255,193,7,0.1); border-radius: 4px; font-size: 0.8rem; color: #666; font-style: italic; border-left: 3px solid #ffc107;">📝 ${match.notes}</div>` : ''}
+                </div>
+            `;
+        });
+        
+        matchesHTML += `</div></div>`;
+    });
+
+    container.innerHTML = matchesHTML;
+    console.log('✅ Champions section populated successfully');
 }
 
 // Add some interactive animations
