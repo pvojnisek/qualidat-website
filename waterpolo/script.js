@@ -1,6 +1,53 @@
 // Tournament data loading and processing
 let tournamentData = null;
 
+// Function to convert venue names to clickable links
+function createVenueLink(venueName) {
+    if (!venueName || venueName === 'TBD') {
+        return venueName || 'TBD';
+    }
+    
+    // Define venue mappings to anchor links
+    const venueMap = {
+        'BBMAC': { anchor: 'bbmac', display: 'BBMAC' },
+        'BBMAC #2': { anchor: 'bbmac', display: 'BBMAC #2' },
+        'GRANITE_HILLS': { anchor: 'granite-hills', display: 'Granite Hills' },
+        'GRANITE HILLS': { anchor: 'granite-hills', display: 'Granite Hills' },
+        'GRANITE_HILLS #2': { anchor: 'granite-hills', display: 'Granite Hills #2' },
+        'GRANITE HILLS #2': { anchor: 'granite-hills', display: 'Granite Hills #2' },
+        'RIVERSIDE POLY #1': { anchor: 'riverside-poly', display: 'Riverside Poly #1' },
+        'RIVERSIDE POLY #2': { anchor: 'riverside-poly', display: 'Riverside Poly #2' },
+        'RAMONA HS': { anchor: 'ramona', display: 'Ramona HS' },
+        'NORCO HS': { anchor: 'norco', display: 'Norco HS' },
+        'SANTIAGO HS': { anchor: 'santiago', display: 'Santiago HS' }
+    };
+    
+    // Clean venue name (remove underscores, normalize)
+    const cleanVenue = venueName.replace(/_/g, ' ').trim();
+    
+    // Check for exact match first
+    if (venueMap[venueName]) {
+        const venue = venueMap[venueName];
+        return `<a href="pools.html#${venue.anchor}" style="color: #0077be; text-decoration: none; font-weight: inherit;">${venue.display}</a>`;
+    }
+    
+    // Check for cleaned match
+    if (venueMap[cleanVenue]) {
+        const venue = venueMap[cleanVenue];
+        return `<a href="pools.html#${venue.anchor}" style="color: #0077be; text-decoration: none; font-weight: inherit;">${venue.display}</a>`;
+    }
+    
+    // Check for partial matches (for cases like "BBMAC" in "BBMAC #2")
+    for (const [key, venue] of Object.entries(venueMap)) {
+        if (cleanVenue.includes(key.replace(/_/g, ' ')) || key.includes(cleanVenue)) {
+            return `<a href="pools.html#${venue.anchor}" style="color: #0077be; text-decoration: none; font-weight: inherit;">${cleanVenue}</a>`;
+        }
+    }
+    
+    // Fallback: return as-is if no match found
+    return cleanVenue;
+}
+
 async function loadTournamentData() {
     try {
         // Try to load from external JSON first (works when served via HTTP)
@@ -93,7 +140,7 @@ function populateMatchTable() {
                 month: 'long', 
                 day: 'numeric' 
             });
-            const venueDisplay = matchVenue ? matchVenue.replace(/_/g, ' ') : 'TBD';
+            const venueDisplay = createVenueLink(matchVenue);
             html += `
                 <tr style="background: #e3f2fd;">
                     <td colspan="10" style="padding: 10px; text-align: center; font-weight: bold; color: #0077be; border: 1px solid #ddd;">${formattedDate} - ${venueDisplay}</td>
@@ -106,7 +153,7 @@ function populateMatchTable() {
         const score = match.score1 !== null && match.score2 !== null ? 
             `${match.score1}-${match.score2}` : '- vs -';
         
-        const venueDisplay = match.venue ? match.venue.replace(/_/g, ' ') : 'TBD';
+        const venueDisplay = createVenueLink(match.venue);
         
         // Video links column
         let videoHTML = '-';
@@ -157,7 +204,7 @@ function populateMatchTable() {
                 month: 'long', 
                 day: 'numeric' 
             });
-            const venueDisplay = matchVenue ? matchVenue.replace(/_/g, ' ') : 'TBD';
+            const venueDisplay = createVenueLink(matchVenue);
             html += `
                 <tr style="background: #e3f2fd;">
                     <td colspan="10" style="padding: 10px; text-align: center; font-weight: bold; color: #0077be; border: 1px solid #ddd;">${formattedDate} - ${venueDisplay}</td>
@@ -167,7 +214,7 @@ function populateMatchTable() {
         const score = match.score1 !== null && match.score2 !== null ? 
             `${match.score1}-${match.score2}` : '- vs -';
         
-        const venueDisplay = match.venue ? match.venue.replace(/_/g, ' ') : 'TBD';
+        const venueDisplay = createVenueLink(match.venue);
         
         // Video links column
         let videoHTML = '-';
@@ -206,7 +253,7 @@ function populateMatchTable() {
         const score = match.score1 !== null && match.score2 !== null ? 
             `${match.score1}-${match.score2}` : '- vs -';
         
-        const venueDisplay = match.venue ? match.venue.replace(/_/g, ' ') : 'TBD';
+        const venueDisplay = createVenueLink(match.venue);
         
         // Video links column
         let videoHTML = '-';

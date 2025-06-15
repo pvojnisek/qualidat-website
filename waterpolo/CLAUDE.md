@@ -203,3 +203,160 @@ Tournament files follow the pattern: `YYYYMMDD_tournament_description.html` (e.g
 ## Browser Compatibility
 
 The site uses modern CSS features like CSS Grid, Flexbox, and CSS custom properties. JavaScript uses modern DOM APIs and should work in all current browsers. Designed to work on mobile phone and computer dispalys also.
+
+## Pool locations
+
+- BBMC
+<a href="https://maps.google.com/maps?q=818+6th+St,+Coronado,+CA+92118">
+  Navigate to Brian Bent Memorial Aquatics Complex
+</a>
+- Granite Hills High School - 1719 E Madison Ave, El Cajon, CA 92019, United States
+
+## Adding New Pool Locations to pools.html
+
+When adding a new pool/venue to the pools.html page, follow this template structure:
+
+### 1. Create New Pool Section
+Add a new content section following this exact pattern:
+
+```html
+<!-- [POOL NAME] -->
+<div class="content-section" id="[pool-anchor-id]">
+    <button class="collapsible">🏫 [Pool Name]</button>
+    <div class="collapsible-content">
+        <div class="memorial-story">
+            <h3>🏆 [Brief Description] - [City]</h3>
+            <p>[First paragraph describing the facility, its significance, and key features]</p>
+            <p>[Second paragraph with additional details, history, or tournament role]</p>
+        </div>
+        <div class="fun-facts">
+            [Fact cards - see template below]
+        </div>
+        <div class="fun-facts">
+            [Navigation and resources - see template below]
+        </div>
+    </div>
+</div>
+```
+
+### 2. Fact Cards Template
+Use 4 fact cards with these typical categories:
+
+```html
+<div class="fact-card">
+    <div class="fact-icon">📍</div>
+    <div class="fact-title">Location & Access</div>
+    <div class="fact-text">
+        <strong>Address:</strong> [Full address]<br>
+        <strong>School/District:</strong> [If applicable]<br>
+        <strong>Access:</strong> [Highway/freeway access]<br>
+        <strong>Parking:</strong> [Parking information]
+    </div>
+</div>
+
+<div class="fact-card">
+    <div class="fact-icon">🏊‍♂️</div>
+    <div class="fact-title">Pool Specifications</div>
+    <div class="fact-text">
+        <strong>Size:</strong> [Pool dimensions]<br>
+        <strong>Configuration:</strong> [Pool setup]<br>
+        <strong>Lanes:</strong> [Number of lanes]<br>
+        <strong>Features:</strong> [Special features]
+    </div>
+</div>
+
+<div class="fact-card">
+    <div class="fact-icon">🏆</div>
+    <div class="fact-title">Tournament Role</div>
+    <div class="fact-text">
+        <strong>Events:</strong> [Which tournaments]<br>
+        <strong>Role:</strong> [Primary venue, co-host, finals, etc.]<br>
+        <strong>Standards:</strong> [Competition level]<br>
+        <strong>Capacity:</strong> [Spectator/event capacity]
+    </div>
+</div>
+
+<div class="fact-card">
+    <div class="fact-icon">🎯</div>
+    <div class="fact-title">[Custom Category]</div>
+    <div class="fact-text">
+        [Custom content based on what makes this venue unique]
+    </div>
+</div>
+```
+
+### 3. Navigation and Resources Template
+Always include these two fact cards at the end:
+
+```html
+<div class="fun-facts">
+    <div class="fact-card">
+        <div class="fact-icon">🗺️</div>
+        <div class="fact-title">Navigation</div>
+        <div class="fact-text">
+            <a href="https://maps.google.com/maps?q=[URL_ENCODED_ADDRESS]" 
+               target="_blank" rel="noopener noreferrer" 
+               style="display: inline-block; background: #0077be; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; margin: 5px 0; width: 100%; text-align: center; box-sizing: border-box;">
+                📍 Navigate to [Pool Name]
+            </a>
+        </div>
+    </div>
+    <div class="fact-card">
+        <div class="fact-icon">🌐</div>
+        <div class="fact-title">Additional Resources</div>
+        <div class="fact-text">
+            <a href="[WEBSITE_URL]" target="_blank" rel="noopener noreferrer" 
+               style="color: #0077be; text-decoration: none; font-weight: bold;">
+                🏠 [Website Name]
+            </a><br>
+            <a href="[ADDITIONAL_URL]" target="_blank" rel="noopener noreferrer" 
+               style="color: #0077be; text-decoration: none; font-weight: bold;">
+                [ICON] [Additional Resource Name]
+            </a>
+        </div>
+    </div>
+</div>
+```
+
+### 4. Styling Guidelines
+- **Navigation buttons** must have the blue background (#0077be) and full-width styling
+- **Collapsible icons** should match the venue type (🏫 for schools, 🏊‍♂️ for aquatic centers)
+- **Fact card icons** should be relevant (📍 location, 🏊‍♂️ pools, 🏆 tournaments, etc.)
+- **Additional resources** should use appropriate icons (🏠 websites, 📘 Facebook, 📞 phone, etc.)
+
+### 5. Placement
+- Insert new pool sections **before the closing `</div>` of the container**
+- Maintain alphabetical or logical order (by tournament importance/geographic location)
+- Ensure proper spacing between sections
+
+### 6. Anchor Link System
+Each pool section has an anchor ID for direct linking:
+- **BBMAC**: `#bbmac` - `pools.html#bbmac`
+- **Granite Hills**: `#granite-hills` - `pools.html#granite-hills`
+- **Norco**: `#norco` - `pools.html#norco`
+- **Riverside Poly**: `#riverside-poly` - `pools.html#riverside-poly`
+- **Ramona**: `#ramona` - `pools.html#ramona`
+- **Santiago**: `#santiago` - `pools.html#santiago`
+
+When creating anchor IDs for new pools:
+- Use lowercase letters and hyphens only
+- Keep it short but descriptive
+- Follow pattern: `[school-name]` or `[facility-abbreviation]`
+
+### 7. JavaScript Behavior
+The page automatically:
+- **Closes all sections** when page loads
+- **Opens only the linked section** if URL contains anchor hash
+- **Smooth scrolls** to the opened section
+- **Handles hash changes** when users click anchor links
+- **Maintains collapsible functionality** from script.js
+
+### 8. Required Information to Gather
+Before adding a new pool, collect:
+- Full address and location details
+- Pool specifications (size, lanes, features)
+- Tournament role and significance
+- Website and contact information
+- Parking and access information
+- Any unique features or history
+- **Anchor ID** (lowercase, hyphenated, unique)
