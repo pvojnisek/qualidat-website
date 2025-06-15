@@ -526,7 +526,29 @@
       "score2": 11,
       "phase": "Re-bracket AA",
       "status": "COMPLETED",
-      "notes": "AA1 vs AA3"
+      "notes": "AA1 vs AA3",
+      "videos": [
+        {
+          "quarter": "Q1",
+          "url": "https://youtu.be/2RAAITK425M?si=VljLTFRaf3zfZwX0",
+          "title": "Del Mar Blue vs Shores Black - Q1"
+        },
+        {
+          "quarter": "Q2", 
+          "url": "https://youtu.be/AQSXn_kmkQY?si=GJprZeGrmhThPJx8",
+          "title": "Del Mar Blue vs Shores Black - Q2"
+        },
+        {
+          "quarter": "Q3",
+          "url": "https://youtu.be/R96zr9VZOCU?si=m_GUv44wJ8hvc5cj", 
+          "title": "Del Mar Blue vs Shores Black - Q3"
+        },
+        {
+          "quarter": "Q4",
+          "url": "https://youtu.be/yhpCWidg8vk?si=x7VxxbsQfn1SSlUc",
+          "title": "Del Mar Blue vs Shores Black - Q4"
+        }
+      ]
     },
     {
       "game_number": 35,
@@ -565,7 +587,19 @@
       "score2": 4,
       "phase": "Re-bracket AA",
       "status": "COMPLETED",
-      "notes": "AA3 vs AA4"
+      "notes": "AA3 vs AA4",
+      "videos": [
+        {
+          "quarter": "Q1",
+          "url": "https://youtu.be/DD_9Unm4gmk?si=fmI097USI3HaYEEr",
+          "title": "Shores Black vs CBAD Black - Q1"
+        },
+        {
+          "quarter": "Q2", 
+          "url": "https://youtu.be/OBY4P5lNg64?si=MiJrepCBvAOCc6qA",
+          "title": "Shores Black vs CBAD Black - Q2"
+        }
+      ]
     },
     {
       "game_number": 38,
