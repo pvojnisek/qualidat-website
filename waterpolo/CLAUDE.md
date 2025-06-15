@@ -118,6 +118,51 @@ curl -L "https://docs.google.com/spreadsheets/d/1C_yU7MyVHzL1_rubWOHVqAeDto9BApO
 - Completed matches have numeric scores in the S columns
 - Game numbers are in format "Game # X" where X is the game number
 
+#### Updating Final Tournament Placements
+
+The tournament results table displays official final placements. The Google Sheet contains a "Final Placement" section at the bottom that shows the official tournament standings.
+
+**Current Official Placements (from Google Sheet):**
+```
+Final Placement,,,,,,,,,
+1,SHORES BLACK,Championship,,,,,,,
+2,LJ UNITED - A,Championship,,,,,,,
+3,DEL MAR BLUE,Championship,,,,,,,
+4,,Championship,,,,,,,
+5,,Classic,,,,,,,
+...
+```
+
+**How to Update Final Placements:**
+
+1. **Check Google Sheet for Updates**: The "Final Placement" section shows official standings
+2. **Only update officially announced positions**: Do not guess or calculate - wait for official announcement
+3. **Update the HTML table** in `20250613_16U_JOs_Quals.html` in the "Final Tournament Results" section
+4. **Replace "To be announced" entries** with actual team names when officially confirmed
+
+**Template for updating a placement:**
+```html
+<!-- Before (pending) -->
+<tr style="background: #f8f9fa;">
+    <td style="padding: 12px 8px; border: 1px solid #ddd; text-align: center;">4</td>
+    <td style="padding: 12px 8px; border: 1px solid #ddd; color: #888; font-style: italic;">To be announced</td>
+    <td style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; color: #888;">Championship</td>
+</tr>
+
+<!-- After (official result) -->
+<tr style="background: #f8f9fa;">
+    <td style="padding: 12px 8px; border: 1px solid #ddd; text-align: center;">4</td>
+    <td style="padding: 12px 8px; border: 1px solid #ddd;">⚫ CBAD BLACK</td>
+    <td style="padding: 12px 8px; border: 1px solid #ddd; text-align: center;">Championship</td>
+</tr>
+```
+
+**Important Notes:**
+- Only update positions when they appear in the official Google Sheet Final Placement section
+- Keep team emoji prefixes consistent (🌊 for Shores, ⚪ for LJ United, 🔵 for Del Mar, etc.)
+- Remove gray color and italic styling when updating from "To be announced"
+- The table automatically shows qualification levels (Championship 1-4, Classic 5-8, Invitational 9-11, DNQ 12-16)
+
 ### Locations
 
 - BBMAC: Brian Bent Memorial Aquatics Complex (location: MRVC+33 Coronado, California)

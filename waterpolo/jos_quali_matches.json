@@ -600,10 +600,10 @@
       "venue": "GRANITE_HILLS",
       "team1": "Southern",
       "team2": "Poway",
-      "score1": null,
-      "score2": null,
+      "score1": 10,
+      "score2": 7,
       "phase": "Re-bracket BB",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": "BB1 vs BB2"
     },
     {
@@ -678,10 +678,10 @@
       "venue": "GRANITE_HILLS #2",
       "team1": "Southern B",
       "team2": "Odin B",
-      "score1": null,
-      "score2": null,
+      "score1": 5,
+      "score2": 15,
       "phase": "Re-bracket DD",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": "DD1 vs DD3"
     },
     {
@@ -691,10 +691,10 @@
       "venue": "GRANITE_HILLS #2",
       "team1": "NSD Stars",
       "team2": "CBAD Silver",
-      "score1": null,
-      "score2": null,
+      "score1": 9,
+      "score2": 5,
       "phase": "Re-bracket CC",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": "CC3 vs CC4"
     },
     {
@@ -704,10 +704,10 @@
       "venue": "GRANITE_HILLS #2",
       "team1": "Del Mar White",
       "team2": "LJ United B",
-      "score1": null,
-      "score2": null,
+      "score1": 16,
+      "score2": 8,
       "phase": "Re-bracket CC",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": "CC1 vs CC2"
     },
     {
@@ -717,10 +717,10 @@
       "venue": "GRANITE_HILLS #2",
       "team1": "Odin B",
       "team2": "Shores White",
-      "score1": null,
-      "score2": null,
+      "score1": 9,
+      "score2": 8,
       "phase": "Re-bracket DD",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": "DD3 vs DD4"
     },
     {
@@ -730,10 +730,10 @@
       "venue": "GRANITE_HILLS #2",
       "team1": "Southern B",
       "team2": "NADO",
-      "score1": null,
-      "score2": null,
+      "score1": 6,
+      "score2": 21,
       "phase": "Re-bracket DD",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": "DD1 vs DD2"
     },
     {
