@@ -14,10 +14,10 @@
     "D": ["CBAD Black", "Odin A", "Shores White", "CBAD Silver"]
   },
   "re_bracket": {
-    "AA": ["1st A", "1st B", "1st C", "1st D"],
-    "BB": ["2nd A", "2nd B", "2nd C", "2nd D"],
-    "CC": ["3rd A", "3rd B", "3rd C", "3rd D"],
-    "DD": ["4th A", "4th B", "4th C", "4th D"]
+    "AA": ["Del Mar Blue", "LJ United A", "Shores Black", "CBAD Black"],
+    "BB": ["Southern", "Poway", "Shores Gold", "Odin A"],
+    "CC": ["Del Mar White", "LJ United B", "NSD Stars", "Shores White"],
+    "DD": ["Southern B", "NADO", "Odin B", "CBAD Silver"]
   },
   "matches": [
     {
@@ -118,10 +118,10 @@
       "venue": "GRANITE_HILLS",
       "team1": "Poway",
       "team2": "NADO",
-      "score1": null,
-      "score2": null,
+      "score1": 13,
+      "score2": 3,
       "phase": "Group B",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": null
     },
     {
@@ -157,10 +157,10 @@
       "venue": "GRANITE_HILLS",
       "team1": "LJ United A",
       "team2": "Poway",
-      "score1": null,
-      "score2": null,
+      "score1": 19,
+      "score2": 6,
       "phase": "Group B",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": null
     },
     {
@@ -170,10 +170,10 @@
       "venue": "GRANITE_HILLS",
       "team1": "LJ United B",
       "team2": "NADO",
-      "score1": null,
-      "score2": null,
+      "score1": 13,
+      "score2": 11,
       "phase": "Group B",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": null
     },
     {
@@ -305,10 +305,10 @@
       "venue": "GRANITE_HILLS",
       "team1": "CBAD Black",
       "team2": "Shores White",
-      "score1": null,
-      "score2": null,
+      "score1": 17,
+      "score2": 1,
       "phase": "Group D",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": null
     },
     {
@@ -318,10 +318,10 @@
       "venue": "GRANITE_HILLS",
       "team1": "Odin A",
       "team2": "CBAD Silver",
-      "score1": null,
-      "score2": null,
+      "score1": 12,
+      "score2": 1,
       "phase": "Group D",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": null
     },
     {
@@ -344,10 +344,10 @@
       "venue": "GRANITE_HILLS",
       "team1": "NSD Stars",
       "team2": "Odin B",
-      "score1": null,
-      "score2": null,
+      "score1": 9,
+      "score2": 8,
       "phase": "Group C",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": null
     },
     {
@@ -357,11 +357,11 @@
       "venue": "GRANITE_HILLS",
       "team1": "CBAD Black",
       "team2": "Odin A",
-      "score1": null,
-      "score2": null,
+      "score1": 7,
+      "score2": 7,
       "phase": "Group D",
-      "status": "SCHEDULED",
-      "notes": null
+      "status": "COMPLETED",
+      "notes": "Tie - CBAD Black 7.3, Odin A 7.1"
     },
     {
       "game_number": 24,
@@ -370,10 +370,10 @@
       "venue": "GRANITE_HILLS",
       "team1": "Shores White",
       "team2": "CBAD Silver",
-      "score1": null,
-      "score2": null,
+      "score1": 3,
+      "score2": 7,
       "phase": "Group D",
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "notes": null
     },
     {
@@ -381,104 +381,104 @@
       "date": "6/14/2025",
       "time": "4:20 PM",
       "venue": "GRANITE_HILLS",
-      "team1": "AA2",
-      "team2": "AA3",
-      "score1": null,
-      "score2": null,
+      "team1": "LJ United A",
+      "team2": "Shores Black",
+      "score1": 9,
+      "score2": 11,
       "phase": "Re-bracket AA",
-      "status": "SCHEDULED",
-      "notes": null
+      "status": "COMPLETED",
+      "notes": "AA2 vs AA3"
     },
     {
       "game_number": 26,
       "date": "6/14/2025",
       "time": "5:20 PM",
       "venue": "GRANITE_HILLS",
-      "team1": "AA1",
-      "team2": "AA4",
-      "score1": null,
-      "score2": null,
+      "team1": "Del Mar Blue",
+      "team2": "CBAD Black",
+      "score1": 13,
+      "score2": 4,
       "phase": "Re-bracket AA",
-      "status": "SCHEDULED",
-      "notes": null
+      "status": "COMPLETED",
+      "notes": "AA1 vs AA4"
     },
     {
       "game_number": 27,
       "date": "6/14/2025",
       "time": "6:20 PM",
       "venue": "GRANITE_HILLS",
-      "team1": "BB2",
-      "team2": "BB3",
-      "score1": null,
-      "score2": null,
+      "team1": "Poway",
+      "team2": "Shores Gold",
+      "score1": 7,
+      "score2": 10,
       "phase": "Re-bracket BB",
-      "status": "SCHEDULED",
-      "notes": null
+      "status": "COMPLETED",
+      "notes": "BB2 vs BB3"
     },
     {
       "game_number": 28,
       "date": "6/14/2025",
       "time": "7:20 PM",
       "venue": "GRANITE_HILLS",
-      "team1": "BB1",
-      "team2": "BB4",
-      "score1": null,
-      "score2": null,
+      "team1": "Southern",
+      "team2": "Odin A",
+      "score1": 6,
+      "score2": 9,
       "phase": "Re-bracket BB",
-      "status": "SCHEDULED",
-      "notes": null
+      "status": "COMPLETED",
+      "notes": "BB1 vs BB4"
     },
     {
       "game_number": 29,
       "date": "6/14/2025",
       "time": "4:20 PM",
       "venue": "GRANITE_HILLS #2",
-      "team1": "CC2",
-      "team2": "CC3",
-      "score1": null,
-      "score2": null,
+      "team1": "LJ United B",
+      "team2": "NSD Stars",
+      "score1": 10,
+      "score2": 11,
       "phase": "Re-bracket CC",
-      "status": "SCHEDULED",
-      "notes": null
+      "status": "COMPLETED",
+      "notes": "CC2 vs CC3"
     },
     {
       "game_number": 30,
       "date": "6/14/2025",
       "time": "5:20 PM",
       "venue": "GRANITE_HILLS #2",
-      "team1": "CC1",
-      "team2": "CC4",
-      "score1": null,
-      "score2": null,
+      "team1": "Del Mar White",
+      "team2": "CBAD Silver",
+      "score1": 10,
+      "score2": 7,
       "phase": "Re-bracket CC",
-      "status": "SCHEDULED",
-      "notes": null
+      "status": "COMPLETED",
+      "notes": "CC1 vs CC4"
     },
     {
       "game_number": 31,
       "date": "6/14/2025",
       "time": "6:20 PM",
       "venue": "GRANITE_HILLS #2",
-      "team1": "DD2",
-      "team2": "DD3",
-      "score1": null,
-      "score2": null,
+      "team1": "NADO",
+      "team2": "Odin B",
+      "score1": 12,
+      "score2": 13,
       "phase": "Re-bracket DD",
-      "status": "SCHEDULED",
-      "notes": null
+      "status": "COMPLETED",
+      "notes": "DD2 vs DD3"
     },
     {
       "game_number": 32,
       "date": "6/14/2025",
       "time": "7:20 PM",
       "venue": "GRANITE_HILLS #2",
-      "team1": "DD1",
-      "team2": "DD4",
-      "score1": null,
-      "score2": null,
+      "team1": "Southern B",
+      "team2": "Shores White",
+      "score1": 8,
+      "score2": 17,
       "phase": "Re-bracket DD",
-      "status": "SCHEDULED",
-      "notes": null
+      "status": "COMPLETED",
+      "notes": "DD1 vs DD4"
     },
     {
       "game_number": 33,
