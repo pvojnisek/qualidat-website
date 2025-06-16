@@ -93,7 +93,6 @@ async function loadTournamentData() {
         populatePlacementMatches();
         displayGroupVideos();
         populateChampionsSection();
-        updateFinalResultsTableWithStats();
         console.log('✅ Page populated successfully');
     } catch (error) {
         console.error('❌ Error populating page:', error);
@@ -742,7 +741,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('✅ Using embedded data for delayed retry');
             }
             populateChampionsSection();
-            updateFinalResultsTableWithStats();
         }
     }, 2000); // Retry after 2 seconds
     
