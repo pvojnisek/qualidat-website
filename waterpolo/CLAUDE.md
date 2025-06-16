@@ -96,6 +96,11 @@ Document contains SD Shores Black team match recordings with YouTube links:
 - Reference of the official google drice sheet as datasource: https://docs.google.com/spreadsheets/d/1C_yU7MyVHzL1_rubWOHVqAeDto9BApOgw7MarJzQoLk/edit?gid=0#gid=0 "16U BOYS" sheet
 - the specific sheet can be fetched directly in csv format here: https://docs.google.com/spreadsheets/d/1C_yU7MyVHzL1_rubWOHVqAeDto9BApOgw7MarJzQoLk/export?format=csv&gid=0#gid=0 - use this url to process the tournament official live data
 - The data is public and updated regularly
+- final positions mean seed places in Junior Olympics Championship class:
+  - 1. position: 2. seed
+  - 2. position: 9. seed
+  - 3. position: 19. seed
+  - 4. position: 30. seed
 
 #### Updating Tournament Results from Google Sheets
 

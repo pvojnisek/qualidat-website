@@ -93,6 +93,7 @@ async function loadTournamentData() {
         populatePlacementMatches();
         displayGroupVideos();
         populateChampionsSection();
+        updateFinalResultsTableWithStats();
         console.log('✅ Page populated successfully');
     } catch (error) {
         console.error('❌ Error populating page:', error);
@@ -741,6 +742,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('✅ Using embedded data for delayed retry');
             }
             populateChampionsSection();
+            updateFinalResultsTableWithStats();
         }
     }, 2000); // Retry after 2 seconds
     
@@ -819,6 +821,26 @@ function setupTeamClickHandlers() {
             showRebracketMatches(bracket, position);
         });
     });
+
+    // Handle final tournament results team clicks
+    const clickableFinalTeams = document.querySelectorAll('.clickable-final-team');
+    clickableFinalTeams.forEach(teamElement => {
+        teamElement.addEventListener('click', function() {
+            const teamName = this.dataset.team;
+            showAllTeamMatches(teamName);
+        });
+        
+        // Add hover effects for better UX
+        teamElement.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = 'rgba(0, 119, 190, 0.1)';
+            this.style.transform = 'scale(1.02)';
+        });
+        
+        teamElement.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+            this.style.transform = 'scale(1)';
+        });
+    });
 }
 
 function showTeamMatches(teamName, groupName) {
@@ -839,6 +861,26 @@ function showTeamMatches(teamName, groupName) {
 
     // Create and show popup
     createMatchPopup(teamName, groupName, teamMatches);
+}
+
+function showAllTeamMatches(teamName) {
+    if (!tournamentData || !tournamentData.matches) {
+        console.error('Tournament data not available');
+        return;
+    }
+
+    // Filter matches for this team throughout the entire tournament
+    const teamMatches = tournamentData.matches.filter(match => 
+        match.team1 === teamName || match.team2 === teamName
+    );
+
+    if (teamMatches.length === 0) {
+        alert(`No matches found for ${teamName}`);
+        return;
+    }
+
+    // Create and show tournament-wide popup
+    createAllMatchesPopup(teamName, teamMatches);
 }
 
 function showRebracketMatches(bracket, position) {
@@ -1303,6 +1345,314 @@ function createRebracketMatchPopup(teamName, bracketName, matches, bracket, posi
     document.addEventListener('keydown', escapeHandler);
 }
 
+function createAllMatchesPopup(teamName, matches) {
+    // Remove existing popup if any
+    const existingPopup = document.getElementById('team-match-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    // Create popup overlay
+    const popupOverlay = document.createElement('div');
+    popupOverlay.id = 'team-match-popup';
+    popupOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease-in-out;
+    `;
+
+    // Create popup content
+    const popupContent = document.createElement('div');
+    popupContent.style.cssText = `
+        background: white;
+        border-radius: 12px;
+        max-width: 90%;
+        max-height: 90%;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        position: relative;
+        animation: slideIn 0.3s ease-in-out;
+    `;
+
+    // Determine team placement and qualification status
+    let placement = '';
+    let qualificationLevel = '';
+    let placementIcon = '';
+    
+    // Look up team placement from tournament data
+    if (tournamentData.placement) {
+        for (const [place, team] of Object.entries(tournamentData.placement)) {
+            if (team === teamName) {
+                placement = `${place}${getOrdinalSuffix(place)} Place`;
+                placementIcon = getPlacementIcon(parseInt(place));
+                qualificationLevel = getQualificationLevel(parseInt(place));
+                break;
+            }
+        }
+    }
+
+    // Create header
+    const header = document.createElement('div');
+    header.style.cssText = `
+        background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px 12px 0 0;
+        position: relative;
+    `;
+
+    header.innerHTML = `
+        <h2 style="margin: 0; font-size: 1.5rem;">${placementIcon} ${teamName}</h2>
+        <p style="margin: 5px 0 0 0; opacity: 0.9;">Tournament Summary • ${matches.length} total matches</p>
+        ${placement ? `<p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9rem;">🏆 Final Placement: ${placement} • ${qualificationLevel}</p>` : ''}
+        <button id="close-popup" style="
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">×</button>
+    `;
+
+    // Create matches content
+    const matchesContent = document.createElement('div');
+    matchesContent.style.cssText = `
+        padding: 20px;
+        max-height: 500px;
+        overflow-y: auto;
+    `;
+
+    // Group matches by phase
+    const groupedMatches = {};
+    matches.forEach(match => {
+        const phase = match.phase;
+        if (!groupedMatches[phase]) {
+            groupedMatches[phase] = [];
+        }
+        groupedMatches[phase].push(match);
+    });
+
+    // Generate matches HTML
+    let matchesHTML = '';
+    
+    // Sort phases to show in tournament order
+    const phaseOrder = ['Group A', 'Group B', 'Group C', 'Group D', 'Re-bracket AA', 'Re-bracket BB', 'Re-bracket CC', 'Re-bracket DD', 'Championship'];
+    const sortedPhases = Object.keys(groupedMatches).sort((a, b) => {
+        const aIndex = phaseOrder.indexOf(a);
+        const bIndex = phaseOrder.indexOf(b);
+        if (aIndex === -1 && bIndex === -1) return a.localeCompare(b);
+        if (aIndex === -1) return 1;
+        if (bIndex === -1) return -1;
+        return aIndex - bIndex;
+    });
+
+    // Calculate team statistics
+    let totalWins = 0, totalLosses = 0, totalTies = 0;
+    let totalGoalsFor = 0, totalGoalsAgainst = 0;
+
+    sortedPhases.forEach(phase => {
+        matchesHTML += `
+            <div style="margin-bottom: 25px;">
+                <h3 style="color: #ff9800; margin: 0 0 15px 0; padding: 10px 15px; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 8px; border-left: 4px solid #ff9800;">${phase}</h3>
+                <div style="display: grid; gap: 12px;">
+        `;
+        
+        groupedMatches[phase].forEach(match => {
+            const isTeam1 = match.team1 === teamName;
+            const opponent = isTeam1 ? match.team2 : match.team1;
+            const teamScore = isTeam1 ? match.score1 : match.score2;
+            const opponentScore = isTeam1 ? match.score2 : match.score1;
+            
+            // Update statistics
+            if (teamScore !== null && opponentScore !== null) {
+                totalGoalsFor += teamScore;
+                totalGoalsAgainst += opponentScore;
+                if (teamScore > opponentScore) totalWins++;
+                else if (teamScore < opponentScore) totalLosses++;
+                else totalTies++;
+            }
+            
+            let scoreDisplay = '- vs -';
+            let resultClass = '';
+            let resultIcon = '';
+            
+            if (teamScore !== null && opponentScore !== null) {
+                scoreDisplay = `${teamScore}-${opponentScore}`;
+                if (teamScore > opponentScore) {
+                    resultClass = 'win';
+                    resultIcon = '🏆';
+                } else if (teamScore < opponentScore) {
+                    resultClass = 'loss';
+                    resultIcon = '❌';
+                } else {
+                    resultClass = 'tie';
+                    resultIcon = '🤝';
+                }
+            } else if (match.status === 'SCHEDULED') {
+                resultIcon = '📅';
+            }
+
+            const statusColor = match.status === 'SCHEDULED' ? '#1976d2' : 
+                               match.status === 'OPT OUT' ? '#d32f2f' : 
+                               match.status === 'NO CONTEST' ? '#ff9800' : '#2e7d32';
+
+            // Add video links if available
+            let videoHTML = '';
+            if (match.videos && match.videos.length > 0) {
+                videoHTML = `
+                    <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px;">
+                        ${match.videos.map(video => 
+                            `<a href="${video.url}" target="_blank" style="
+                                display: inline-block; 
+                                padding: 3px 8px; 
+                                background: #dc2626; 
+                                color: white; 
+                                text-decoration: none; 
+                                border-radius: 4px; 
+                                font-size: 0.7rem; 
+                                font-weight: bold;
+                                transition: background 0.2s;
+                            " onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">${video.quarter}</a>`
+                        ).join('')}
+                    </div>
+                `;
+            }
+
+            matchesHTML += `
+                <div style="
+                    background: ${resultClass === 'win' ? 'linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%)' : 
+                                resultClass === 'loss' ? 'linear-gradient(135deg, #ffeaea 0%, #ffcdd2 100%)' : 
+                                'linear-gradient(135deg, #f9f9f9 0%, #e0e0e0 100%)'};
+                    border: 2px solid ${resultClass === 'win' ? '#4caf50' : resultClass === 'loss' ? '#f44336' : '#bdbdbd'};
+                    border-radius: 8px;
+                    padding: 12px;
+                    transition: transform 0.2s, box-shadow 0.2s;
+                " onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'" 
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'">
+                    
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                        <!-- Game Info -->
+                        <div style="flex: 0 0 auto;">
+                            <div style="font-size: 1rem; font-weight: bold; color: #ff9800;">
+                                ${resultIcon} Game ${match.game_number}
+                            </div>
+                            <div style="font-size: 0.8rem; color: #666;">
+                                📅 ${match.date} ${match.time ? '• ' + match.time : ''} 📍 ${match.venue ? match.venue.replace(/_/g, ' ') : 'TBD'}
+                            </div>
+                        </div>
+                        
+                        <!-- Teams & Score -->
+                        <div style="flex: 1 1 auto; text-align: center; min-width: 200px;">
+                            <div style="font-weight: bold; font-size: 1rem; margin-bottom: 4px;">
+                                ${teamName} <span style="color: #666;">vs</span> ${opponent}
+                            </div>
+                            <div style="display: inline-flex; align-items: center; gap: 8px;">
+                                <div style="font-weight: bold; color: ${statusColor}; font-size: 1.1rem; background: white; padding: 4px 8px; border-radius: 6px; border: 2px solid ${statusColor};">
+                                    ${scoreDisplay}
+                                </div>
+                                <div style="
+                                    background: ${statusColor};
+                                    color: white;
+                                    padding: 4px 8px;
+                                    border-radius: 12px;
+                                    font-size: 0.7rem;
+                                    font-weight: bold;
+                                    text-transform: uppercase;
+                                ">${match.status}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${videoHTML}
+                    ${match.notes ? `<div style="margin-top: 8px; padding: 8px; background: rgba(255,193,7,0.1); border-radius: 4px; font-size: 0.8rem; color: #666; font-style: italic; border-left: 3px solid #ffc107;">📝 ${match.notes}</div>` : ''}
+                </div>
+            `;
+        });
+        
+        matchesHTML += `</div></div>`;
+    });
+
+    // Add tournament statistics summary
+    const goalDifferential = totalGoalsFor - totalGoalsAgainst;
+    matchesHTML = `
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
+            <h4 style="color: #ff9800; margin: 0 0 10px 0; text-align: center;">📊 Tournament Statistics</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; text-align: center; font-size: 0.9rem;">
+                <div style="background: white; padding: 8px; border-radius: 6px;">
+                    <div style="font-weight: bold; color: #4caf50;">${totalWins}</div>
+                    <div style="color: #666;">Wins</div>
+                </div>
+                <div style="background: white; padding: 8px; border-radius: 6px;">
+                    <div style="font-weight: bold; color: #f44336;">${totalLosses}</div>
+                    <div style="color: #666;">Losses</div>
+                </div>
+                ${totalTies > 0 ? `
+                    <div style="background: white; padding: 8px; border-radius: 6px;">
+                        <div style="font-weight: bold; color: #ff9800;">${totalTies}</div>
+                        <div style="color: #666;">Ties</div>
+                    </div>
+                ` : ''}
+                <div style="background: white; padding: 8px; border-radius: 6px;">
+                    <div style="font-weight: bold; color: #2196f3;">${totalGoalsFor}</div>
+                    <div style="color: #666;">Goals For</div>
+                </div>
+                <div style="background: white; padding: 8px; border-radius: 6px;">
+                    <div style="font-weight: bold; color: #9c27b0;">${totalGoalsAgainst}</div>
+                    <div style="color: #666;">Goals Against</div>
+                </div>
+                <div style="background: white; padding: 8px; border-radius: 6px;">
+                    <div style="font-weight: bold; color: ${goalDifferential >= 0 ? '#4caf50' : '#f44336'};">${goalDifferential >= 0 ? '+' : ''}${goalDifferential}</div>
+                    <div style="color: #666;">Goal Diff</div>
+                </div>
+            </div>
+        </div>
+    ` + matchesHTML;
+
+    matchesContent.innerHTML = matchesHTML;
+
+    // Assemble popup
+    popupContent.appendChild(header);
+    popupContent.appendChild(matchesContent);
+    popupOverlay.appendChild(popupContent);
+
+    // Add to document
+    document.body.appendChild(popupOverlay);
+
+    // Add event listeners
+    document.getElementById('close-popup').addEventListener('click', closeMatchPopup);
+    popupOverlay.addEventListener('click', function(e) {
+        if (e.target === popupOverlay) {
+            closeMatchPopup();
+        }
+    });
+
+    // Add escape key listener
+    const escapeHandler = function(e) {
+        if (e.key === 'Escape') {
+            closeMatchPopup();
+            document.removeEventListener('keydown', escapeHandler);
+        }
+    };
+    document.addEventListener('keydown', escapeHandler);
+}
+
 function createMatchPopup(teamName, groupName, matches) {
     // Remove existing popup if any
     const existingPopup = document.getElementById('team-match-popup');
@@ -1520,6 +1870,46 @@ function closeMatchPopup() {
     }
 }
 
+// Helper functions for tournament placement display
+function getOrdinalSuffix(place) {
+    const lastDigit = place % 10;
+    const lastTwoDigits = place % 100;
+    
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+        return 'th';
+    }
+    
+    switch (lastDigit) {
+        case 1: return 'st';
+        case 2: return 'nd';
+        case 3: return 'rd';
+        default: return 'th';
+    }
+}
+
+function getPlacementIcon(place) {
+    switch(place) {
+        case 1: return '🥇';
+        case 2: return '🥈';
+        case 3: return '🥉';
+        case 4: return '🏆';
+        case 5: return '🌟';
+        default: return '🏊‍♂️';
+    }
+}
+
+function getQualificationLevel(place) {
+    if (place >= 1 && place <= 4) {
+        return 'Championship Qualification';
+    } else if (place >= 5 && place <= 8) {
+        return 'Classic Qualification';
+    } else if (place >= 9 && place <= 11) {
+        return 'Invitational Qualification';
+    } else {
+        return 'Did Not Qualify';
+    }
+}
+
 // Add fadeOut animation
 const fadeOutStyle = document.createElement('style');
 fadeOutStyle.textContent = `
@@ -1529,6 +1919,119 @@ fadeOutStyle.textContent = `
     }
 `;
 document.head.appendChild(fadeOutStyle);
+
+// Calculate tournament statistics for a team
+function calculateTeamTournamentStats(teamName) {
+    if (!tournamentData || !tournamentData.matches) {
+        return { gamesPlayed: 0, wins: 0, losses: 0, ties: 0, goalsFor: 0, goalsAgainst: 0, goalDifferential: 0 };
+    }
+
+    // Filter matches for this team
+    const teamMatches = tournamentData.matches.filter(match => 
+        (match.team1 === teamName || match.team2 === teamName) && 
+        match.status === 'COMPLETED' && 
+        match.score1 !== null && 
+        match.score2 !== null
+    );
+
+    let stats = {
+        gamesPlayed: 0,
+        wins: 0,
+        losses: 0,
+        ties: 0,
+        goalsFor: 0,
+        goalsAgainst: 0,
+        goalDifferential: 0
+    };
+
+    teamMatches.forEach(match => {
+        const isTeam1 = match.team1 === teamName;
+        const teamScore = isTeam1 ? match.score1 : match.score2;
+        const opponentScore = isTeam1 ? match.score2 : match.score1;
+
+        stats.gamesPlayed++;
+        stats.goalsFor += teamScore;
+        stats.goalsAgainst += opponentScore;
+
+        if (teamScore > opponentScore) {
+            stats.wins++;
+        } else if (teamScore < opponentScore) {
+            stats.losses++;
+        } else {
+            stats.ties++;
+        }
+    });
+
+    stats.goalDifferential = stats.goalsFor - stats.goalsAgainst;
+    return stats;
+}
+
+// Update Final Tournament Results table with statistics
+function updateFinalResultsTableWithStats() {
+    // Define the teams we know stats for
+    const knownTeams = [
+        { displayName: "🌊 SHORES BLACK", dataName: "Shores Black" },
+        { displayName: "⚪ LJ UNITED A", dataName: "LJ United A" },
+        { displayName: "🔵 DEL MAR BLUE", dataName: "Del Mar Blue" },
+        { displayName: "⚫ ODIN A", dataName: "Odin A" },
+        { displayName: "⚫ CBAD BLACK", dataName: "CBAD Black" }
+    ];
+
+    knownTeams.forEach(team => {
+        const stats = calculateTeamTournamentStats(team.dataName);
+        const teamRow = document.querySelector(`[data-team="${team.dataName}"]`);
+        
+        if (teamRow) {
+            const parentRow = teamRow.parentElement;
+            
+            // Create statistics cells
+            const gpCell = document.createElement('td');
+            gpCell.style.cssText = 'padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;';
+            gpCell.textContent = stats.gamesPlayed;
+
+            const wlCell = document.createElement('td');
+            wlCell.style.cssText = 'padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;';
+            wlCell.textContent = stats.ties > 0 ? `${stats.wins}-${stats.losses}-${stats.ties}` : `${stats.wins}-${stats.losses}`;
+
+            const gfCell = document.createElement('td');
+            gfCell.style.cssText = 'padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;';
+            gfCell.textContent = stats.goalsFor;
+
+            const gaCell = document.createElement('td');
+            gaCell.style.cssText = 'padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;';
+            gaCell.textContent = stats.goalsAgainst;
+
+            const gdCell = document.createElement('td');
+            gdCell.style.cssText = `padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: ${stats.goalDifferential >= 0 ? '#4caf50' : '#f44336'};`;
+            gdCell.textContent = stats.goalDifferential >= 0 ? `+${stats.goalDifferential}` : stats.goalDifferential;
+
+            // Insert the new cells before the qualification level cell (last cell)
+            const qualificationCell = parentRow.lastElementChild;
+            parentRow.insertBefore(gpCell, qualificationCell);
+            parentRow.insertBefore(wlCell, qualificationCell);
+            parentRow.insertBefore(gfCell, qualificationCell);
+            parentRow.insertBefore(gaCell, qualificationCell);
+            parentRow.insertBefore(gdCell, qualificationCell);
+        }
+    });
+
+    // Add placeholders for "To be announced" rows
+    const tbdRows = document.querySelectorAll('td[style*="font-style: italic"]');
+    tbdRows.forEach(tbdCell => {
+        if (tbdCell.textContent.includes('To be announced')) {
+            const parentRow = tbdCell.parentElement;
+            const qualificationCell = parentRow.lastElementChild;
+            
+            // Add placeholder cells
+            for (let i = 0; i < 5; i++) {
+                const placeholderCell = document.createElement('td');
+                placeholderCell.style.cssText = 'padding: 12px 8px; border: 1px solid #ddd; text-align: center; color: #888; font-style: italic;';
+                placeholderCell.textContent = '-';
+                parentRow.insertBefore(placeholderCell, qualificationCell);
+            }
+        }
+    });
+}
 
 // Team photo zoom functionality
 function zoomImage(img) {
