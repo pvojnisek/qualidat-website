@@ -226,15 +226,27 @@ function populateMatchTable() {
             videoHTML += '</div>';
         }
         
+        // Determine winner styling for completed matches
+        let team1Style = "padding: 8px; border: 1px solid #ddd; text-align: center;";
+        let team2Style = "padding: 8px; border: 1px solid #ddd; text-align: center;";
+        
+        if (match.status === 'COMPLETED' && match.score1 !== null && match.score2 !== null) {
+            if (match.score1 > match.score2) {
+                team1Style = "padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #059669;";
+            } else if (match.score2 > match.score1) {
+                team2Style = "padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #059669;";
+            }
+        }
+
         html += `
             <tr style="background: #f9f9f9;">
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${match.game_number}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.date}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.time || '-'}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${venueDisplay}</td>
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team1}</td>
+                <td style="${team1Style}">${match.team1}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #d32f2f;">${score}</td>
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team2}</td>
+                <td style="${team2Style}">${match.team2}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.phase}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;" class="status-${match.status.toLowerCase().replace(/\s+/g, '-')}">${match.status}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${videoHTML}</td>
@@ -265,15 +277,27 @@ function populateMatchTable() {
             videoHTML += '</div>';
         }
         
+        // Determine winner styling for completed championship matches
+        let champTeam1Style = "padding: 8px; border: 1px solid #ddd; text-align: center;";
+        let champTeam2Style = "padding: 8px; border: 1px solid #ddd; text-align: center;";
+        
+        if (match.status === 'COMPLETED' && match.score1 !== null && match.score2 !== null) {
+            if (match.score1 > match.score2) {
+                champTeam1Style = "padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #059669;";
+            } else if (match.score2 > match.score1) {
+                champTeam2Style = "padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #059669;";
+            }
+        }
+
         html += `
             <tr style="background: #fff3e0;">
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${match.game_number}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.date}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.time || '-'}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${venueDisplay}</td>
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team1}</td>
+                <td style="${champTeam1Style}">${match.team1}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #d32f2f;">${score}</td>
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.team2}</td>
+                <td style="${champTeam2Style}">${match.team2}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #ff9800;">${match.phase}${match.notes ? ' - ' + match.notes : ''}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;" class="status-${match.status.toLowerCase().replace(/\s+/g, '-')}">${match.status}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${videoHTML}</td>
