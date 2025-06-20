@@ -91,6 +91,91 @@ Document contains SD Shores Black team match recordings with YouTube links:
 
 ## Tournament information
 
+### 16U US Club Championship (June 20-22)
+
+Official google sheet: https://docs.google.com/spreadsheets/d/1FuCUomKqgfg8d83zYxld0B2mnTmcbefwyxKFEebMgiY/edit?gid=0#gid=0
+
+#### Updating US Club Championship Match Data
+
+**IMPORTANT**: Match scores and results are now being updated live in the official Google Sheet. To update the website with the latest match results, follow these steps:
+
+##### Method 1: Download and Update CSV Data (Recommended)
+
+1. **Download the latest CSV data** from Google Sheets:
+```bash
+curl -L "https://docs.google.com/spreadsheets/d/1FuCUomKqgfg8d83zYxld0B2mnTmcbefwyxKFEebMgiY/export?format=csv&gid=0" 2>/dev/null
+```
+
+2. **Clean the CSV data** to extract only match rows:
+```bash
+curl -L "https://docs.google.com/spreadsheets/d/1FuCUomKqgfg8d83zYxld0B2mnTmcbefwyxKFEebMgiY/export?format=csv&gid=0" 2>/dev/null | grep -E "^[0-9]+/[0-9]+/[0-9]+" | grep -v "18 BOYS" | awk -F',' '{print $1","$2","$3","$4","$5","$6","$7","$8}' > cleaned_matches.csv
+```
+
+3. **Add the CSV header**:
+```bash
+echo "DATE,LOCATION,TIME,WHITE TEAM,S,DARK TEAM,S,COMMENTS" > final_data.csv && cat cleaned_matches.csv >> final_data.csv
+```
+
+4. **Update the HTML file** (`20250620 US_Club_Championship_16U.html`):
+   - Open the file and locate the `csvData` section (around lines 113-152)
+   - Replace the entire content between the backticks with the new CSV data from `final_data.csv`
+
+##### Method 2: Direct CSV Replacement (Quick Update)
+
+If you need to quickly update just a few match scores:
+
+1. **Identify completed matches** in the Google Sheet (matches with scores in both S columns)
+2. **Find the corresponding match** in the HTML file's csvData section
+3. **Update the score columns** (5th and 7th columns in CSV format)
+4. **Change status indicators** if needed (empty score columns = scheduled, filled = completed)
+
+##### CSV Data Format Reference
+
+The embedded CSV data follows this structure:
+```
+DATE,LOCATION,TIME,WHITE TEAM,S,DARK TEAM,S,COMMENTS
+6/20/2025,RIVERSIDE POLY #1,4:30 PM,D1 - THUNDER,12,D4 - KERN PREMIER,8,bracket
+```
+
+**Key Points:**
+- **Columns 5 & 7 (S)**: Score columns for WHITE TEAM and DARK TEAM
+- **Empty scores**: Match is scheduled
+- **Filled scores**: Match is completed
+- **Column 8 (COMMENTS)**: Match phase/bracket info and placement indicators
+
+##### Score Update Detection
+
+The JavaScript automatically detects completed matches when:
+- Both score columns (5th and 7th) contain numeric values
+- Status changes from "SCHEDULED" to "COMPLETED"
+- Match highlighting updates for key games
+
+##### Tournament Statistics Auto-Update
+
+When updating match data, these statistics auto-calculate:
+- **Team count**: Extracted from unique team names
+- **Match count**: Total matches in CSV (currently 39)
+- **Venue count**: Unique venues (currently 4)
+- **Pool standings**: Calculated from completed pool matches
+
+##### Venues Covered
+
+All tournament venues are mapped with navigation links:
+- **Riverside Poly #1**: Primary venue (18 matches)
+- **Ramona HS**: Co-host venue (17 matches) 
+- **Norco HS**: Pool play venue (2 matches)
+- **Chino Hills HS**: Championship finals venue (2 matches)
+
+##### Future Automation Option
+
+For automated updates, the HTML file can be modified to fetch directly from Google Sheets:
+```javascript
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/1FuCUomKqgfg8d83zYxld0B2mnTmcbefwyxKFEebMgiY/export?format=csv&gid=0';
+// Replace embedded csvData with fetch(CSV_URL)
+```
+
+**Note**: Current embedded approach works reliably across all environments and provides fallback if Google Sheets is unavailable.
+
 ### 16U Boys Junior Olympics Qualification Tournament (June 13-15, 2025)
 
 - Reference of the official google drice sheet as datasource: https://docs.google.com/spreadsheets/d/1C_yU7MyVHzL1_rubWOHVqAeDto9BApOgw7MarJzQoLk/edit?gid=0#gid=0 "16U BOYS" sheet

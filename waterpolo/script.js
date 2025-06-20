@@ -19,7 +19,8 @@ function createVenueLink(venueName) {
         'RIVERSIDE POLY #2': { anchor: 'riverside-poly', display: 'Riverside Poly #2' },
         'RAMONA HS': { anchor: 'ramona', display: 'Ramona HS' },
         'NORCO HS': { anchor: 'norco', display: 'Norco HS' },
-        'SANTIAGO HS': { anchor: 'santiago', display: 'Santiago HS' }
+        'SANTIAGO HS': { anchor: 'santiago', display: 'Santiago HS' },
+        'CHINO HILLS HS': { anchor: 'chino-hills', display: 'Chino Hills HS' }
     };
     
     // Clean venue name (remove underscores, normalize)

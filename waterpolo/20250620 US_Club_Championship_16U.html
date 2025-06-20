@@ -16,7 +16,7 @@
         <p class="subtitle">US Club Championship</p>
         <div class="memorial">
             <p><strong>June 20-22, 2025</strong></p>
-            <p><a href="pools.html#riverside-poly">Riverside Poly</a> • <a href="pools.html#ramona">Ramona HS</a> • <a href="pools.html#norco">Norco HS</a> • <a href="pools.html#santiago">Santiago HS</a></p>
+            <p><a href="pools.html#riverside-poly">Riverside Poly</a> • <a href="pools.html#ramona">Ramona HS</a> • <a href="pools.html#norco">Norco HS</a> • <a href="pools.html#chino-hills">Chino Hills HS</a></p>
         </div>
     </div>
 
@@ -32,7 +32,7 @@
                         <div class="stat-label">Teams</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="match-count">48</div>
+                        <div class="stat-number" id="match-count">39</div>
                         <div class="stat-label">Matches</div>
                     </div>
                     <div class="stat-card">
@@ -99,7 +99,7 @@
     <div class="footer">
         <div class="container">
             <p><strong>2025 U16 Boys Water Polo - US Club Championship</strong></p>
-            <p>June 20-22, 2025 • <a href="pools.html#riverside-poly">Riverside Poly</a> • <a href="pools.html#ramona">Ramona HS</a> • <a href="pools.html#norco">Norco HS</a> • <a href="pools.html#santiago">Santiago HS</a> • California</p>
+            <p>June 20-22, 2025 • <a href="pools.html#riverside-poly">Riverside Poly</a> • <a href="pools.html#ramona">Ramona HS</a> • <a href="pools.html#norco">Norco HS</a> • <a href="pools.html#chino-hills">Chino Hills HS</a> • California</p>
             <p>Building champions through competition and teamwork 🏆</p>
         </div>
     </div>
@@ -111,54 +111,45 @@
         // and use fetch(CSV_URL) in loadTournamentData()
         
         const csvData = `DATE,LOCATION,TIME,WHITE TEAM,S,DARK TEAM,S,COMMENTS
-6/20/2025,RIVERSIDE POLY #1,4:30 PM,A1 - SD SHORES BLACK,,A4 - SUPREME,,bracket
-6/20/2025,RIVERSIDE POLY #1,5:30 PM,B1 - NORTH IRVINE,,B4 - PASADENA,,bracket
+6/20/2025,RIVERSIDE POLY #1,4:30 PM,D1 - THUNDER,,D4 - KERN PREMIER,,bracket
+6/20/2025,RIVERSIDE POLY #1,5:30 PM,B2 - ROSE BOWL,,B3 -  SD SHORES GOLD,,bracket
 6/20/2025,RIVERSIDE POLY #1,6:30 PM,C1 - CARLSBAD,,C3 - CLOVIS,,bracket
-6/20/2025,RIVERSIDE POLY #1,7:30 PM,A2 - POWAY VALLEY,,A4 - SUPREME,,bracket
-6/20/2025,RIVERSIDE POLY #1,8:30 PM,B1 - NORTH IRVINE,,B3 - SOCAL,,bracket
-6/20/2025,RAMONA HS,4:30 PM,A2 - POWAY VALLEY,,A3 - KERN PREMIER,,bracket
-6/20/2025,RAMONA HS,5:30 PM,B2 - ROSE BOWL,,B3 - SOCAL,,bracket
+6/20/2025,RIVERSIDE POLY #1,7:30 PM,D2 - COMMERCE,,D4 - KERN PREMIER,,bracket
+6/20/2025,RAMONA HS,4:30 PM,D2 - COMMERCE,,D3 - SUPREME,,bracket
+6/20/2025,RAMONA HS,5:30 PM,A2 - POWAY VALLEY,,A3 - SOCAL,,bracket
 6/20/2025,RAMONA HS,6:30 PM,C2 - CHAWP,,C4 - TEMPLE CITY,,bracket
-6/20/2025,RAMONA HS,7:30 PM,A1 - SD SHORES BLACK,,A3 - KERN PREMIER,,bracket
-6/20/2025,RAMONA HS,8:30 PM,B2 - ROSE BOWL,,B4 - PASADENA,,bracket
-6/20/2025,NORCO HS,8:00 AM,D2 - COMMERCE,,D3 - SD SHORES GOLD,,bracket
-6/20/2025,NORCO HS,9:00 AM,D1 - THUNDER,,D4 - ELITE,,bracket
-6/20/2025,NORCO HS,10:00 AM,C2 - CHAWP,,C3 - CLOVIS,,bracket
-6/20/2025,NORCO HS,11:00 AM,C1 - CARLSBAD,,C4 - TEMPLE CITY,,bracket
-6/20/2025,NORCO HS,12:00 PM,D1 - THUNDER,,D4 - ELITE,,bracket
-6/20/2025,NORCO HS,1:00 PM,D2 - COMMERCE,,D3 - SD SHORES GOLD,,bracket
-6/21/2025,RIVERSIDE POLY #1,8:00 AM,A1 - SD SHORES BLACK,,A2 - POWAY VALLEY,,
-6/21/2025,RIVERSIDE POLY #1,9:00 AM,A3 - KERN PREMIER,,A4 - SUPREME,,
-6/21/2025,RIVERSIDE POLY #1,10:00 AM,C1 - CARLSBAD,,C2 - CHAWP,,
-6/21/2025,RIVERSIDE POLY #1,11:00 AM,C3 - CLOVIS,,C4 - TEMPLE CITY,,
-6/21/2025,RIVERSIDE POLY #1,12:00 PM,E1 -1st A -,,E2 - 2nd B -,,
-6/21/2025,RIVERSIDE POLY #1,1:00 PM,F1 -1st B -,,F2 -2nd A -,,
-6/21/2025,RIVERSIDE POLY #1,2:00 PM,G1 - 1st C -,,G2 - 2nd D -,,
-6/21/2025,RIVERSIDE POLY #1,3:00 PM,H1 - 1st D -,,H2 - 2nd C -,,
-6/21/2025,RAMONA HS,8:00 AM,B1 - NORTH IRVINE,,B2 - ROSE BOWL,,
-6/21/2025,RAMONA HS,9:00 AM,B3 - SOCAL,,B4 - PASADENA,,
-6/21/2025,RAMONA HS,10:00 AM,D1 - THUNDER,,D2 - COMMERCE,,
-6/21/2025,RAMONA HS,11:00 AM,D3 - SD SHORES GOLD,,D4 - ELITE,,
-6/21/2025,RAMONA HS,12:00 PM,J1- 3rd A -,,J2 - 4th B -,,
-6/21/2025,RAMONA HS,1:00 PM,K1- 3rd B -,,K2 - 4th A -,,
-6/21/2025,RAMONA HS,2:00 PM,L1 - 3rd C -,,L2 - 4th D -,,
-6/21/2025,RAMONA HS,3:00 PM,I1 - 3rd D -,,I2 - 4th C -,,
-6/22/2025,RIVERSIDE POLY #1,8:00 AM,O1 - 2nd E -,,O2 - 2nd H -,,
-6/22/2025,RIVERSIDE POLY #1,9:00 AM,R1 - 1st K -,,R2 - 1st L -,,
-6/22/2025,RIVERSIDE POLY #1,10:00 AM,M1 - 1st E -,,M2 - 1st H -,,
-6/22/2025,RIVERSIDE POLY #1,11:00 AM,S1 - 2nd J -,,S2 - 2nd I -,,
-6/22/2025,RIVERSIDE POLY #1,12:00 PM,W1 - 1st O -,,W2 - 1st P -,5th,
-6/22/2025,RIVERSIDE POLY #1,1:00 PM,Y1 - 1st Q -,,Y2 - 1st R -,9th,
-6/22/2025,RIVERSIDE POLY #1,2:00 PM,AA1 - 1st S -,,AA2 - 1st T -,11th,
-6/22/2025,RAMONA HS,8:00 AM,P1 - 2nd F -,,P2 - 2nd G -,,
-6/22/2025,RAMONA HS,9:00 AM,Q1 - 1st J -,,Q2 - 1st I -,,
-6/22/2025,RAMONA HS,10:00 AM,N1 - 1st F -,,N2 - 1st G -,,
-6/22/2025,RAMONA HS,11:00 AM,T1 - 2nd K -,,T2 - 2nd L -,,
-6/22/2025,RAMONA HS,12:00 PM,X1 - 2nd O -,,X2 - 2nd P -,7th,
-6/22/2025,RAMONA HS,1:00 PM,Z1 - 2nd Q -,,Z2 - 2nd R -,11th,
-6/22/2025,RAMONA HS,2:00 PM,BB1 - 2nd S -,,BB2 - 2nd T -,15th,
-6/22/2025,SANTIAGO HS,1:00 PM,V1 - 2nd M -,,V2 - 2nd N -,3rd,
-6/22/2025,SANTIAGO HS,2:00 PM,U1 - 1st M -,,U2 - 1st N -,1st,`;
+6/20/2025,RAMONA HS,7:30 PM,D1 - THUNDER,,D3 - SUPREME,,bracket
+6/20/2025,NORCO HS,10:00 AM,C1 - CARLSBAD,,C4 - TEMPLE CITY,,bracket
+6/20/2025,NORCO HS,11:00 AM,C2 - CHAWP,,C3 - CLOVIS,,bracket
+6/21/2025,RIVERSIDE POLY #1,9:00 AM,A1 - SD SHORES BLACK,,A2 - POWAY VALLEY,,
+6/21/2025,RIVERSIDE POLY #1,11:00 AM,A1 - SD SHORES BLACK,,A3 - SOCAL,,
+6/21/2025,RIVERSIDE POLY #1,12:00 PM,C1 - CARLSBAD,,C2 - CHAWP,,
+6/21/2025,RIVERSIDE POLY #1,1:00 PM,C3 - CLOVIS,,C4 - TEMPLE CITY,,
+6/21/2025,RIVERSIDE POLY #1,2:00 PM,E1 -1st A - ,,E2 - 2nd B - ,,
+6/21/2025,RIVERSIDE POLY #1,3:00 PM,K1- 3rd B - ,,K3 - 4th D - ,,
+6/21/2025,RIVERSIDE POLY #1,4:00 PM,H1 - 1st D - ,,H2 - 2nd C -,,
+6/21/2025,RIVERSIDE POLY #1,5:00 PM,K1- 3rd B - ,,K2 - 3rd C - ,,
+6/21/2025,RAMONA HS,9:00 AM,B1 - NORTH IRVINE,,B3 -  SD SHORES GOLD,,
+6/21/2025,RAMONA HS,11:00 AM,B1 - NORTH IRVINE,,B2 - ROSE BOWL,,
+6/21/2025,RAMONA HS,12:00 PM,D3 - SUPREME,,D4 - KERN PREMIER,,
+6/21/2025,RAMONA HS,1:00 PM,D1 - THUNDER,,D2 - COMMERCE,,
+6/21/2025,RAMONA HS,2:00 PM,F1 -1st B -,,F2 -2nd A - ,,
+6/21/2025,RAMONA HS,3:00 PM,J1- 3rd A - ,,J2 - 3rd D - ,,
+6/21/2025,RAMONA HS,4:00 PM,G1 - 1st C - ,,G2 - 2nd D - ,,
+6/21/2025,RAMONA HS,5:00 PM,J1- 3rd A - ,,J3 - 4th C - ,,
+6/22/2025,RIVERSIDE POLY #1,8:00 AM,M1 - 1st E - ,,M2 - 1st H - ,,
+6/22/2025,RIVERSIDE POLY #1,9:00 AM,N1 - 1st F - ,,N2 - 1st G - ,,
+6/22/2025,RIVERSIDE POLY #1,11:00 AM,P1 - 2nd F - ,,P2 - 2nd G - ,,
+6/22/2025,RIVERSIDE POLY #1,12:00 PM,O1 - 2nd E - ,,O2 - 2nd H - ,,
+6/22/2025,RIVERSIDE POLY #1,2:00 PM,X1 - 2nd O - ,,X2 - 2nd P - ,,7th
+6/22/2025,RIVERSIDE POLY #1,3:00 PM,W1 - 1st O - ,,W2 - 1st P -,,5th
+6/22/2025,RAMONA HS,8:00 AM,K2 - 3rd C - ,,K3 - 4th D - ,,
+6/22/2025,RAMONA HS,9:00 AM,J2 - 3rd D - ,,J3 - 4th C - ,,
+6/22/2025,RAMONA HS,11:00 AM,R1 - 3rd J,,R2 - 3td K,,13th
+6/22/2025,RAMONA HS,12:00 PM,Q1 - 1st J - ,,Q2 - 1st K - ,,9th
+6/22/2025,RAMONA HS,2:00 PM,S1 - 2nd J - ,,S2 - 2nd K - ,,11th
+6/22/2025,CHINO HILLS HS,1:00 PM,V1 - 2nd M -,,V2 - 2nd N - ,,3rd
+6/22/2025,CHINO HILLS HS,2:00 PM,U1 - 1st M - ,,U2 - 1st N - ,,1st`;
         
         let tournamentData = {};
 
@@ -270,10 +261,10 @@
 
             // Extract pools based on known tournament structure
             const pools = {
-                A: ['SD SHORES BLACK', 'POWAY VALLEY', 'KERN PREMIER', 'SUPREME'],
-                B: ['NORTH IRVINE', 'ROSE BOWL', 'SOCAL', 'PASADENA'], 
+                A: ['SD SHORES BLACK', 'POWAY VALLEY', 'SOCAL', 'SUPREME'],
+                B: ['NORTH IRVINE', 'ROSE BOWL', 'SD SHORES GOLD', 'PASADENA'], 
                 C: ['CARLSBAD', 'CHAWP', 'CLOVIS', 'TEMPLE CITY'],
-                D: ['THUNDER', 'COMMERCE', 'SD SHORES GOLD', 'ELITE']
+                D: ['THUNDER', 'COMMERCE', 'SUPREME', 'KERN PREMIER']
             };
 
             return {
