@@ -24,8 +24,8 @@
 
         <!-- Tournament Information -->
         <div class="content-section">
-            <div class="section-header">📋 Tournament Information</div>
-            <div class="section-content">
+            <button class="collapsible">📋 Tournament Information</button>
+            <div class="collapsible-content">
                 <div class="tournament-stats">
                     <div class="stat-card">
                         <div class="stat-number" id="team-count">16</div>
@@ -326,7 +326,7 @@
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${match.match_id}</td>
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.date}</td>
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #0077be;">${match.time}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.venue}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${getVenueLink(match.venue)}</td>
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: left; ${isPlaceholder ? 'font-style: italic; color: #666;' : ''}">${match.white_team.code ? match.white_team.code + ' - ' : ''}${match.white_team.name}</td>
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; font-size: 1.1rem;">- vs -</td>
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: left; ${isPlaceholder ? 'font-style: italic; color: #666;' : ''}">${match.dark_team.code ? match.dark_team.code + ' - ' : ''}${match.dark_team.name}</td>
@@ -375,8 +375,22 @@
             }
         }
 
+        // Function to convert venue names to links
+        function getVenueLink(venue) {
+            const venueLinks = {
+                'RIVERSIDE POLY #1': '<a href="pools.html#riverside-poly" style="color: #0077be; text-decoration: none; font-weight: bold;">RIVERSIDE POLY #1</a>',
+                'RIVERSIDE POLY #2': '<a href="pools.html#riverside-poly" style="color: #0077be; text-decoration: none; font-weight: bold;">RIVERSIDE POLY #2</a>',
+                'RAMONA HS': '<a href="pools.html#ramona" style="color: #0077be; text-decoration: none; font-weight: bold;">RAMONA HS</a>',
+                'NORCO HS': '<a href="pools.html#norco" style="color: #0077be; text-decoration: none; font-weight: bold;">NORCO HS</a>',
+                'CHINO HILLS HS': '<a href="pools.html#chino-hills" style="color: #0077be; text-decoration: none; font-weight: bold;">CHINO HILLS HS</a>'
+            };
+            
+            return venueLinks[venue] || venue;
+        }
+
         // Load data when page loads
         document.addEventListener('DOMContentLoaded', loadTournamentData);
     </script>
+    <script src="script.js" defer></script>
 </body>
 </html>
