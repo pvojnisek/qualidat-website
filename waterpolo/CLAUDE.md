@@ -150,6 +150,26 @@ The JavaScript automatically detects completed matches when:
 - Status changes from "SCHEDULED" to "COMPLETED"
 - Match highlighting updates for key games
 
+##### Multiple Data Update Points ⚠️ **IMPORTANT**
+
+**When updating match data, you MUST update multiple places:**
+
+1. **Main Match Table**: All matches display in the "All Tournament Matches" section
+2. **Team Match Modals**: Clickable team names in pools show individual team match histories
+3. **Pool Structure**: The hardcoded pools array must match actual teams in CSV data
+4. **Statistics Calculations**: Team/match counts auto-update from CSV data
+
+**Key Update Locations in `20250620 US_Club_Championship_16U.html`:**
+- **CSV Data**: Lines 113-152 (embedded csvData)
+- **Pools Array**: Lines 263-268 (must match actual CSV teams)
+- **Team Name Matching**: Team names in pools must exactly match CSV team names
+
+**Clickable Teams Feature:**
+- Pool team names are clickable and show all matches for that team
+- Uses `match.white_team.name` and `match.dark_team.name` for filtering
+- Team name mismatches will cause "No matches found" errors
+- Venue names in modals are clickable links to pools.html
+
 ##### Tournament Statistics Auto-Update
 
 When updating match data, these statistics auto-calculate:

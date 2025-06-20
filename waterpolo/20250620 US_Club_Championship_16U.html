@@ -94,6 +94,23 @@
                 </div>
             </div>
         </div>
+
+        <!-- Data Source -->
+        <div class="content-section">
+            <div class="section-content">
+                <div class="data-source">
+                    <h4>📊 Data Source</h4>
+                    <p>Tournament schedules, results and live match updates from official scoresheet:</p>
+                    <a href="https://docs.google.com/spreadsheets/d/1FuCUomKqgfg8d83zYxld0B2mnTmcbefwyxKFEebMgiY/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer">
+                        View Official Tournament Scoresheet - US Club Championship 16U
+                    </a>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+                        <strong>Note:</strong> Match scores and results are updated live in the Google Sheet. 
+                        Website data is embedded and requires manual updates from the live sheet.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="footer">
@@ -259,10 +276,10 @@
                 !team.includes('st ') && !team.endsWith(' -') && team !== ''
             );
 
-            // Extract pools based on known tournament structure
+            // Extract pools based on actual tournament structure from CSV data
             const pools = {
-                A: ['SD SHORES BLACK', 'POWAY VALLEY', 'SOCAL', 'SUPREME'],
-                B: ['NORTH IRVINE', 'ROSE BOWL', 'SD SHORES GOLD', 'PASADENA'], 
+                A: ['SD SHORES BLACK', 'POWAY VALLEY', 'SOCAL'],
+                B: ['NORTH IRVINE', 'ROSE BOWL', 'SD SHORES GOLD'], 
                 C: ['CARLSBAD', 'CHAWP', 'CLOVIS', 'TEMPLE CITY'],
                 D: ['THUNDER', 'COMMERCE', 'SUPREME', 'KERN PREMIER']
             };
@@ -289,7 +306,7 @@
                         <h3>Pool ${poolName}</h3>
                         <div class="standings-list">
                             ${teams.map((team, index) => `
-                                <div class="standing-item">
+                                <div class="standing-item clickable-pool-team" data-team="${team}" style="cursor: pointer; transition: background-color 0.2s;">
                                     <span class="position">${poolName}${index + 1}</span>
                                     <span class="team-name">${team}</span>
                                 </div>
@@ -388,9 +405,190 @@
             return venueLinks[venue] || venue;
         }
 
+        // Function to show matches for a pool team
+        function showPoolTeamMatches(teamName) {
+            if (!tournamentData || !tournamentData.matches) {
+                console.error('Tournament data not available');
+                return;
+            }
+
+            // Filter matches for this team
+            const teamMatches = tournamentData.matches.filter(match => 
+                match.white_team.name === teamName || match.dark_team.name === teamName
+            );
+
+            if (teamMatches.length === 0) {
+                alert(`No matches found for ${teamName}`);
+                return;
+            }
+
+            // Create and show modal
+            createTeamMatchesModal(teamName, teamMatches);
+        }
+
+        // Function to create team matches modal
+        function createTeamMatchesModal(teamName, matches) {
+            const modal = document.getElementById('teamMatchesModal');
+            const modalTeamName = document.getElementById('modalTeamName');
+            const teamMatchesList = document.getElementById('teamMatchesList');
+
+            // Set team name in modal header
+            modalTeamName.textContent = `${teamName} - Tournament Matches`;
+
+            // Sort matches by match_id (chronological order)
+            matches.sort((a, b) => a.match_id - b.match_id);
+
+            // Group matches by phase
+            const groupedMatches = {};
+            matches.forEach(match => {
+                const phase = match.phase;
+                if (!groupedMatches[phase]) {
+                    groupedMatches[phase] = [];
+                }
+                groupedMatches[phase].push(match);
+            });
+
+            // Generate matches HTML
+            let matchesHTML = '';
+            
+            Object.entries(groupedMatches).forEach(([phase, phaseMatches]) => {
+                matchesHTML += `
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color: #0077be; margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #0077be;">
+                            ${phase} (${phaseMatches.length} match${phaseMatches.length > 1 ? 'es' : ''})
+                        </h4>
+                        <div style="display: grid; gap: 12px;">
+                `;
+
+                phaseMatches.forEach(match => {
+                    const isTeam1 = match.white_team.name === teamName;
+                    const opponent = isTeam1 ? match.dark_team.name : match.white_team.name;
+                    const teamScore = isTeam1 ? 'TBD' : 'TBD'; // Scores not available in current data
+                    const opponentScore = isTeam1 ? 'TBD' : 'TBD';
+                    
+                    const matchDate = match.date || 'TBD';
+                    const matchTime = match.time || 'TBD';
+                    const venue = getVenueLink(match.venue) || 'TBD';
+                    
+                    matchesHTML += `
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 15px; align-items: center;">
+                                <div style="text-align: center; min-width: 60px;">
+                                    <div style="font-size: 0.9rem; color: #666;">${matchDate}</div>
+                                    <div style="font-size: 0.9rem; color: #666;">${matchTime}</div>
+                                </div>
+                                <div>
+                                    <div style="font-weight: bold; margin-bottom: 5px;">
+                                        <span style="color: ${isTeam1 ? '#0077be' : '#333'};">${teamName}</span>
+                                        <span style="margin: 0 10px;">vs</span>
+                                        <span style="color: ${!isTeam1 ? '#0077be' : '#333'};">${opponent}</span>
+                                    </div>
+                                    <div style="font-size: 0.9rem; color: #666;">
+                                        📍 ${venue}
+                                    </div>
+                                </div>
+                                <div style="text-align: center; min-width: 80px;">
+                                    <div style="font-size: 1.1rem; font-weight: bold; color: #0077be;">
+                                        ${teamScore} - ${opponentScore}
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                                        Game ${match.match_id}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                matchesHTML += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Add summary info at the top
+            const summaryHTML = `
+                <div style="background: linear-gradient(135deg, #0077be, #00a8cc); color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; text-align: center;">
+                    <h3 style="margin: 0 0 10px 0;">${teamName}</h3>
+                    <p style="margin: 0; opacity: 0.9;">Total Matches: ${matches.length} | Tournament: US Club Championship</p>
+                </div>
+            `;
+
+            teamMatchesList.innerHTML = summaryHTML + matchesHTML;
+
+            // Show modal
+            modal.style.display = 'block';
+        }
+
+        // Function to set up event listeners after pools are loaded
+        function setupTeamClickListeners() {
+            const clickableTeams = document.querySelectorAll('.clickable-pool-team');
+            clickableTeams.forEach(teamElement => {
+                teamElement.addEventListener('click', function() {
+                    const teamName = this.dataset.team;
+                    showPoolTeamMatches(teamName);
+                });
+                
+                // Add hover effect
+                teamElement.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#e3f2fd';
+                });
+                teamElement.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+        }
+
+        // Function to set up modal close functionality
+        function setupModalCloseListeners() {
+            const modal = document.getElementById('teamMatchesModal');
+            const closeBtn = modal.querySelector('.close');
+
+            // Close modal when X is clicked
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside of it
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Close modal when Escape key is pressed
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
         // Load data when page loads
-        document.addEventListener('DOMContentLoaded', loadTournamentData);
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTournamentData();
+            
+            // Set up modal close listeners
+            setupModalCloseListeners();
+            
+            // Set up team click listeners after a short delay to ensure pools are loaded
+            setTimeout(setupTeamClickListeners, 500);
+        });
     </script>
+
+    <!-- Team Matches Modal -->
+    <div id="teamMatchesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTeamName">Team Matches</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="teamMatchesList"></div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js" defer></script>
 </body>
 </html>
