@@ -409,7 +409,17 @@
                 // Add calendar button after row is added to DOM
                 const timeCell = document.getElementById(`time-cell-${match.match_id}`);
                 if (timeCell) {
-                    const calendarButton = createCalendarButton(match, {
+                    // Format match data for calendar function
+                    const calendarMatchData = {
+                        date: match.date,
+                        time: match.time,
+                        venue: match.venue,
+                        team1: match.white_team.name,
+                        team2: match.dark_team.name,
+                        game_number: match.match_id
+                    };
+                    
+                    const calendarButton = createCalendarButton(calendarMatchData, {
                         tournamentName: 'US Club Championship 16U',
                         websiteSource: 'SD Shores Tournament Website'
                     });
@@ -712,6 +722,7 @@
         </div>
     </div>
 
+    <script src="calendar.js"></script>
     <script src="script.js" defer></script>
 </body>
 </html>
