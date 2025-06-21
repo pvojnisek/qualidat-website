@@ -378,7 +378,9 @@
                 row.innerHTML = `
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${match.match_id}</td>
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.date}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #0077be;">${match.time}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;" id="time-cell-${match.match_id}">
+                        <!-- Calendar button will be inserted here -->
+                    </td>
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${getVenueLink(match.venue)}</td>
                     <td style="${whiteTeamStyle}">${match.white_team.code ? match.white_team.code + ' - ' : ''}${match.white_team.name}</td>
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; font-size: 1.1rem;">${scoreDisplay}</td>
@@ -403,6 +405,16 @@
                 }
 
                 tbody.appendChild(row);
+                
+                // Add calendar button after row is added to DOM
+                const timeCell = document.getElementById(`time-cell-${match.match_id}`);
+                if (timeCell) {
+                    const calendarButton = createCalendarButton(match, {
+                        tournamentName: 'US Club Championship 16U',
+                        websiteSource: 'SD Shores Tournament Website'
+                    });
+                    timeCell.appendChild(calendarButton);
+                }
             });
         }
 
@@ -662,6 +674,7 @@
                 }
             });
         }
+
 
 
         // Load data when page loads
