@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hungarian Banking QR Code Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .language-selector select {
+            padding: 8px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .form-group .error {
+            color: #f44336;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.has-error input {
+            border-color: #f44336;
+        }
+
+        .form-group.has-error .error {
+            display: block;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .output-container {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .output-container.show {
+            display: block;
+        }
+
+        .output-group {
+            margin-bottom: 25px;
+        }
+
+        .output-group h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .qr-code-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .qr-code-container canvas {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-width: 100%;
+        }
+
+        .data-output {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .success-message {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .char-counter {
+            font-size: 0.9em;
+            color: #666;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .char-counter.warning {
+            color: #ff9800;
+        }
+
+        .char-counter.error {
+            color: #f44336;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 12px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="language-selector">
+                <select id="languageSelect" onchange="changeLanguage()">
+                    <option value="en">English</option>
+                    <option value="hu">Magyar</option>
+                </select>
+            </div>
+            <h1 id="mainTitle">Hungarian Banking QR Code Generator</h1>
+            <p id="mainSubtitle">Generate HCT (Hungarian Credit Transfer) QR codes according to MNB standard</p>
+        </div>
+
+        <div class="form-container">
+            <form id="qrForm">
+                <div class="form-group">
+                    <label for="accountOwner" id="labelAccountOwner">Account Owner Name *</label>
+                    <input type="text" id="accountOwner" name="accountOwner" maxlength="70" required>
+                    <div class="char-counter">
+                        <span id="ownerCounter">0</span><span id="ownerCounterText">/70 characters</span>
+                    </div>
+                    <div class="error" id="errorAccountOwner">Account owner name is required.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="accountNumber" id="labelAccountNumber">Account Number (XXXXXXXX-XXXXXXXX-XXXXXXXX) *</label>
+                    <input type="text" id="accountNumber" name="accountNumber" maxlength="26" required>
+                    <div class="error" id="errorAccountNumber">Please enter a valid Hungarian account number.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount" id="labelAmount">Amount (HUF) *</label>
+                    <input type="number" id="amount" name="amount" min="1" step="1" required>
+                    <div class="error" id="errorAmount">Amount is required and must be a positive number.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" id="labelDescription">Description/Reference</label>
+                    <input type="text" id="description" name="description" maxlength="70">
+                    <div class="char-counter">
+                        <span id="descCounter">0</span><span id="descCounterText">/70 characters</span>
+                    </div>
+                    <div class="error" id="errorDescription">Description can be maximum 70 characters.</div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary" id="btnGenerate">Generate QR Code</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()" id="btnReset">Clear Form</button>
+                </div>
+            </form>
+
+            <div id="outputContainer" class="output-container">
+                <div class="success-message" id="successMessage">
+                    ✅ <span id="successText">QR code generated successfully!</span>
+                </div>
+
+                <div class="output-group">
+                    <h3 id="qrCodeTitle">QR Code</h3>
+                    <div class="qr-code-container">
+                        <canvas id="qrCanvas"></canvas>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="downloadQR()" id="btnDownload">Download QR Code</button>
+                        <button type="button" class="btn btn-secondary" onclick="copyData()" id="btnCopy">Copy Data</button>
+                    </div>
+                </div>
+
+                <div class="output-group">
+                    <h3 id="qrDataTitle">QR Code Data</h3>
+                    <div class="data-output" id="qrData"></div>
+                </div>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <span id="loadingText">Generating QR code...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language translations
+        const translations = {
+            en: {
+                mainTitle: "Hungarian Banking QR Code Generator",
+                mainSubtitle: "Generate HCT (Hungarian Credit Transfer) QR codes according to MNB standard",
+                labelAccountOwner: "Account Owner Name *",
+                labelAccountNumber: "Account Number (XXXXXXXX-XXXXXXXX-XXXXXXXX) *", 
+                labelAmount: "Amount (HUF) *",
+                labelDescription: "Description/Reference",
+                ownerCounterText: "/70 characters",
+                descCounterText: "/70 characters",
+                errorAccountOwner: "Account owner name is required.",
+                errorAccountNumber: "Please enter a valid Hungarian account number.",
+                errorAmount: "Amount is required and must be a positive number.",
+                errorDescription: "Description can be maximum 70 characters.",
+                btnGenerate: "Generate QR Code",
+                btnReset: "Clear Form",
+                successText: "QR code generated successfully!",
+                qrCodeTitle: "QR Code",
+                qrDataTitle: "QR Code Data",
+                btnDownload: "Download QR Code",
+                btnCopy: "Copy Data",
+                loadingText: "Generating QR code...",
+                copySuccess: "QR code data copied to clipboard!",
+                copyError: "Error occurred during copying."
+            },
+            hu: {
+                mainTitle: "Magyar Banki QR Kód Generátor",
+                mainSubtitle: "MNB szabvány szerinti HCT (Hungarian Credit Transfer) QR kód készítése",
+                labelAccountOwner: "Számlatulajdonos neve *",
+                labelAccountNumber: "Számlaszám (XXXXXXXX-XXXXXXXX-XXXXXXXX) *",
+                labelAmount: "Összeg (HUF) *", 
+                labelDescription: "Közlemény",
+                ownerCounterText: "/70 karakter",
+                descCounterText: "/70 karakter",
+                errorAccountOwner: "A számlatulajdonos neve kötelező mező.",
+                errorAccountNumber: "Kérjük, adjon meg egy érvényes magyar számlaszámot.",
+                errorAmount: "Az összeg kötelező és pozitív szám kell legyen.",
+                errorDescription: "A közlemény maximum 70 karakter lehet.",
+                btnGenerate: "QR Kód Generálása",
+                btnReset: "Űrlap Törlése",
+                successText: "QR kód sikeresen generálva!",
+                qrCodeTitle: "QR Kód",
+                qrDataTitle: "QR Kód Adatai",
+                btnDownload: "QR Kód Letöltése",
+                btnCopy: "Adat Másolása",
+                loadingText: "QR kód generálása...",
+                copySuccess: "QR kód adatai a vágólapra másolva!",
+                copyError: "Hiba történt a másolás során."
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        function changeLanguage() {
+            const select = document.getElementById('languageSelect');
+            currentLanguage = select.value;
+            updateTexts();
+            localStorage.setItem('qrLanguage', currentLanguage);
+        }
+
+        function updateTexts() {
+            const t = translations[currentLanguage];
+            
+            document.getElementById('mainTitle').textContent = t.mainTitle;
+            document.getElementById('mainSubtitle').textContent = t.mainSubtitle;
+            document.getElementById('labelAccountOwner').textContent = t.labelAccountOwner;
+            document.getElementById('labelAccountNumber').textContent = t.labelAccountNumber;
+            document.getElementById('labelAmount').textContent = t.labelAmount;
+            document.getElementById('labelDescription').textContent = t.labelDescription;
+            document.getElementById('ownerCounterText').textContent = t.ownerCounterText;
+            document.getElementById('descCounterText').textContent = t.descCounterText;
+            document.getElementById('errorAccountOwner').textContent = t.errorAccountOwner;
+            document.getElementById('errorAccountNumber').textContent = t.errorAccountNumber;
+            document.getElementById('errorAmount').textContent = t.errorAmount;
+            document.getElementById('errorDescription').textContent = t.errorDescription;
+            document.getElementById('btnGenerate').textContent = t.btnGenerate;
+            document.getElementById('btnReset').textContent = t.btnReset;
+            document.getElementById('successText').textContent = t.successText;
+            document.getElementById('qrCodeTitle').textContent = t.qrCodeTitle;
+            document.getElementById('qrDataTitle').textContent = t.qrDataTitle;
+            document.getElementById('btnDownload').textContent = t.btnDownload;
+            document.getElementById('btnCopy').textContent = t.btnCopy;
+            document.getElementById('loadingText').textContent = t.loadingText;
+        }
+
+        function initializeLanguage() {
+            const savedLanguage = localStorage.getItem('qrLanguage') || 'en';
+            currentLanguage = savedLanguage;
+            document.getElementById('languageSelect').value = savedLanguage;
+            updateTexts();
+        }
+
+        // Hungarian bank BIC codes mapping
+        const BIC_CODES = {
+            '104': 'OKHBHUHB',    // K&H Bank
+            '107': 'CIBHHUHB',    // CIB Bank
+            '108': 'CIBHHUHB',    // CIB Bank
+            '109': 'BACXHUHB',    // UniCredit Bank
+            '116': 'GIBAHUHB',    // Erste Bank
+            '117': 'OTPVHUHB',    // OTP Bank
+            '120': 'UBRTHUHB',    // Raiffeisen Bank
+            '128': 'BKCHHUHU',    // Budapest Bank
+            '138': 'HBWEHUHB',    // MKB Bank
+            '149': 'BUDDHUHU',    // Commerzbank
+            '159': 'GRANHUHU',    // Gránit Bank
+        };
+
+        // Form elements - will be initialized on DOMContentLoaded
+        let form, accountOwnerInput, accountNumberInput, amountInput, descriptionInput;
+        let outputContainer, successMessage, qrCanvas, qrDataDiv, loading;
+        let ownerCounter, descCounter;
+
+        function updateCharCounter(event) {
+            const input = event.target;
+            const counter = input.id === 'accountOwner' ? ownerCounter : descCounter;
+            const length = input.value.length;
+            const maxLength = input.maxLength;
+            
+            counter.textContent = length;
+            counter.className = length > maxLength * 0.9 ? 'char-counter error' : 
+                               length > maxLength * 0.7 ? 'char-counter warning' : 'char-counter';
+        }
+
+        function formatAccountNumber(event) {
+            let value = event.target.value.replace(/[^0-9]/g, '');
+            
+            if (value.length > 0) {
+                if (value.length <= 8) {
+                    value = value;
+                } else if (value.length <= 16) {
+                    value = value.slice(0, 8) + '-' + value.slice(8);
+                } else {
+                    value = value.slice(0, 8) + '-' + value.slice(8, 16) + '-' + value.slice(16, 24);
+                }
+            }
+            
+            event.target.value = value;
+        }
+
+        function validateForm() {
+            let isValid = true;
+            const formGroups = document.querySelectorAll('.form-group');
+            
+            formGroups.forEach(group => {
+                group.classList.remove('has-error');
+            });
+
+            // Validate account owner
+            if (!accountOwnerInput.value.trim()) {
+                showError(accountOwnerInput, 'Account owner name is required.');
+                isValid = false;
+            } else if (accountOwnerInput.value.length > 70) {
+                showError(accountOwnerInput, 'Account owner name can be maximum 70 characters.');
+                isValid = false;
+            }
+
+            // Validate account number
+            const accountNumber = accountNumberInput.value.replace(/[^0-9]/g, '');
+            if (!accountNumber) {
+                showError(accountNumberInput, 'Account number is required.');
+                isValid = false;
+            } else if (accountNumber.length !== 24) {
+                showError(accountNumberInput, 'Account number format is incorrect. Please enter 24 digits.');
+                isValid = false;
+            } else if (!isValidHungarianAccount(accountNumber)) {
+                showError(accountNumberInput, 'Invalid Hungarian account number.');
+                isValid = false;
+            }
+
+            // Validate amount
+            if (!amountInput.value || parseFloat(amountInput.value) <= 0) {
+                showError(amountInput, 'Amount is required and must be a positive number.');
+                isValid = false;
+            }
+
+            // Validate description length
+            if (descriptionInput.value.length > 70) {
+                showError(descriptionInput, 'Description can be maximum 70 characters.');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function showError(input, message) {
+            const formGroup = input.closest('.form-group');
+            formGroup.classList.add('has-error');
+            const errorDiv = formGroup.querySelector('.error');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+            }
+        }
+
+        function isValidHungarianAccount(accountNumber) {
+            if (accountNumber.length !== 24) return false;
+            
+            const bankCode = accountNumber.substring(0, 3);
+            return BIC_CODES.hasOwnProperty(bankCode);
+        }
+
+        function calculateHungarianIBAN(accountNumber) {
+            const cleanAccount = accountNumber.replace(/[^0-9]/g, '');
+            const countryCode = 'HU';
+            const accountPart = cleanAccount;
+            
+            // Calculate check digits using modulo 97 - safer implementation
+            const rearranged = accountPart + '1725' + '00'; // HU = 1725, 00 for initial check digits
+            
+            let remainder = 0;
+            for (let i = 0; i < rearranged.length; i++) {
+                const digit = parseInt(rearranged[i]);
+                remainder = (remainder * 10 + digit) % 97;
+                
+                if (i > 100) {
+                    console.error('IBAN calculation taking too long, breaking');
+                    break;
+                }
+            }
+            
+            const checkDigits = (98 - remainder).toString().padStart(2, '0');
+            
+            return countryCode + checkDigits + accountPart;
+        }
+
+        function getBICFromAccountNumber(accountNumber) {
+            const bankCode = accountNumber.substring(0, 3);
+            return BIC_CODES[bankCode] || 'UNKNOWN';
+        }
+
+        function generateTimestamp() {
+            const now = new Date();
+            const validUntil = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+            
+            const year = validUntil.getFullYear();
+            const month = (validUntil.getMonth() + 1).toString().padStart(2, '0');
+            const day = validUntil.getDate().toString().padStart(2, '0');
+            const hours = validUntil.getHours().toString().padStart(2, '0');
+            const minutes = validUntil.getMinutes().toString().padStart(2, '0');
+            const seconds = validUntil.getSeconds().toString().padStart(2, '0');
+            
+            const isDST = validUntil.getMonth() >= 2 && validUntil.getMonth() <= 9;
+            const timezone = isDST ? '+02:00' : '+01:00';
+            
+            return `${year}${month}${day}${hours}${minutes}${seconds}${timezone}`;
+        }
+
+        function generateQRData(formData) {
+            const accountNumber = formData.accountNumber.replace(/[^0-9]/g, '');
+            const iban = calculateHungarianIBAN(accountNumber);
+            const bic = getBICFromAccountNumber(accountNumber);
+            const timestamp = generateTimestamp();
+            
+            // MNB specification: 17 fields separated by LF (Line Feed)
+            const qrFields = [
+                'HCT',                              // 1. ID Code
+                '001',                              // 2. Version
+                '1',                                // 3. Character Set (UTF-8)
+                bic,                                // 4. BIC
+                formData.accountOwner,              // 5. Name
+                iban,                               // 6. IBAN
+                'HUF' + formData.amount,            // 7. Amount
+                timestamp,                          // 8. Validity
+                'CBFF',                             // 9. Payment Situation (Business-to-Business)
+                formData.description || '',         // 10. Description
+                '',                                 // 11. Shop ID
+                '',                                 // 12. Device ID
+                '',                                 // 13. Invoice ID
+                '',                                 // 14. Customer ID
+                '',                                 // 15. Transaction ID
+                '',                                 // 16. Loyalty ID
+                ''                                  // 17. NAV Code
+            ];
+            
+            return qrFields.join('\n');
+        }
+
+        function generateQR(event) {
+            event.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+
+            loading.style.display = 'block';
+            outputContainer.classList.remove('show');
+
+            setTimeout(() => {
+                try {
+                    console.log('Starting QR generation...');
+                    
+                    const formData = {
+                        accountOwner: accountOwnerInput.value.trim(),
+                        accountNumber: accountNumberInput.value,
+                        amount: amountInput.value,
+                        description: descriptionInput.value.trim()
+                    };
+                    
+                    console.log('Form data:', formData);
+
+                    const qrData = generateQRData(formData);
+                    console.log('Generated QR data:', qrData);
+                    
+                    // Display QR data first
+                    qrDataDiv.textContent = qrData;
+                    
+                    // Show the output container with data
+                    loading.style.display = 'none';
+                    outputContainer.classList.add('show');
+                    successMessage.classList.add('show');
+                    
+                    // Generate QR code using QRious library
+                    setTimeout(() => {
+                        try {
+                            console.log('Starting QR code image generation...');
+                            
+                            if (typeof QRious === 'undefined') {
+                                throw new Error('QRious library not loaded');
+                            }
+                            
+                            const qr = new QRious({
+                                value: qrData,
+                                size: 250,
+                                level: 'M'
+                            });
+                            
+                            console.log('QR object created, replacing canvas...');
+                            
+                            // Replace existing canvas
+                            const container = qrCanvas.parentNode;
+                            if (qrCanvas.parentNode) {
+                                container.removeChild(qrCanvas);
+                            }
+                            
+                            const newCanvas = qr.canvas;
+                            newCanvas.id = 'qrCanvas';
+                            newCanvas.style.border = '1px solid #ddd';
+                            newCanvas.style.borderRadius = '8px';
+                            container.appendChild(newCanvas);
+                            
+                            // Update the global reference
+                            qrCanvas = newCanvas;
+                            
+                            console.log('QR code generation completed successfully');
+                            
+                        } catch (error) {
+                            console.error('QR image generation error: ', error);
+                            
+                            // Fallback: create a simple placeholder
+                            const container = qrCanvas.parentNode;
+                            const placeholder = document.createElement('div');
+                            placeholder.id = 'qrCanvas';
+                            placeholder.style.cssText = 'width: 250px; height: 250px; border: 2px dashed #2196F3; display: flex; align-items: center; justify-content: center; background: #f8f9ff; color: #2196F3; text-align: center; border-radius: 8px;';
+                            placeholder.innerHTML = '<div>QR generation failed.<br>Use the data below with any QR generator.</div>';
+                            
+                            if (qrCanvas.parentNode) {
+                                container.removeChild(qrCanvas);
+                            }
+                            container.appendChild(placeholder);
+                            qrCanvas = placeholder;
+                        }
+                    }, 100);
+                    
+                    // Scroll to results
+                    outputContainer.scrollIntoView({ behavior: 'smooth' });
+                    
+                    console.log('Data display completed successfully');
+                    
+                } catch (error) {
+                    console.error('Error in QR generation:', error);
+                    loading.style.display = 'none';
+                    alert('Error: ' + error.message);
+                }
+            }, 500);
+        }
+
+        function resetForm() {
+            form.reset();
+            ownerCounter.textContent = '0';
+            descCounter.textContent = '0';
+            outputContainer.classList.remove('show');
+            successMessage.classList.remove('show');
+            
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('has-error');
+            });
+        }
+
+        function copyData() {
+            const data = qrDataDiv.textContent;
+            const t = translations[currentLanguage];
+            navigator.clipboard.writeText(data).then(() => {
+                alert(t.copySuccess);
+            }).catch(err => {
+                console.error('Copy failed: ', err);
+                alert(t.copyError);
+            });
+        }
+
+        function downloadQR() {
+            if (qrCanvas && qrCanvas.toDataURL) {
+                const link = document.createElement('a');
+                link.download = 'hungarian-banking-qr.png';
+                link.href = qrCanvas.toDataURL();
+                link.click();
+            } else {
+                // Download the QR data as a text file instead
+                const data = qrDataDiv.textContent;
+                const blob = new Blob([data], { type: 'text/plain' });
+                const link = document.createElement('a');
+                link.download = 'hungarian-banking-qr-data.txt';
+                link.href = URL.createObjectURL(blob);
+                link.click();
+                URL.revokeObjectURL(link.href);
+            }
+        }
+
+        // Initialize everything on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize form elements
+            form = document.getElementById('qrForm');
+            accountOwnerInput = document.getElementById('accountOwner');
+            accountNumberInput = document.getElementById('accountNumber');
+            amountInput = document.getElementById('amount');
+            descriptionInput = document.getElementById('description');
+            outputContainer = document.getElementById('outputContainer');
+            successMessage = document.getElementById('successMessage');
+            qrCanvas = document.getElementById('qrCanvas');
+            qrDataDiv = document.getElementById('qrData');
+            loading = document.getElementById('loading');
+            ownerCounter = document.getElementById('ownerCounter');
+            descCounter = document.getElementById('descCounter');
+
+            // Set up event listeners
+            accountOwnerInput.addEventListener('input', updateCharCounter);
+            descriptionInput.addEventListener('input', updateCharCounter);
+            accountNumberInput.addEventListener('input', formatAccountNumber);
+            form.addEventListener('submit', generateQR);
+
+            // Initialize language
+            initializeLanguage();
+        });
+    </script>
+</body>
+</html>
