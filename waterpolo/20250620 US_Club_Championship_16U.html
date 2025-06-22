@@ -85,6 +85,7 @@
                                 <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Team 2</th>
                                 <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Phase/Bracket</th>
                                 <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Status</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Videos</th>
                             </tr>
                         </thead>
                         <tbody id="matches-tbody">
@@ -268,7 +269,7 @@
                 const whiteScore = (row.S && row.S.trim() !== '') ? parseInt(row.S.trim()) : null;
                 const darkScore = (row.S2 && row.S2.trim() !== '') ? parseInt(row.S2.trim()) : null;
                 
-                matches.push({
+                const match = {
                     match_id: index + 1,
                     date: (row.DATE || '').trim(),
                     time: (row.TIME || '').trim(),
@@ -280,7 +281,12 @@
                     status: (whiteScore !== null && darkScore !== null) ? 'COMPLETED' : 'SCHEDULED',
                     phase: determineMatchPhase(row.COMMENTS || '', whiteTeamRaw, darkTeamRaw),
                     comments: (row.COMMENTS || '').trim()
-                });
+                };
+                
+                // Add videos for specific matches
+                match.videos = getVideosForMatch(whiteTeam.name, darkTeam.name, whiteScore, darkScore);
+                
+                matches.push(match);
             });
 
             // Filter actual teams (remove placeholders)
@@ -375,6 +381,20 @@
                     scoreDisplay = `<span style="font-weight: bold; color: #d32f2f;">${match.white_score}</span> - <span style="font-weight: bold; color: #d32f2f;">${match.dark_score}</span>`;
                 }
                 
+                // Format videos display
+                let videosDisplay = '-';
+                if (match.videos && match.videos.length > 0) {
+                    videosDisplay = match.videos.map(video => 
+                        `<a href="${video.url}" target="_blank" rel="noopener noreferrer" 
+                           style="display: inline-block; background: #dc2626; color: white; padding: 4px 8px; 
+                                  margin: 2px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; 
+                                  font-weight: bold; transition: background 0.2s;" 
+                           onmouseover="this.style.background='#b91c1c'" 
+                           onmouseout="this.style.background='#dc2626'" 
+                           title="${video.title}">${video.quarter}</a>`
+                    ).join('');
+                }
+                
                 row.innerHTML = `
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${match.match_id}</td>
                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${match.date}</td>
@@ -390,6 +410,7 @@
                         <span style="display: inline-block; width: 8px; height: 8px; background: ${statusColor}; border-radius: 50%; margin-right: 6px;"></span>
                         <span style="font-size: 0.9rem; color: ${statusColor};">${statusText}</span>
                     </td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${videosDisplay}</td>
                 `;
 
                 // Highlight key matches
@@ -450,6 +471,54 @@
             }
         }
 
+        // Function to get videos for specific matches
+        function getVideosForMatch(whiteTeamName, darkTeamName, whiteScore, darkScore) {
+            const videos = [];
+            
+            // Debug logging for Rose Bowl match
+            if ((whiteTeamName.includes('SD SHORES BLACK') && darkTeamName.includes('ROSE BOWL')) ||
+                (darkTeamName.includes('SD SHORES BLACK') && whiteTeamName.includes('ROSE BOWL'))) {
+                console.log(`Rose Bowl match debug: white="${whiteTeamName}", dark="${darkTeamName}", scores=${whiteScore}-${darkScore}`);
+            }
+            
+            // Check for SD SHORES BLACK vs POWAY VALLEY (18-9 in CSV data)
+            if ((whiteTeamName === 'SD SHORES BLACK' && darkTeamName === 'POWAY VALLEY' && whiteScore === 18 && darkScore === 9) ||
+                (darkTeamName === 'SD SHORES BLACK' && whiteTeamName === 'POWAY VALLEY' && darkScore === 18 && whiteScore === 9)) {
+                return [
+                    { quarter: 'Q1', url: 'https://youtu.be/JA0L441qIh4?si=teWOCvyAZU-HSHjR', title: 'SD Shores Black vs Poway - Q1' },
+                    { quarter: 'Q2', url: 'https://youtu.be/3S6pzcupvuo?si=D2rq-R2MpajvXblL', title: 'SD Shores Black vs Poway - Q2' },
+                    { quarter: 'Q3', url: 'https://youtu.be/fR-OGEkA8cs?si=QrmmOPv0uKiBpCii', title: 'SD Shores Black vs Poway - Q3' },
+                    { quarter: 'Q4', url: 'https://youtu.be/zjGfjimQKYk?si=9mXkM8cvd-6AAhbw', title: 'SD Shores Black vs Poway - Q4' }
+                ];
+            }
+            
+            // Check for SD SHORES BLACK vs SOCAL (18-6)
+            if ((whiteTeamName === 'SD SHORES BLACK' && darkTeamName === 'SOCAL' && whiteScore === 18 && darkScore === 6) ||
+                (darkTeamName === 'SD SHORES BLACK' && whiteTeamName === 'SOCAL' && darkScore === 18 && whiteScore === 6)) {
+                return [
+                    { quarter: 'Q1', url: 'https://youtu.be/zVWixJ6B2Q0?si=zHe4Wj1JNosDEQeg', title: 'SD Shores Black vs SoCal - Q1' },
+                    { quarter: 'Q2', url: 'https://youtu.be/xYBHHMzZ628?si=dD_Ss7Bv_s3oOtWR', title: 'SD Shores Black vs SoCal - Q2' },
+                    { quarter: 'Q3', url: 'https://youtu.be/2n7yz1rStEY?si=hgdMuIZXhxD6sus-', title: 'SD Shores Black vs SoCal - Q3' },
+                    { quarter: 'Q4', url: 'https://youtu.be/x5sEmWxHAU0?si=8X-StZoF0ENCEByB', title: 'SD Shores Black vs SoCal - Q4' }
+                ];
+            }
+            
+            // Check for SD SHORES BLACK vs ROSE BOWL (15-5) - with more flexible matching
+            if (((whiteTeamName === 'SD SHORES BLACK' || whiteTeamName.includes('SD SHORES BLACK')) && 
+                 (darkTeamName === 'ROSE BOWL' || darkTeamName.includes('ROSE BOWL')) && 
+                 whiteScore === 15 && darkScore === 5) ||
+                ((darkTeamName === 'SD SHORES BLACK' || darkTeamName.includes('SD SHORES BLACK')) && 
+                 (whiteTeamName === 'ROSE BOWL' || whiteTeamName.includes('ROSE BOWL')) && 
+                 darkScore === 15 && whiteScore === 5)) {
+                return [
+                    { quarter: 'Q1', url: 'https://youtu.be/wufkmEzIBsc?si=I_fSWQHj8XG1pb_t', title: 'SD Shores Black vs Rose Bowl - Q1' },
+                    { quarter: 'Q2', url: 'https://youtu.be/WK7UYbZDWKI?si=ZWXLf1DNgbdN5iiK', title: 'SD Shores Black vs Rose Bowl - Q2' }
+                ];
+            }
+            
+            return [];
+        }
+        
         // Function to convert venue names to links
         function getVenueLink(venue) {
             const venueLinks = {
@@ -588,6 +657,26 @@
                     const matchTime = match.time || 'TBD';
                     const venue = getVenueLink(match.venue) || 'TBD';
                     
+                    // Format videos for modal
+                    let modalVideosDisplay = '';
+                    if (match.videos && match.videos.length > 0) {
+                        modalVideosDisplay = `
+                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                                <div style="font-size: 0.8rem; color: #666; margin-bottom: 5px;">📹 Match Videos:</div>
+                                <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                    ${match.videos.map(video => 
+                                        `<a href="${video.url}" target="_blank" rel="noopener noreferrer" 
+                                           style="display: inline-block; background: #dc2626; color: white; padding: 4px 8px; 
+                                                  border-radius: 4px; text-decoration: none; font-size: 0.8rem; 
+                                                  font-weight: bold; transition: background 0.2s;" 
+                                           onmouseover="this.style.background='#b91c1c'" 
+                                           onmouseout="this.style.background='#dc2626'" 
+                                           title="${video.title}">${video.quarter}</a>`
+                                    ).join('')}
+                                </div>
+                            </div>`;
+                    }
+                    
                     matchesHTML += `
                         <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                             <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 15px; align-items: center;">
@@ -604,6 +693,7 @@
                                     <div style="font-size: 0.9rem; color: #666;">
                                         📍 ${venue}
                                     </div>
+                                    ${modalVideosDisplay}
                                 </div>
                                 <div style="text-align: center; min-width: 80px;">
                                     <div style="font-size: 1.1rem; font-weight: bold; color: ${match.status === 'COMPLETED' ? '#d32f2f' : '#0077be'};">
