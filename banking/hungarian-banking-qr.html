@@ -41,17 +41,35 @@
             top: 20px;
             right: 20px;
             z-index: 1000;
+            display: flex;
+            gap: 8px;
         }
 
-        .language-selector select {
-            padding: 8px 12px;
+        .flag-button {
+            width: 40px;
+            height: 30px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 6px;
             background: rgba(255, 255, 255, 0.9);
-            color: #333;
-            font-size: 14px;
             cursor: pointer;
-            outline: none;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            opacity: 0.7;
+        }
+
+        .flag-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.05);
+        }
+
+        .flag-button.active {
+            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 1);
+            opacity: 1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .header h1 {
@@ -268,10 +286,8 @@
     <div class="container">
         <div class="header">
             <div class="language-selector">
-                <select id="languageSelect" onchange="changeLanguage()">
-                    <option value="en">English</option>
-                    <option value="hu">Magyar</option>
-                </select>
+                <div class="flag-button active" id="flagEn" onclick="setLanguage('en')">🇺🇸</div>
+                <div class="flag-button" id="flagHu" onclick="setLanguage('hu')">🇭🇺</div>
             </div>
             <h1 id="mainTitle">Hungarian Banking QR Code Generator</h1>
             <p id="mainSubtitle">Generate HCT (Hungarian Credit Transfer) QR codes according to MNB standard</p>
@@ -398,11 +414,25 @@
 
         let currentLanguage = 'en';
 
-        function changeLanguage() {
-            const select = document.getElementById('languageSelect');
-            currentLanguage = select.value;
+        function setLanguage(lang) {
+            currentLanguage = lang;
             updateTexts();
+            updateFlagStates();
             localStorage.setItem('qrLanguage', currentLanguage);
+        }
+
+        function updateFlagStates() {
+            const flagEn = document.getElementById('flagEn');
+            const flagHu = document.getElementById('flagHu');
+            
+            flagEn.classList.remove('active');
+            flagHu.classList.remove('active');
+            
+            if (currentLanguage === 'en') {
+                flagEn.classList.add('active');
+            } else {
+                flagHu.classList.add('active');
+            }
         }
 
         function updateTexts() {
@@ -433,8 +463,8 @@
         function initializeLanguage() {
             const savedLanguage = localStorage.getItem('qrLanguage') || 'en';
             currentLanguage = savedLanguage;
-            document.getElementById('languageSelect').value = savedLanguage;
             updateTexts();
+            updateFlagStates();
         }
 
         // Hungarian bank BIC codes mapping
