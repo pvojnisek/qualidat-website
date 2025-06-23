@@ -52,6 +52,65 @@
             </div>
         </div>
 
+        <!-- Final Tournament Standings -->
+        <div class="content-section">
+            <button class="collapsible active">🏆 Final Tournament Standings</button>
+            <div class="collapsible-content active">
+                <div style="overflow-x: auto; margin-top: 20px;">
+                    <table id="standings-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #0077be 0%, #00a8cc 100%); color: white;">
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Rank</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Team</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; cursor: help; position: relative;" data-tooltip="Games Played - Total number of matches played in the tournament">GP</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; cursor: help; position: relative;" data-tooltip="Goals For - Total goals scored by the team">GF</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; cursor: help; position: relative;" data-tooltip="Goals Against - Total goals conceded by the team">GA</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; cursor: help; position: relative;" data-tooltip="Goal Difference - Goals For minus Goals Against (GF - GA)">GD</th>
+                                <th style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">Final Result</th>
+                            </tr>
+                        </thead>
+                        <tbody id="standings-tbody">
+                            <!-- Standings will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Custom tooltip styles for table headers -->
+                <style>
+                    [data-tooltip] {
+                        position: relative;
+                    }
+                    
+                    [data-tooltip]:hover::after {
+                        content: attr(data-tooltip);
+                        position: absolute;
+                        bottom: 125%;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: rgba(0, 0, 0, 0.9);
+                        color: white;
+                        padding: 8px 12px;
+                        border-radius: 4px;
+                        font-size: 0.8rem;
+                        white-space: nowrap;
+                        z-index: 1000;
+                        font-weight: normal;
+                    }
+                    
+                    [data-tooltip]:hover::before {
+                        content: '';
+                        position: absolute;
+                        bottom: 115%;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        border: 5px solid transparent;
+                        border-top-color: rgba(0, 0, 0, 0.9);
+                        z-index: 1000;
+                    }
+                </style>
+            </div>
+        </div>
+
         <div id="loading" class="loading" style="display: none;">
             🏊‍♂️ Loading tournament data...
         </div>
@@ -155,19 +214,19 @@
 6/21/2025,RAMONA HS,3:00 PM,J1- 3rd A - POWAY VALLEY,20,J2 - 3rd D -  KERN PREMIER,6,
 6/21/2025,RAMONA HS,4:00 PM,G1 - 1st C - CHAWP,12,G2 - 2nd D - COMMERCE,8,
 6/21/2025,RAMONA HS,5:00 PM,J1- 3rd A - POWAY VALLEY,14,J3 - 4th C - CARLSBAD,6,
-6/22/2025,RIVERSIDE POLY #1,8:00 AM,M1 - 1st E - SD SHORES BLACK,,M2 - 1st H - CLOVIS,,
-6/22/2025,RIVERSIDE POLY #1,9:00 AM,N1 - 1st F - SOCAL,,N2 - 1st G - CHAWP,,
-6/22/2025,RIVERSIDE POLY #1,11:00 AM,P1 - 2nd F - SD SHORES GOLD,,P2 - 2nd G - COMMERCE,,
-6/22/2025,RIVERSIDE POLY #1,12:00 PM,O1 - 2nd E - ROSE BOWL,,O2 - 2nd H - SUPREME,,
-6/22/2025,RIVERSIDE POLY #1,2:00 PM,X1 - 2nd O - ,,X2 - 2nd P - ,,7th
-6/22/2025,RIVERSIDE POLY #1,3:00 PM,W1 - 1st O - ,,W2 - 1st P -,,5th
-6/22/2025,RAMONA HS,8:00 AM,K2 - 3rd C - TEMPLE CITY,,K3 - 4th D - THUNDER,,
-6/22/2025,RAMONA HS,9:00 AM,J2 - 3rd D -  KERN PREMIER,,J3 - 4th C - CARLSBAD,,
-6/22/2025,RAMONA HS,11:00 AM,R1 - 3rd J,,R2 - 3td K,,13th
-6/22/2025,RAMONA HS,12:00 PM,Q1 - 1st J - ,,Q2 - 1st K - ,,9th
-6/22/2025,RAMONA HS,2:00 PM,S1 - 2nd J - ,,S2 - 2nd K - ,,11th
-6/22/2025,CHINO HILLS HS,1:00 PM,V1 - 2nd M -,,V2 - 2nd N - ,,3rd
-6/22/2025,CHINO HILLS HS,2:00 PM,U1 - 1st M - ,,U2 - 1st N - ,,1st`;
+6/22/2025,RIVERSIDE POLY #1,8:00 AM,M1 - 1st E - SD SHORES BLACK,18,M2 - 1st H - CLOVIS,3,
+6/22/2025,RIVERSIDE POLY #1,9:00 AM,N1 - 1st F - SOCAL,8,N2 - 1st G - CHAWP,4,
+6/22/2025,RIVERSIDE POLY #1,11:00 AM,P1 - 2nd F - SD SHORES GOLD,5,P2 - 2nd G - COMMERCE,0,
+6/22/2025,RIVERSIDE POLY #1,12:00 PM,O1 - 2nd E - ROSE BOWL,12,O2 - 2nd H - SUPREME,10,
+6/22/2025,RIVERSIDE POLY #1,2:00 PM,X1 - 2nd O - SUPREME,7,X2 - 2nd P - COMMERCE,15,7th
+6/22/2025,RIVERSIDE POLY #1,3:00 PM,W1 - 1st O - ROSE BOWL,13,W2 - 1st P - SD SHORES GOLD,12,5th
+6/22/2025,RAMONA HS,8:00 AM,K2 - 3rd C - TEMPLE CITY,10,K3 - 4th D - THUNDER,11,
+6/22/2025,RAMONA HS,9:00 AM,J2 - 3rd D -  KERN PREMIER,15,J3 - 4th C - CARLSBAD,9,
+6/22/2025,RAMONA HS,11:00 AM,R1 - 3rd J - CARSBAD,10,R2 - 3rd K - TEMPLE CITY,14,13th
+6/22/2025,RAMONA HS,12:00 PM,Q1 - 1st J -  POWAY VALLEY,16,Q2 - 1st K - NORTH IRVINE,2,9th
+6/22/2025,RAMONA HS,2:00 PM,S1 - 2nd J - TEMPLE CITY,13,S2 - 2nd K - THUNDER,10,11th
+6/22/2025,CHINO HILLS HS,1:00 PM,V1 - 2nd M -CLOVIS,8,V2 - 2nd N - CHAWP,12,3rd
+6/22/2025,CHINO HILLS HS,2:00 PM,U1 - 1st M - SD SHORES BLACK,14,U2 - 1st N - SOCAL,5,1st`;
         
         let tournamentData = {};
 
@@ -449,6 +508,132 @@
             });
         }
 
+        // Calculate team statistics (GP, GF, GA, GD) using proper team name matching
+        function calculateTeamStatistics(matches) {
+            const teamStats = {};
+            
+            // Get all team names from standings to properly initialize stats
+            const allTeamNames = [
+                'SD SHORES BLACK', 'SOCAL', 'CHAWP', 'CLOVIS', 'ROSE BOWL', 'SD SHORES GOLD',
+                'COMMERCE', 'SUPREME', 'POWAY VALLEY', 'NORTH IRVINE', 'TEMPLE CITY', 
+                'THUNDER', 'CARLSBAD', 'KERN PREMIER'
+            ];
+            
+            // Initialize all team stats
+            allTeamNames.forEach(teamName => {
+                teamStats[teamName] = { gp: 0, gf: 0, ga: 0, gd: 0 };
+            });
+            
+            matches.forEach(match => {
+                const whiteTeamName = match.white_team.name.replace(/\s+/g, ' ').trim();
+                const darkTeamName = match.dark_team.name.replace(/\s+/g, ' ').trim();
+                const whiteScore = match.white_score;
+                const darkScore = match.dark_score;
+                
+                // Only count completed matches (both scores are not null)
+                if (match.status === 'COMPLETED' && whiteScore !== null && darkScore !== null) {
+                    // Find matching team names using same logic as showPoolTeamMatches
+                    allTeamNames.forEach(teamName => {
+                        const searchTeamName = teamName.replace(/\s+/g, ' ').trim();
+                        
+                        // Check if this team is the white team
+                        if (whiteTeamName.endsWith(searchTeamName) || whiteTeamName === searchTeamName) {
+                            teamStats[teamName].gp++;
+                            teamStats[teamName].gf += whiteScore;
+                            teamStats[teamName].ga += darkScore;
+                            teamStats[teamName].gd = teamStats[teamName].gf - teamStats[teamName].ga;
+                        }
+                        
+                        // Check if this team is the dark team  
+                        if (darkTeamName.endsWith(searchTeamName) || darkTeamName === searchTeamName) {
+                            teamStats[teamName].gp++;
+                            teamStats[teamName].gf += darkScore;
+                            teamStats[teamName].ga += whiteScore;
+                            teamStats[teamName].gd = teamStats[teamName].gf - teamStats[teamName].ga;
+                        }
+                    });
+                }
+            });
+            
+            return teamStats;
+        }
+
+        // Determine final standings order based on placement matches
+        function determineFinalStandings(matches) {
+            const finalStandings = [];
+            
+            // Define final standings based on placement match results
+            const standingsOrder = [
+                { rank: 1, team: 'SD SHORES BLACK', result: '🥇 Champion' },
+                { rank: 2, team: 'SOCAL', result: '🥈 Championship Final Runner-up' },
+                { rank: 3, team: 'CHAWP', result: '🥉 3rd Place Match Winner' },
+                { rank: 4, team: 'CLOVIS', result: '4th Place' },
+                { rank: 5, team: 'ROSE BOWL', result: '5th Place Match Winner' },
+                { rank: 6, team: 'SD SHORES GOLD', result: '6th Place' },
+                { rank: 7, team: 'COMMERCE', result: '7th Place Match Winner' },
+                { rank: 8, team: 'SUPREME', result: '8th Place' },
+                { rank: 9, team: 'POWAY VALLEY', result: '9th Place Match Winner' },
+                { rank: 10, team: 'NORTH IRVINE', result: '10th Place' },
+                { rank: 11, team: 'TEMPLE CITY', result: '11th Place Match Winner' },
+                { rank: 12, team: 'THUNDER', result: '12th Place' },
+                { rank: 13, team: 'CARLSBAD', result: '13th Place' },
+                { rank: 14, team: 'KERN PREMIER', result: '14th Place' }
+            ];
+            
+            return standingsOrder;
+        }
+
+        // Display final standings table
+        function displayFinalStandings(matches) {
+            const teamStats = calculateTeamStatistics(matches);
+            const standings = determineFinalStandings(matches);
+            const tbody = document.getElementById('standings-tbody');
+            tbody.innerHTML = '';
+            
+            standings.forEach(standing => {
+                const stats = teamStats[standing.team] || { gp: 0, gf: 0, ga: 0, gd: 0 };
+                const row = document.createElement('tr');
+                row.style.cursor = 'pointer';
+                row.style.transition = 'background-color 0.2s';
+                row.className = 'clickable-standings-team';
+                row.setAttribute('data-team', standing.team);
+                
+                // Add hover effect
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f0f8ff';
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+                
+                // Add click handler for team details
+                row.addEventListener('click', function() {
+                    showPoolTeamMatches(standing.team);
+                });
+                
+                // Medal emoji for top 3
+                let rankDisplay = standing.rank;
+                if (standing.rank === 1) rankDisplay = '🥇 1';
+                else if (standing.rank === 2) rankDisplay = '🥈 2';
+                else if (standing.rank === 3) rankDisplay = '🥉 3';
+                
+                // Goal difference with + sign for positive
+                const gdDisplay = stats.gd > 0 ? `+${stats.gd}` : stats.gd.toString();
+                
+                row.innerHTML = `
+                    <td style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${rankDisplay}</td>
+                    <td style="padding: 12px 8px; border: 1px solid #ddd; font-weight: bold;">${standing.team}</td>
+                    <td style="padding: 12px 8px; border: 1px solid #ddd; text-align: center;">${stats.gp}</td>
+                    <td style="padding: 12px 8px; border: 1px solid #ddd; text-align: center;">${stats.gf}</td>
+                    <td style="padding: 12px 8px; border: 1px solid #ddd; text-align: center;">${stats.ga}</td>
+                    <td style="padding: 12px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: ${stats.gd > 0 ? '#28a745' : stats.gd < 0 ? '#dc3545' : '#666'};">${gdDisplay}</td>
+                    <td style="padding: 12px 8px; border: 1px solid #ddd; font-size: 0.85rem; color: #666;">${standing.result}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
         // Load and display tournament data
         function loadTournamentData() {
             try {
@@ -463,6 +648,7 @@
                 // Display data
                 displayPools(tournamentData.pools);
                 displayMatches(tournamentData.matches);
+                displayFinalStandings(tournamentData.matches);
                 
             } catch (error) {
                 console.error('Error loading tournament data:', error);
