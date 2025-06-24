@@ -263,19 +263,19 @@
                 onblur="this.style.borderColor='#e1e5e9'"
             >
             <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
-                <button class="quick-url" onclick="setUrl('https://feeds.kahunaevents.org/kahuna')">Kahuna Events</button>
-                <button class="quick-url" onclick="setUrl('https://httpbin.org/drip?numbytes=1000&duration=5&delay=1')">Test Stream</button>
+                <button class="quick-url" onclick="setUrl('https://httpbin.org/drip?numbytes=2000&duration=10&delay=1')">Test Stream</button>
+                <button class="quick-url" onclick="setUrl('https://httpbin.org/base64/SFRUUEJJTiBpcyBhd2Vzb21lCkxpbmUgMgpMaW5lIDMKTGluZSA0CkxpbmUgNQpMaW5lIDYKTGluZSA3CkxpbmUgOApMaW5lIDkKTGluZSAxMApMaW5lIDExCkxpbmUgMTIKTGluZSAxMwpMaW5lIDE0CkxpbmUgMTUKTGluZSAxNg==')">Sample Lines</button>
                 <button class="quick-url" onclick="setUrl('https://jsonplaceholder.typicode.com/posts')">JSON API</button>
-                <button class="quick-url" onclick="setUrl('https://api.github.com/users/octocat/repos')">GitHub API</button>
+                <button class="quick-url" onclick="setUrl('https://feeds.kahunaevents.org/kahuna')">Kahuna Events</button>
             </div>
             <div style="margin-top: 8px; font-size: 0.8rem; color: #666;">
-                💡 <strong>Working URLs:</strong> Most APIs work • GitHub Raw files often blocked by CORS • httpbin.org great for testing
+                💡 <strong>Reliable sources:</strong> httpbin.org (no CORS issues) • Some APIs need proxy • GitHub/Raw files often blocked
             </div>
         </div>
 
         <div class="controls">
             <button class="btn" onclick="startStreaming()" id="startBtn">Start Streaming</button>
-            <button class="btn" onclick="testCorsProxy()" id="corsBtn">Test CORS Proxy</button>
+            <button class="btn" onclick="testCorsProxy()" id="corsBtn">Test Proxies</button>
             <button class="btn" onclick="clearData()" id="clearBtn">Clear Data</button>
         </div>
 
@@ -392,8 +392,6 @@
         }
 
         async function attemptStreaming(url) {
-            const corsProxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
-            
             updateStatusText(`Trying: ${url}`);
             
             // Try direct fetch first
@@ -401,18 +399,39 @@
                 await streamFromUrl(url, `Connecting directly to ${new URL(url).hostname}...`);
             } catch (error) {
                 if (isCorsError(error)) {
-                    console.warn('CORS error detected, trying proxy...', error);
-                    updateStatus('warning', '⚠️ CORS blocked, trying proxy...');
+                    console.warn('CORS error detected, trying proxies...', error);
+                    updateStatus('warning', '⚠️ CORS blocked, trying proxy services...');
                     await new Promise(resolve => setTimeout(resolve, 1000));
                     
-                    updateStatusText(`Trying proxy: ${corsProxyUrl}`);
+                    // Try multiple CORS proxy services
+                    const proxies = [
+                        'https://api.allorigins.win/raw?url=',
+                        'https://thingproxy.freeboard.io/fetch/',
+                        'https://cors-anywhere.herokuapp.com/'
+                    ];
                     
-                    try {
-                        await streamFromUrl(corsProxyUrl, 'Connecting via CORS proxy...');
-                    } catch (proxyError) {
-                        // Don't retry proxy failures - they usually won't work on retry
-                        throw new Error(`Direct access blocked by CORS and proxy failed: ${proxyError.message}`);
+                    let lastError = error;
+                    
+                    for (let i = 0; i < proxies.length; i++) {
+                        const proxyUrl = proxies[i] + encodeURIComponent(url);
+                        const proxyName = ['AllOrigins', 'ThingProxy', 'CORS-Anywhere'][i];
+                        
+                        try {
+                            updateStatusText(`Trying ${proxyName} proxy...`);
+                            await streamFromUrl(proxyUrl, `Connecting via ${proxyName}...`);
+                            return; // Success! Exit the function
+                        } catch (proxyError) {
+                            console.warn(`${proxyName} proxy failed:`, proxyError);
+                            lastError = proxyError;
+                            
+                            if (i < proxies.length - 1) {
+                                await new Promise(resolve => setTimeout(resolve, 500));
+                            }
+                        }
                     }
+                    
+                    // All proxies failed
+                    throw new Error(`Direct access blocked by CORS and all proxy services failed. Last error: ${lastError.message}`);
                 } else {
                     throw error;
                 }
@@ -426,13 +445,13 @@
             const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
             
             try {
+                // Use absolutely minimal fetch options to avoid CORS preflight
+                // Some browsers add headers automatically that can trigger preflight
                 const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'text/plain, */*',
-                        'Cache-Control': 'no-cache'
-                    },
-                    signal: controller.signal
+                    signal: controller.signal,
+                    // Explicitly avoid any headers that might trigger preflight
+                    mode: 'cors',
+                    cache: 'default'  // Use browser default instead of no-cache
                 });
                 
                 clearTimeout(timeoutId);
@@ -577,6 +596,8 @@
                    error.message.includes('Cross-Origin') ||
                    error.message.includes('blocked') ||
                    error.message.includes('origin \'null\'') ||
+                   error.message.includes('preflight') ||
+                   error.message.includes('cache-control') ||
                    (error.message.includes('fetch') && error.message.includes('TypeError'));
         }
 
@@ -690,28 +711,73 @@
             corsBtn.textContent = 'Testing...';
             
             try {
-                updateStatus('loading', '🔄 Testing CORS proxy connection...');
+                updateStatus('loading', '🔄 Testing CORS proxies...');
                 document.getElementById('status').style.display = 'flex';
                 
-                const testUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
-                const response = await fetch(testUrl, { 
-                    method: 'HEAD',
-                    headers: { 'Cache-Control': 'no-cache' }
-                });
+                // Test multiple CORS proxy services
+                const proxies = [
+                    {
+                        name: 'AllOrigins',
+                        url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
+                    },
+                    {
+                        name: 'CORS-Anywhere',
+                        url: 'https://cors-anywhere.herokuapp.com/' + url
+                    },
+                    {
+                        name: 'ThingProxy',
+                        url: 'https://thingproxy.freeboard.io/fetch/' + url
+                    }
+                ];
                 
-                if (response.ok) {
-                    updateStatus('success', '✅ CORS proxy is working! You can use streaming safely.');
-                } else {
-                    updateStatus('warning', '⚠️ CORS proxy responded but may have issues.');
+                let workingProxy = null;
+                
+                for (const proxy of proxies) {
+                    try {
+                        updateStatusText(`Testing ${proxy.name}...`);
+                        
+                        // Use a simple GET request with minimal headers to avoid preflight issues
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 5000);
+                        
+                        const response = await fetch(proxy.url, {
+                            method: 'GET',
+                            signal: controller.signal
+                        });
+                        
+                        clearTimeout(timeoutId);
+                        
+                        if (response.ok) {
+                            // Try to read a small amount to verify it's working
+                            const reader = response.body.getReader();
+                            const { value } = await reader.read();
+                            reader.releaseLock();
+                            
+                            if (value && value.length > 0) {
+                                workingProxy = proxy.name;
+                                break;
+                            }
+                        }
+                    } catch (proxyError) {
+                        console.warn(`${proxy.name} failed:`, proxyError.message);
+                        continue;
+                    }
                 }
+                
+                if (workingProxy) {
+                    updateStatus('success', `✅ ${workingProxy} proxy is working! Streaming should work.`);
+                } else {
+                    updateStatus('warning', '⚠️ All CORS proxies failed. Try direct connection or different URL.');
+                }
+                
             } catch (error) {
                 updateStatus('error', `❌ CORS proxy test failed: ${error.message}`);
             } finally {
                 corsBtn.disabled = false;
-                corsBtn.textContent = 'Test CORS Proxy';
+                corsBtn.textContent = 'Test Proxies';
                 setTimeout(() => {
                     document.getElementById('status').style.display = 'none';
-                }, 5000);
+                }, 8000);
             }
         }
 
