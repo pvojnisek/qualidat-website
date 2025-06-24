@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming Data Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .url-input {
+            margin-bottom: 25px;
+        }
+
+        .url-input input:focus {
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .quick-url {
+            background: #f8f9fa;
+            border: 1px solid #e1e5e9;
+            color: #667eea;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-url:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .status.loading {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            color: #d4721a;
+        }
+
+        .status.success {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            color: #2d7a2d;
+        }
+
+        .status.error {
+            background: linear-gradient(135deg, #ffecd2, #ff9a9e);
+            color: #d32f2f;
+        }
+
+        .status.warning {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .data-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .row {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #667eea;
+            animation: slideIn 0.3s ease-out;
+            transition: transform 0.2s ease;
+        }
+
+        .row:hover {
+            transform: translateX(5px);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .row-header {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .row-number {
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .row-content {
+            font-family: 'Courier New', monospace;
+            background: #f1f3f4;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #444;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🌊 Stream Viewer</h1>
+            <p class="subtitle">Real-time data streaming with robust error handling</p>
+            <div style="margin-top: 15px; padding: 10px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; font-size: 0.9rem; color: #666;">
+                ✨ Features: CORS handling • Automatic retries • Timeout protection • Proxy fallback<br>
+                <span style="color: #e74c3c; font-weight: 600;">⚠️ For best results, serve via HTTP (not file://)</span>
+            </div>
+        </div>
+
+        <div class="url-input">
+            <label for="urlInput" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Data Source URL:</label>
+            <input 
+                type="url" 
+                id="urlInput" 
+                placeholder="Enter URL to stream data from..."
+                value="https://feeds.kahunaevents.org/kahuna"
+                style="width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 12px; font-size: 1rem; outline: none; transition: all 0.3s ease;"
+                onfocus="this.style.borderColor='#667eea'"
+                onblur="this.style.borderColor='#e1e5e9'"
+            >
+            <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="quick-url" onclick="setUrl('https://feeds.kahunaevents.org/kahuna')">Kahuna Events</button>
+                <button class="quick-url" onclick="setUrl('https://httpbin.org/drip?numbytes=1000&duration=5&delay=1')">Test Stream</button>
+                <button class="quick-url" onclick="setUrl('https://jsonplaceholder.typicode.com/posts')">JSON API</button>
+                <button class="quick-url" onclick="setUrl('https://api.github.com/users/octocat/repos')">GitHub API</button>
+            </div>
+            <div style="margin-top: 8px; font-size: 0.8rem; color: #666;">
+                💡 <strong>Working URLs:</strong> Most APIs work • GitHub Raw files often blocked by CORS • httpbin.org great for testing
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="startStreaming()" id="startBtn">Start Streaming</button>
+            <button class="btn" onclick="testCorsProxy()" id="corsBtn">Test CORS Proxy</button>
+            <button class="btn" onclick="clearData()" id="clearBtn">Clear Data</button>
+        </div>
+
+        <div id="status" class="status" style="display: none;">
+            <div class="spinner"></div>
+            <span id="statusText">Initializing stream...</span>
+        </div>
+
+        <div class="data-container">
+            <div id="dataRows">
+                <div class="empty-state">
+                    Click "Start Streaming" to begin fetching data line by line!
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">Rows: <span id="rowCount">0</span></div>
+            <div class="stat">Bytes: <span id="byteCount">0</span></div>
+            <div class="stat">Time: <span id="timeElapsed">0s</span></div>
+        </div>
+    </div>
+
+    <script>
+        let isStreaming = false;
+        let rowCount = 0;
+        let byteCount = 0;
+        let startTime = null;
+        let timeInterval = null;
+
+        let retryCount = 0;
+        const MAX_RETRIES = 3;
+        const RETRY_DELAY = 2000; // 2 seconds
+        const REQUEST_TIMEOUT = 10000; // 10 seconds
+
+        async function startStreaming() {
+            if (isStreaming) return;
+            
+            const url = getUrlFromInput();
+            if (!url) return;
+            
+            console.log('🚀 Starting stream from:', url);
+            console.log('📍 Location protocol:', window.location.protocol);
+            
+            resetState();
+            
+            const startBtn = document.getElementById('startBtn');
+            const urlInput = document.getElementById('urlInput');
+            const status = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            const dataRows = document.getElementById('dataRows');
+            
+            startBtn.disabled = true;
+            urlInput.disabled = true;
+            status.style.display = 'flex';
+            status.className = 'status loading';
+            statusText.textContent = 'Initializing connection...';
+            dataRows.innerHTML = '';
+            
+            // Start time counter
+            timeInterval = setInterval(updateTimer, 100);
+            
+            try {
+                await attemptStreaming(url);
+            } catch (error) {
+                await handleStreamingError(error, statusText, status);
+            } finally {
+                cleanup();
+            }
+        }
+
+        function getUrlFromInput() {
+            const urlInput = document.getElementById('urlInput');
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                updateStatus('error', '❌ Please enter a URL');
+                document.getElementById('status').style.display = 'flex';
+                setTimeout(() => {
+                    document.getElementById('status').style.display = 'none';
+                }, 3000);
+                return null;
+            }
+            
+            try {
+                new URL(url); // Validate URL format
+                return url;
+            } catch (e) {
+                updateStatus('error', '❌ Please enter a valid URL');
+                document.getElementById('status').style.display = 'flex';
+                setTimeout(() => {
+                    document.getElementById('status').style.display = 'none';
+                }, 3000);
+                return null;
+            }
+        }
+
+        function resetState() {
+            isStreaming = true;
+            rowCount = 0;
+            byteCount = 0;
+            retryCount = 0;
+            startTime = Date.now();
+        }
+
+        function cleanup() {
+            isStreaming = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('urlInput').disabled = false;
+            if (timeInterval) {
+                clearInterval(timeInterval);
+                timeInterval = null;
+            }
+        }
+
+        async function attemptStreaming(url) {
+            const corsProxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+            
+            updateStatusText(`Trying: ${url}`);
+            
+            // Try direct fetch first
+            try {
+                await streamFromUrl(url, `Connecting directly to ${new URL(url).hostname}...`);
+            } catch (error) {
+                if (isCorsError(error)) {
+                    console.warn('CORS error detected, trying proxy...', error);
+                    updateStatus('warning', '⚠️ CORS blocked, trying proxy...');
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    updateStatusText(`Trying proxy: ${corsProxyUrl}`);
+                    
+                    try {
+                        await streamFromUrl(corsProxyUrl, 'Connecting via CORS proxy...');
+                    } catch (proxyError) {
+                        // Don't retry proxy failures - they usually won't work on retry
+                        throw new Error(`Direct access blocked by CORS and proxy failed: ${proxyError.message}`);
+                    }
+                } else {
+                    throw error;
+                }
+            }
+        }
+
+        async function streamFromUrl(url, statusMessage) {
+            updateStatusText(statusMessage);
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'text/plain, */*',
+                        'Cache-Control': 'no-cache'
+                    },
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                if (!response.body) {
+                    throw new Error('Response body not available for streaming');
+                }
+                
+                updateStatusText('Streaming data...');
+                await processStream(response);
+                
+            } catch (error) {
+                clearTimeout(timeoutId);
+                
+                if (error.name === 'AbortError') {
+                    throw new Error('Request timed out after 10 seconds');
+                }
+                throw error;
+            }
+        }
+
+        async function processStream(response) {
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            
+            let buffer = '';
+            let processedRows = 0;
+            let lastActivity = Date.now();
+            
+            try {
+                while (processedRows < 15) {
+                    // Set a timeout for each chunk read
+                    const readPromise = reader.read();
+                    const timeoutPromise = new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Stream read timeout')), 5000)
+                    );
+                    
+                    const { done, value } = await Promise.race([readPromise, timeoutPromise]);
+                    
+                    if (done) {
+                        if (processedRows === 0) {
+                            throw new Error('No data received - the stream appears to be empty');
+                        }
+                        updateStatusText('Stream ended (reached end of file)');
+                        break;
+                    }
+                    
+                    lastActivity = Date.now();
+                    
+                    // Update byte count
+                    byteCount += value.length;
+                    updateStats();
+                    
+                    // Decode chunk and add to buffer
+                    const chunk = decoder.decode(value, { stream: true });
+                    buffer += chunk;
+                    
+                    // Process complete lines
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || ''; // Keep incomplete line in buffer
+                    
+                    for (const line of lines) {
+                        if (processedRows >= 15) break;
+                        if (line.trim()) {
+                            addRowToDisplay(line, processedRows + 1);
+                            processedRows++;
+                            rowCount = processedRows;
+                            updateStats();
+                            
+                            // Small delay for visual effect
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                        }
+                    }
+                }
+                
+                updateStatus('success', `✅ Successfully streamed ${processedRows} rows!`);
+                
+            } finally {
+                try {
+                    reader.releaseLock();
+                } catch (e) {
+                    console.warn('Error releasing reader lock:', e);
+                }
+            }
+        }
+
+        async function handleStreamingError(error, statusText, status) {
+            console.error('Streaming error:', error);
+            
+            // Check if this is a local file execution issue
+            if (window.location.protocol === 'file:') {
+                updateStatus('error', '❌ Local file execution detected. Please serve this via HTTP server or use online version.');
+                return;
+            }
+            
+            // Don't retry CORS proxy failures or infinite loop errors
+            if (error.message.includes('proxy failed') || 
+                error.message.includes('file:///') ||
+                error.message.includes('undefined')) {
+                updateStatus('error', `❌ ${getErrorMessage(error)}`);
+                return;
+            }
+            
+            if (retryCount < MAX_RETRIES && isRetryableError(error)) {
+                retryCount++;
+                updateStatus('warning', `⚠️ Attempt ${retryCount} failed, retrying in ${RETRY_DELAY/1000}s... (${error.message.substring(0, 50)}...)`);
+                
+                await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+                
+                try {
+                    const url = getUrlFromInput();
+                    if (url) {
+                        // Only retry the direct connection, not the full proxy fallback
+                        await streamFromUrl(url, `Retry ${retryCount}: Connecting directly...`);
+                        updateStatus('success', `✅ Successfully connected on retry ${retryCount}!`);
+                        return;
+                    }
+                } catch (retryError) {
+                    console.warn(`Retry ${retryCount} failed:`, retryError);
+                    // Continue to final error handling below
+                    error = retryError;
+                }
+            }
+            
+            // Final error handling - no more retries
+            updateStatus('error', `❌ ${getErrorMessage(error)}`);
+            
+            if (isCorsError(error)) {
+                setTimeout(() => {
+                    updateStatus('warning', '💡 Tip: Try a different URL or run this on a web server instead of opening the file directly');
+                }, 3000);
+            }
+        }
+
+        function isCorsError(error) {
+            return error.message.includes('CORS') || 
+                   error.message.includes('Cross origin') ||
+                   error.message.includes('Cross-Origin') ||
+                   error.message.includes('blocked') ||
+                   error.message.includes('origin \'null\'') ||
+                   (error.message.includes('fetch') && error.message.includes('TypeError'));
+        }
+
+        function isRetryableError(error) {
+            return (error.message.includes('timeout') ||
+                    error.message.includes('network') ||
+                    error.message.includes('connection') ||
+                    error.message.includes('NetworkError')) &&
+                   !error.message.includes('CORS') &&
+                   !error.message.includes('proxy failed') &&
+                   !error.message.includes('file:///');
+        }
+
+        function getErrorMessage(error) {
+            if (window.location.protocol === 'file:') {
+                return 'Cannot access external URLs when opening HTML file directly. Please use a web server.';
+            }
+            
+            if (error.message.includes('origin \'null\'')) {
+                return 'Browser security restriction: Try running on a web server instead of opening the file directly.';
+            }
+            
+            if (isCorsError(error)) {
+                return 'CORS policy blocked the request. The target server doesn\'t allow cross-origin access.';
+            }
+            
+            if (error.message.includes('timeout')) {
+                return 'Connection timed out. The server may be slow or unreachable.';
+            }
+            
+            if (error.message.includes('Failed to fetch')) {
+                return 'Network error. Check your internet connection and the URL.';
+            }
+            
+            if (error.message.startsWith('HTTP ')) {
+                return `Server error: ${error.message}`;
+            }
+            
+            if (error.message.includes('proxy failed')) {
+                return 'Both direct access and CORS proxy failed. The URL may not be accessible.';
+            }
+            
+            return error.message || 'Unknown error occurred';
+        }
+
+        function updateStatus(type, message) {
+            const status = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            status.className = `status ${type}`;
+            statusText.textContent = message;
+        }
+
+        function updateStatusText(message) {
+            document.getElementById('statusText').textContent = message;
+        }
+
+        function setUrl(url) {
+            document.getElementById('urlInput').value = url;
+            // Add a subtle animation to indicate the URL changed
+            const input = document.getElementById('urlInput');
+            input.style.borderColor = '#667eea';
+            input.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+            setTimeout(() => {
+                input.style.borderColor = '#e1e5e9';
+                input.style.boxShadow = 'none';
+            }, 1000);
+        }
+
+        function addRowToDisplay(content, rowNumber) {
+            const dataRows = document.getElementById('dataRows');
+            
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'row';
+            
+            rowDiv.innerHTML = `
+                <div class="row-header">
+                    <span>Row ${rowNumber}</span>
+                    <span class="row-number">#${rowNumber}</span>
+                </div>
+                <div class="row-content">${escapeHtml(content)}</div>
+            `;
+            
+            dataRows.appendChild(rowDiv);
+            
+            // Scroll to bottom
+            dataRows.scrollTop = dataRows.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function clearData() {
+            document.getElementById('dataRows').innerHTML = '<div class="empty-state">Click "Start Streaming" to begin fetching data line by line!</div>';
+            document.getElementById('status').style.display = 'none';
+            rowCount = 0;
+            byteCount = 0;
+            updateStats();
+        }
+
+        async function testCorsProxy() {
+            if (isStreaming) return;
+            
+            const url = getUrlFromInput();
+            if (!url) return;
+            
+            const corsBtn = document.getElementById('corsBtn');
+            corsBtn.disabled = true;
+            corsBtn.textContent = 'Testing...';
+            
+            try {
+                updateStatus('loading', '🔄 Testing CORS proxy connection...');
+                document.getElementById('status').style.display = 'flex';
+                
+                const testUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+                const response = await fetch(testUrl, { 
+                    method: 'HEAD',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+                
+                if (response.ok) {
+                    updateStatus('success', '✅ CORS proxy is working! You can use streaming safely.');
+                } else {
+                    updateStatus('warning', '⚠️ CORS proxy responded but may have issues.');
+                }
+            } catch (error) {
+                updateStatus('error', `❌ CORS proxy test failed: ${error.message}`);
+            } finally {
+                corsBtn.disabled = false;
+                corsBtn.textContent = 'Test CORS Proxy';
+                setTimeout(() => {
+                    document.getElementById('status').style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('rowCount').textContent = rowCount;
+            document.getElementById('byteCount').textContent = formatBytes(byteCount);
+        }
+
+        function updateTimer() {
+            if (startTime) {
+                const elapsed = (Date.now() - startTime) / 1000;
+                document.getElementById('timeElapsed').textContent = elapsed.toFixed(1) + 's';
+            }
+        }
+
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+    </script>
+</body>
+</html>
