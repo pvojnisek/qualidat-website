@@ -230,6 +230,11 @@
             padding: 10px 20px;
             border-radius: 20px;
             font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+
+        .stat:hover {
+            transform: scale(1.05);
         }
 
         .empty-state {
@@ -264,12 +269,13 @@
             >
             <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
                 <button class="quick-url" onclick="setUrl('https://httpbin.org/drip?numbytes=2000&duration=10&delay=1')">Test Stream</button>
-                <button class="quick-url" onclick="setUrl('https://httpbin.org/base64/SFRUUEJJTiBpcyBhd2Vzb21lCkxpbmUgMgpMaW5lIDMKTGluZSA0CkxpbmUgNQpMaW5lIDYKTGluZSA3CkxpbmUgOApMaW5lIDkKTGluZSAxMApMaW5lIDExCkxpbmUgMTIKTGluZSAxMwpMaW5lIDE0CkxpbmUgMTUKTGluZSAxNg==')">Sample Lines</button>
+                <button class="quick-url" onclick="setUrl('https://httpbin.org/get')">Sample Data</button>
                 <button class="quick-url" onclick="setUrl('https://jsonplaceholder.typicode.com/posts')">JSON API</button>
                 <button class="quick-url" onclick="setUrl('https://feeds.kahunaevents.org/kahuna')">Kahuna Events</button>
             </div>
             <div style="margin-top: 8px; font-size: 0.8rem; color: #666;">
-                💡 <strong>Reliable sources:</strong> httpbin.org (no CORS issues) • Some APIs need proxy • GitHub/Raw files often blocked
+                💡 <strong>Reliable sources:</strong> httpbin.org (no CORS issues) • Some APIs need proxy • GitHub/Raw files often blocked<br>
+                🔧 <strong>Updated:</strong> Sample Data button now uses working httpbin.org/get endpoint
             </div>
         </div>
 
@@ -407,14 +413,14 @@
                     const proxies = [
                         'https://api.allorigins.win/raw?url=',
                         'https://thingproxy.freeboard.io/fetch/',
-                        'https://cors-anywhere.herokuapp.com/'
+                        'https://api.codetabs.com/v1/proxy/?quest='
                     ];
                     
                     let lastError = error;
                     
                     for (let i = 0; i < proxies.length; i++) {
                         const proxyUrl = proxies[i] + encodeURIComponent(url);
-                        const proxyName = ['AllOrigins', 'ThingProxy', 'CORS-Anywhere'][i];
+                        const proxyName = ['AllOrigins', 'ThingProxy', 'CodeTabs'][i];
                         
                         try {
                             updateStatusText(`Trying ${proxyName} proxy...`);
@@ -721,8 +727,8 @@
                         url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
                     },
                     {
-                        name: 'CORS-Anywhere',
-                        url: 'https://cors-anywhere.herokuapp.com/' + url
+                        name: 'CodeTabs',
+                        url: 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(url)
                     },
                     {
                         name: 'ThingProxy',
