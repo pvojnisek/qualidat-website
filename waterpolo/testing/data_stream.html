@@ -404,8 +404,9 @@
             try {
                 await streamFromUrl(url, `Connecting directly to ${new URL(url).hostname}...`);
             } catch (error) {
+                console.log('❌ Direct connection failed:', error.message);
                 if (isCorsError(error)) {
-                    console.warn('CORS error detected, trying proxies...', error);
+                    console.warn('🔄 CORS error detected, trying proxies...', error);
                     updateStatus('warning', '⚠️ CORS blocked, trying proxy services...');
                     await new Promise(resolve => setTimeout(resolve, 1000));
                     
@@ -597,14 +598,20 @@
         }
 
         function isCorsError(error) {
-            return error.message.includes('CORS') || 
-                   error.message.includes('Cross origin') ||
-                   error.message.includes('Cross-Origin') ||
-                   error.message.includes('blocked') ||
-                   error.message.includes('origin \'null\'') ||
-                   error.message.includes('preflight') ||
-                   error.message.includes('cache-control') ||
-                   (error.message.includes('fetch') && error.message.includes('TypeError'));
+            const corsIndicators = [
+                'CORS', 'Cross origin', 'Cross-Origin', 'blocked', 
+                'origin \'null\'', 'preflight', 'cache-control',
+                'Failed to fetch', 'Access to fetch', 'ERR_FAILED'
+            ];
+            
+            console.log('🔍 Checking CORS error:', error.message);
+            
+            const isCors = corsIndicators.some(indicator => 
+                error.message.includes(indicator)
+            ) || (error.message.includes('fetch') && error.message.includes('TypeError'));
+            
+            console.log('🎯 CORS detected:', isCors);
+            return isCors;
         }
 
         function isRetryableError(error) {
