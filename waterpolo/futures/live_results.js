@@ -129,7 +129,7 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
     
     matchDiv.innerHTML = `
         <div class="match-header">
-            <span class="match-number">${isShoresMatch ? '🌊 ' : ''}Result #${cardNumber}</span>
+            <span class="match-number">${isShoresMatch ? '🌊 ' : ''}#${cardNumber}</span>
             ${matchStatus ? `<span class="match-status status-${matchStatus.type}">${matchStatus.label}</span>` : ''}
         </div>
         
@@ -145,16 +145,41 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
             </div>
         </div>
         
-        <div class="match-details">
-            ${matchData.time ? `<div class="match-time">⏰ ${matchData.time}</div>` : ''}
-            ${matchData.venue ? `<div class="match-venue">📍 ${matchData.venue}</div>` : ''}
-            ${matchData.date ? `<div style="color: #6c757d;">📅 ${matchData.date}</div>` : ''}
-            ${matchData.division ? `<div style="color: #0077be; font-weight: 600;">🏆 ${matchData.division}</div>` : ''}
-            ${matchData.placement ? `<div style="color: #ff6b35; font-weight: 600;">🎯 ${matchData.placement}</div>` : ''}
-            ${matchData.gameId ? `<div style="color: #6c757d; font-size: 0.8rem;">Game: ${matchData.gameId}</div>` : ''}
+        <div class="match-actions">
+            <span class="show-details" onclick="toggleMatchDetails(this)">📋 Details</span>
+            <span class="show-raw" onclick="toggleRawData(this)">📄 Raw</span>
         </div>
         
-        <span class="show-raw" onclick="toggleRawData(this)">Show raw data</span>
+        <div class="match-details">
+            <div class="details-summary">
+                <div class="team-detail left">
+                    <span class="team-detail-name ${matchData.team1.isShores ? 'shores-team' : ''}">${matchData.team1.name}</span>
+                    ${matchData.team1.score !== null ? `<span class="team-detail-score">${matchData.team1.score}</span>` : ''}
+                </div>
+                
+                <div class="score-separator">
+                    ${matchData.team1.score !== null && matchData.team2.score !== null ? 
+                        `<span class="score-display">${matchData.team1.score} - ${matchData.team2.score}</span>` : 
+                        `<span class="vs-text">VS</span>`
+                    }
+                </div>
+                
+                <div class="team-detail right">
+                    <span class="team-detail-name ${matchData.team2.isShores ? 'shores-team' : ''}">${matchData.team2.name}</span>
+                    ${matchData.team2.score !== null ? `<span class="team-detail-score">${matchData.team2.score}</span>` : ''}
+                </div>
+            </div>
+            
+            <div class="match-meta">
+                ${matchData.time ? `<span class="meta-item">⏰ ${matchData.time}</span>` : ''}
+                ${matchData.venue ? `<span class="meta-item">📍 ${matchData.venue}</span>` : ''}
+                ${matchData.date ? `<span class="meta-item">📅 ${matchData.date}</span>` : ''}
+                ${matchData.division ? `<span class="meta-item division">🏆 ${matchData.division}</span>` : ''}
+                ${matchData.placement ? `<span class="meta-item placement">🎯 ${matchData.placement}</span>` : ''}
+                ${matchData.gameId ? `<span class="meta-item game-id">Game: ${matchData.gameId}</span>` : ''}
+            </div>
+        </div>
+        
         <div class="raw-data">${escapeHtml(line)}</div>
     `;
     
@@ -271,12 +296,20 @@ function detectMatchStatus(line) {
     return null;
 }
 
+function toggleMatchDetails(element) {
+    const matchDetails = element.parentElement.nextElementSibling;
+    const isVisible = matchDetails.style.display === 'block';
+    
+    matchDetails.style.display = isVisible ? 'none' : 'block';
+    element.innerHTML = isVisible ? '📋 Details' : '📋 Hide';
+}
+
 function toggleRawData(element) {
-    const rawData = element.nextElementSibling;
+    const rawData = element.parentElement.nextElementSibling.nextElementSibling;
     const isVisible = rawData.style.display === 'block';
     
     rawData.style.display = isVisible ? 'none' : 'block';
-    element.textContent = isVisible ? 'Show raw data' : 'Hide raw data';
+    element.innerHTML = isVisible ? '📄 Raw' : '📄 Hide';
 }
 
 function escapeHtml(text) {
