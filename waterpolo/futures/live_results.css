@@ -256,15 +256,97 @@ body {
 .match-teams {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; /* Vertically align items within match-teams */
     margin-bottom: 8px;
-    gap: 6px;
+    gap: 6px; /* Gap between team sections and center score */
 }
 
 .team-info {
-    flex: 1;
-    min-width: 80px;
+    flex: 1; /* Allow team info sections to take up space */
+    /* min-width: 80px; */ /* Replaced by flex basis or explicit width for children */
+    display: flex;
+    flex-direction: column; /* Stack team name and score vertically */
 }
+
+.team-info.team-left {
+    align-items: flex-start; /* Align text to the left */
+}
+
+.team-info.team-right {
+    align-items: flex-end; /* Align text to the right */
+}
+
+.team-score-value {
+    font-size: clamp(1.0rem, 4vw, 1.2rem); /* Slightly smaller than center score */
+    font-weight: 600;
+    color: #34495e; /* Darker grey for individual scores */
+    line-height: 1;
+    margin-top: 2px;
+}
+
+.match-card.shores-highlight .team-score-value {
+    color: #e85a19; /* Shores highlight for individual scores */
+}
+
+.score-center {
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding: 0 10px; /* Space around the central score/vs text */
+    text-align: center;
+}
+
+.center-score-display {
+    font-size: clamp(1.3rem, 5vw, 1.8rem); /* Prominent central score */
+    font-weight: 800;
+    color: #0077be;
+    background-color: rgba(0, 119, 190, 0.05);
+    padding: 4px 8px;
+    border-radius: 6px;
+    line-height: 1;
+    display: inline-block;
+}
+
+.match-card.shores-highlight .center-score-display {
+    color: #ff6b35;
+    background-color: rgba(255, 107, 53, 0.05);
+}
+
+.vs-text-center {
+    font-size: clamp(1.0rem, 4vw, 1.2rem);
+    font-weight: 700;
+    color: #6c757d;
+    line-height: 1;
+}
+
+@media (max-width: 360px) {
+    .match-teams {
+        gap: 4px; /* Reduce gap on very small screens */
+        /* Potentially change to flex-direction: column if horizontal is too cramped */
+        /* align-items: stretch; */ /* if changing to column, might want this */
+    }
+
+    .score-center {
+        padding: 0 5px; /* Reduce padding for center score */
+    }
+
+    .team-name {
+        font-size: clamp(0.75rem, 3.5vw, 0.9rem); /* Slightly smaller base for very narrow */
+    }
+
+    .center-score-display {
+        font-size: clamp(1.1rem, 5vw, 1.6rem); /* Adjust central score font */
+        padding: 3px 6px;
+    }
+
+    .team-score-value {
+        font-size: clamp(0.9rem, 4vw, 1.1rem);
+    }
+
+    .vs-text-center {
+        font-size: clamp(0.9rem, 4vw, 1.1rem);
+    }
+}
+
 
 .team-name {
     font-weight: 700;
@@ -283,24 +365,24 @@ body {
     text-shadow: 0 1px 3px rgba(255, 107, 53, 0.2);
 }
 
-.team-score {
-    font-size: clamp(1.2rem, 5vw, 1.6rem);
-    font-weight: 800;
-    color: #0077be;
-    line-height: 1;
-}
+/* .team-score { */ /* Old style, replaced by .team-score-value and .center-score-display */
+    /* font-size: clamp(1.2rem, 5vw, 1.6rem); */
+    /* font-weight: 800; */
+    /* color: #0077be; */
+    /* line-height: 1; */
+/* } */
 
-.match-card.shores-highlight .team-score {
-    color: #ff6b35;
-}
+/* .match-card.shores-highlight .team-score { */ /* Old style */
+    /* color: #ff6b35; */
+/* } */
 
-.vs-divider {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #6c757d;
-    margin: 0 6px;
-    white-space: nowrap;
-}
+/* .vs-divider { */ /* Old style, replaced by .score-center and .vs-text-center */
+    /* font-size: 0.8rem; */
+    /* font-weight: 600; */
+    /* color: #6c757d; */
+    /* margin: 0 6px; */
+    /* white-space: nowrap; */
+/* } */
 
 .match-actions {
     display: flex;

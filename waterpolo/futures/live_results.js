@@ -134,14 +134,21 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
         </div>
         
         <div class="match-teams">
-            <div class="team-info">
+            <div class="team-info team-left">
                 <div class="team-name ${matchData.team1.isShores ? 'shores-team' : ''}">${matchData.team1.name}</div>
-                ${matchData.team1.score !== null ? `<div class="team-score">${matchData.team1.score}</div>` : ''}
+                ${matchData.team1.score !== null ? `<div class="team-score-value">${matchData.team1.score}</div>` : '<div class="team-score-value">-</div>'}
             </div>
-            <div class="vs-divider">VS</div>
-            <div class="team-info" style="text-align: right;">
+            <div class="score-center">
+                ${matchData.team1.score !== null && matchData.team2.score !== null ?
+                    `<span class="center-score-display">${matchData.team1.score} - ${matchData.team2.score}</span>` :
+                    (matchData.team1.score !== null || matchData.team2.score !== null ?
+                        `<span class="center-score-display">${matchData.team1.score !== null ? matchData.team1.score : '-'} - ${matchData.team2.score !== null ? matchData.team2.score : '-'}</span>` :
+                        `<span class="vs-text-center">VS</span>`)
+                }
+            </div>
+            <div class="team-info team-right">
                 <div class="team-name ${matchData.team2.isShores ? 'shores-team' : ''}">${matchData.team2.name}</div>
-                ${matchData.team2.score !== null ? `<div class="team-score">${matchData.team2.score}</div>` : ''}
+                ${matchData.team2.score !== null ? `<div class="team-score-value">${matchData.team2.score}</div>` : '<div class="team-score-value">-</div>'}
             </div>
         </div>
         
@@ -158,10 +165,7 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
                 </div>
                 
                 <div class="score-separator">
-                    ${matchData.team1.score !== null && matchData.team2.score !== null ? 
-                        `<span class="score-display">${matchData.team1.score} - ${matchData.team2.score}</span>` : 
-                        `<span class="vs-text">VS</span>`
-                    }
+                    <span class="vs-text">VS</span>
                 </div>
                 
                 <div class="team-detail right">
