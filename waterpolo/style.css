@@ -702,6 +702,7 @@
     margin-bottom: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
 }
 .tournament-entry a {
     text-decoration: none;
@@ -717,6 +718,40 @@
     font-size: 0.9rem;
     color: #555;
     margin-top: 5px;
+}
+
+.live-link {
+    display: inline-block !important;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #ff4757, #ff3742);
+    color: white !important;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem !important;
+    font-weight: 600;
+    text-decoration: none !important;
+    box-shadow: 0 3px 10px rgba(255, 71, 87, 0.3);
+    animation: pulse 2s infinite;
+    transition: all 0.3s ease;
+}
+
+.live-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+    text-decoration: none !important;
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1); 
+    }
+    50% { 
+        opacity: 0.8; 
+        transform: scale(1.05); 
+    }
 }
 
 /* Clickable team styles */
