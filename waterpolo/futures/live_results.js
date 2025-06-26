@@ -156,7 +156,6 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
         </div>
         
         <div class="match-details">
-            // The .details-summary div and its content are removed.
             <div class="match-meta">
                 ${matchData.time ? `<span class="meta-item">⏰ ${matchData.time}</span>` : ''}
                 ${matchData.venue ? `<span class="meta-item">📍 ${matchData.venue}</span>` : ''}
