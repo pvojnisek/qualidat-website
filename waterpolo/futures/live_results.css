@@ -471,7 +471,8 @@ body {
 }
 
 /* Responsive Layout - Narrow screens center the score */
-@media (max-width: 360px) {
+/* This media query for .details-summary is removed as .details-summary is removed */
+/* @media (max-width: 360px) {
     .details-summary {
         flex-direction: column;
         gap: 4px;
@@ -500,7 +501,7 @@ body {
     .team-detail.right {
         order: 3;
     }
-}
+} */
 
 .raw-data {
     margin-top: 6px;
