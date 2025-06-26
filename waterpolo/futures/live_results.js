@@ -137,6 +137,7 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
                 </div>
             </div>
             <div class="match-info-right">
+                ${(matchData.date || matchData.time) ? `<div class="datetime-combined">📅 ${matchData.date || ''} ${matchData.time ? `⏰ ${matchData.time}` : ''}</div>` : ''}
                 ${matchStatus ? `<span class="match-status status-${matchStatus.type}">${matchStatus.label}</span>` : ''}
             </div>
         </div>

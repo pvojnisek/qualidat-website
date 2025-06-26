@@ -250,8 +250,21 @@ body {
 
 .match-info-right {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
     flex-shrink: 0;
+}
+
+.datetime-combined {
+    background: rgba(108, 117, 125, 0.1);
+    color: #495057;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-align: right;
 }
 
 .match-number {
