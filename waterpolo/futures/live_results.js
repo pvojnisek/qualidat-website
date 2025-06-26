@@ -129,8 +129,16 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
     
     matchDiv.innerHTML = `
         <div class="match-header">
-            <span class="match-number">${isShoresMatch ? '🌊 ' : ''}#${cardNumber}</span>
-            ${matchStatus ? `<span class="match-status status-${matchStatus.type}">${matchStatus.label}</span>` : ''}
+            <div class="match-info-left">
+                <div class="tournament-bracket-row">
+                    <span class="match-number">${isShoresMatch ? '🌊 ' : ''}${matchData.gameId ? matchData.gameId : `#${cardNumber}`}</span>
+                    ${matchData.division ? `<span class="tournament-info">🏆 ${matchData.division}</span>` : ''}
+                    ${matchData.placement ? `<span class="bracket-info">📊 ${matchData.placement}</span>` : ''}
+                </div>
+            </div>
+            <div class="match-info-right">
+                ${matchStatus ? `<span class="match-status status-${matchStatus.type}">${matchStatus.label}</span>` : ''}
+            </div>
         </div>
         
         <div class="match-teams">

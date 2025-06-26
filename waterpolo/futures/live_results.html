@@ -12,16 +12,17 @@
         <img src="sd_shores_logo.png" alt="Back to Home" />
     </a>
     
-    <div class="container">
-        <div class="header">
-            <h1 class="title">🏆 Futures Super Finals 2025</h1>
-            <p class="subtitle">Live Tournament Results - Boys Division</p>
-            <div class="live-indicator">
-                <div class="live-dot"></div>
-                <span>LIVE • Auto-refresh every 3 minutes</span>
-            </div>
+    <!-- Fixed Header -->
+    <div class="header">
+        <h1 class="title">🏆 Futures Super Finals 2025</h1>
+        <div class="live-indicator">
+            <div class="live-dot"></div>
+            <span>LIVE • Auto-refresh every 3 minutes • Next in <span class="countdown" id="countdown">--</span></span>
         </div>
+    </div>
 
+    <!-- Scrollable Content -->
+    <div class="container">
         <div class="status-bar">
             <div class="status-info">
                 <div id="statusBadge" class="status-badge status-loading">
@@ -42,10 +43,6 @@
                     </div>
                 </div>
             </div>
-            <div class="refresh-info">
-                <span>Next refresh in</span>
-                <span class="countdown" id="countdown">--</span>
-            </div>
         </div>
 
         <div class="data-container">
@@ -58,10 +55,7 @@
         </div>
 
         <div class="footer">
-            <div>Data source: <strong>feeds.kahunaevents.org/kahuna</strong></div>
-            <div style="margin-top: 8px; font-size: 0.8rem;">
-                Real-time tournament feed • CORS proxy enabled • SD Shores teams highlighted in <span style="color: #ff6b35; font-weight: bold;">orange</span>
-            </div>
+            <div>Data source: <strong>Futures Super Finals official website</strong></div>
         </div>
     </div>
 
