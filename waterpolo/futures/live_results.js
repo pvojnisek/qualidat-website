@@ -134,14 +134,19 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
         </div>
         
         <div class="match-teams">
-            <div class="team-info">
+            <div class="team-info team-left">
                 <div class="team-name ${matchData.team1.isShores ? 'shores-team' : ''}">${matchData.team1.name}</div>
-                ${matchData.team1.score !== null ? `<div class="team-score">${matchData.team1.score}</div>` : ''}
             </div>
-            <div class="vs-divider">VS</div>
-            <div class="team-info" style="text-align: right;">
+            <div class="score-center">
+                ${matchData.team1.score !== null && matchData.team2.score !== null ?
+                    `<span class="center-score-display">${matchData.team1.score} - ${matchData.team2.score}</span>` :
+                    (matchData.team1.score !== null || matchData.team2.score !== null ?
+                        `<span class="center-score-display">${matchData.team1.score !== null ? matchData.team1.score : '-'} - ${matchData.team2.score !== null ? matchData.team2.score : '-'}</span>` :
+                        `<span class="vs-text-center">VS</span>`)
+                }
+            </div>
+            <div class="team-info team-right">
                 <div class="team-name ${matchData.team2.isShores ? 'shores-team' : ''}">${matchData.team2.name}</div>
-                ${matchData.team2.score !== null ? `<div class="team-score">${matchData.team2.score}</div>` : ''}
             </div>
         </div>
         
@@ -151,25 +156,7 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
         </div>
         
         <div class="match-details">
-            <div class="details-summary">
-                <div class="team-detail left">
-                    <span class="team-detail-name ${matchData.team1.isShores ? 'shores-team' : ''}">${matchData.team1.name}</span>
-                    ${matchData.team1.score !== null ? `<span class="team-detail-score">${matchData.team1.score}</span>` : ''}
-                </div>
-                
-                <div class="score-separator">
-                    ${matchData.team1.score !== null && matchData.team2.score !== null ? 
-                        `<span class="score-display">${matchData.team1.score} - ${matchData.team2.score}</span>` : 
-                        `<span class="vs-text">VS</span>`
-                    }
-                </div>
-                
-                <div class="team-detail right">
-                    <span class="team-detail-name ${matchData.team2.isShores ? 'shores-team' : ''}">${matchData.team2.name}</span>
-                    ${matchData.team2.score !== null ? `<span class="team-detail-score">${matchData.team2.score}</span>` : ''}
-                </div>
-            </div>
-            
+            <%-- The .details-summary div and its content are confirmed removed. --%>
             <div class="match-meta">
                 ${matchData.time ? `<span class="meta-item">⏰ ${matchData.time}</span>` : ''}
                 ${matchData.venue ? `<span class="meta-item">📍 ${matchData.venue}</span>` : ''}
