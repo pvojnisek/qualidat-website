@@ -657,10 +657,9 @@
         function getVideosForMatch(whiteTeamName, darkTeamName, whiteScore, darkScore) {
             const videos = [];
             
-            // Debug logging for Rose Bowl match
-            if ((whiteTeamName.includes('SD SHORES BLACK') && darkTeamName.includes('ROSE BOWL')) ||
-                (darkTeamName.includes('SD SHORES BLACK') && whiteTeamName.includes('ROSE BOWL'))) {
-                console.log(`Rose Bowl match debug: white="${whiteTeamName}", dark="${darkTeamName}", scores=${whiteScore}-${darkScore}`);
+            // Debug logging for all SD SHORES BLACK matches
+            if (whiteTeamName.includes('SD SHORES BLACK') || darkTeamName.includes('SD SHORES BLACK')) {
+                console.log(`SD SHORES BLACK match debug: white="${whiteTeamName}", dark="${darkTeamName}", scores=${whiteScore}-${darkScore}`);
             }
             
             // Check for SD SHORES BLACK vs POWAY VALLEY (18-9 in CSV data)
@@ -700,9 +699,13 @@
                 ];
             }
             
-            // Check for SD SHORES BLACK vs CLOVIS (18-3)
-            if ((whiteTeamName === 'SD SHORES BLACK' && darkTeamName === 'CLOVIS' && whiteScore === 18 && darkScore === 3) ||
-                (darkTeamName === 'SD SHORES BLACK' && whiteTeamName === 'CLOVIS' && darkScore === 18 && whiteScore === 3)) {
+            // Check for SD SHORES BLACK vs CLOVIS (18-3) - with more flexible matching
+            if (((whiteTeamName === 'SD SHORES BLACK' || whiteTeamName.includes('SD SHORES BLACK')) && 
+                 (darkTeamName === 'CLOVIS' || darkTeamName.includes('CLOVIS')) && 
+                 whiteScore === 18 && darkScore === 3) ||
+                ((darkTeamName === 'SD SHORES BLACK' || darkTeamName.includes('SD SHORES BLACK')) && 
+                 (whiteTeamName === 'CLOVIS' || whiteTeamName.includes('CLOVIS')) && 
+                 darkScore === 18 && whiteScore === 3)) {
                 return [
                     { quarter: 'Q1', url: 'https://youtu.be/q4ZNwVTJN5o?si=N2V0gDHpBXSFy5Xj', title: 'SD Shores Black vs Clovis - Q1' },
                     { quarter: 'Q2', url: 'https://youtu.be/D5ns83BK2Ag?si=SbakkhkJrUqpolG2', title: 'SD Shores Black vs Clovis - Q2' },
@@ -711,9 +714,13 @@
                 ];
             }
             
-            // Check for second SD SHORES BLACK vs SOCAL match (14-5)
-            if ((whiteTeamName === 'SD SHORES BLACK' && darkTeamName === 'SOCAL' && whiteScore === 14 && darkScore === 5) ||
-                (darkTeamName === 'SD SHORES BLACK' && whiteTeamName === 'SOCAL' && darkScore === 14 && whiteScore === 5)) {
+            // Check for second SD SHORES BLACK vs SOCAL match (14-5) - with more flexible matching
+            if (((whiteTeamName === 'SD SHORES BLACK' || whiteTeamName.includes('SD SHORES BLACK')) && 
+                 (darkTeamName === 'SOCAL' || darkTeamName.includes('SOCAL')) && 
+                 whiteScore === 14 && darkScore === 5) ||
+                ((darkTeamName === 'SD SHORES BLACK' || darkTeamName.includes('SD SHORES BLACK')) && 
+                 (whiteTeamName === 'SOCAL' || whiteTeamName.includes('SOCAL')) && 
+                 darkScore === 14 && whiteScore === 5)) {
                 return [
                     { quarter: 'Q1', url: 'https://youtu.be/d8GzqfVqxxY?si=pLv0tVxCPF_W0kxh', title: 'SD Shores Black vs SoCal - Q1' },
                     { quarter: 'Q2', url: 'https://youtu.be/RUYXkTnuyEg?si=OqTFyaOKvQTdLfXO', title: 'SD Shores Black vs SoCal - Q2' },
