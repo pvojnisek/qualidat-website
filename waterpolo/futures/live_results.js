@@ -324,11 +324,11 @@ function detectMatchStatus(line) {
     
     const isToday = line.includes(todayString);
     
-    if (upperLine.includes('HOT!') && isToday) {
+    // Enhanced HOT! detection: Original HOT! OR matches from last 2 hours
+    const isRecentMatch = isMatchFromLastHour(line);
+    
+    if ((upperLine.includes('HOT!') && isToday) || isRecentMatch) {
         return { type: 'live', label: 'HOT! 🔥' };
-    }
-    if (upperLine.includes('LIVE') || upperLine.includes('PLAYING')) {
-        return { type: 'live', label: 'LIVE' };
     }
     if (upperLine.includes('FINAL')) {
         return { type: 'completed', label: 'FINAL' };
@@ -336,8 +336,74 @@ function detectMatchStatus(line) {
     if (upperLine.includes('UPCOMING') || upperLine.includes('SCHEDULED')) {
         return { type: 'upcoming', label: 'UPCOMING' };
     }
+    
+    // Check for penalty/incident notifications
+    if (upperLine.includes('RED CARD') || upperLine.includes('PENALTY') || upperLine.includes('INCIDENT')) {
+        return { type: 'live', label: 'INCIDENT ⚠️' };
+    }
+    
     // Return null for no status badge - removes RESULT tags
     return null;
+}
+
+function isMatchFromLastHour(line) {
+    try {
+        // Parse Kahuna format: HOT! RESULT DIVISION  DATE  VENUE  TIME  ...
+        const fields = line.split(/\s{2,}/);
+        
+        if (fields.length < 4) return false;
+        
+        const dateStr = fields[1]?.trim(); // "27-Jun"
+        const timeStr = fields[3]?.trim(); // "12:00 PM"
+        
+        if (!dateStr || !timeStr) return false;
+        
+        // Parse the match date and time
+        const currentYear = new Date().getFullYear();
+        const matchDateTime = parseKahunaDateTime(dateStr, timeStr, currentYear);
+        
+        if (!matchDateTime) return false;
+        
+        // Check if match was within the last 2 hours
+        const now = new Date();
+        const twoHoursAgo = new Date(now.getTime() - (2 * 60 * 60 * 1000));
+        
+        return matchDateTime >= twoHoursAgo && matchDateTime <= now;
+        
+    } catch (error) {
+        console.warn('Error parsing match time:', error);
+        return false;
+    }
+}
+
+function parseKahunaDateTime(dateStr, timeStr, year) {
+    try {
+        // Parse date like "27-Jun"
+        const [day, monthName] = dateStr.split('-');
+        const monthMap = {
+            'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+            'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+        };
+        
+        const month = monthMap[monthName];
+        if (month === undefined) return null;
+        
+        // Parse time like "12:00 PM"
+        const timeMatch = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (!timeMatch) return null;
+        
+        let hours = parseInt(timeMatch[1]);
+        const minutes = parseInt(timeMatch[2]);
+        const ampm = timeMatch[3].toUpperCase();
+        
+        if (ampm === 'PM' && hours !== 12) hours += 12;
+        if (ampm === 'AM' && hours === 12) hours = 0;
+        
+        return new Date(year, month, parseInt(day), hours, minutes);
+        
+    } catch (error) {
+        return null;
+    }
 }
 
 function toggleMatchDetails(element) {
