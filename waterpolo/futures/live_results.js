@@ -87,8 +87,8 @@ async function fetchViaProxy() {
 function displayMatchResults(data) {
     const lines = data.split('\n').filter(line => line.trim());
     
-    // Get the latest 15 lines for testing purposes
-    const latestResults = lines.slice(-15).reverse(); // Most recent first
+    // Get the first 20 lines (newest matches are inserted at top)
+    const latestResults = lines.slice(0, 20); // Most recent first
     
     matchCount = latestResults.length;
     shoresCount = 0;
