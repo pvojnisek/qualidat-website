@@ -48,6 +48,11 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
+/* Override floating back button z-index to appear above header */
+.floating-back-btn {
+    z-index: 1001 !important;
+}
+
 .title {
     font-size: clamp(1.4rem, 5vw, 2.2rem);
     font-weight: 800;

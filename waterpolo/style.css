@@ -1118,7 +1118,60 @@
     }
 }
 
-/* Responsive adjustments for floating back button */
+/* Floating LIVE Results Button */
+.floating-live-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 71, 87, 0.95);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 25px;
+    box-shadow: 0 4px 20px rgba(255, 71, 87, 0.3);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeInFloat 0.6s ease-out 0.7s forwards;
+    transition: all 0.3s ease;
+}
+
+.floating-live-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 30px rgba(255, 71, 87, 0.4);
+    background: rgba(255, 71, 87, 1);
+    text-decoration: none;
+    color: white;
+}
+
+.floating-live-btn .live-dot {
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1); 
+    }
+    50% { 
+        opacity: 0.5; 
+        transform: scale(1.2); 
+    }
+}
+
+/* Responsive adjustments for floating buttons */
 @media (max-width: 768px) {
     .floating-back-btn {
         width: 50px;
@@ -1130,6 +1183,19 @@
     .floating-back-btn img {
         width: 56px;
         height: 56px;
+    }
+    
+    .floating-live-btn {
+        top: 15px;
+        right: 15px;
+        padding: 10px 12px;
+        font-size: 0.8rem;
+        gap: 6px;
+    }
+    
+    .floating-live-btn .live-dot {
+        width: 8px;
+        height: 8px;
     }
 }
 
@@ -1144,6 +1210,19 @@
     .floating-back-btn img {
         width: 50px;
         height: 50px;
+    }
+    
+    .floating-live-btn {
+        top: 10px;
+        right: 10px;
+        padding: 8px 10px;
+        font-size: 0.75rem;
+        gap: 4px;
+    }
+    
+    .floating-live-btn .live-dot {
+        width: 6px;
+        height: 6px;
     }
 }
 
