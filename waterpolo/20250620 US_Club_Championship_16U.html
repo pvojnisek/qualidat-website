@@ -694,7 +694,31 @@
                  darkScore === 15 && whiteScore === 5)) {
                 return [
                     { quarter: 'Q1', url: 'https://youtu.be/wufkmEzIBsc?si=I_fSWQHj8XG1pb_t', title: 'SD Shores Black vs Rose Bowl - Q1' },
-                    { quarter: 'Q2', url: 'https://youtu.be/WK7UYbZDWKI?si=ZWXLf1DNgbdN5iiK', title: 'SD Shores Black vs Rose Bowl - Q2' }
+                    { quarter: 'Q2', url: 'https://youtu.be/WK7UYbZDWKI?si=ZWXLf1DNgbdN5iiK', title: 'SD Shores Black vs Rose Bowl - Q2' },
+                    { quarter: 'Q3', url: 'https://youtu.be/mnlL4itpzEM?si=FU8_a0hx_0vu0v9u', title: 'SD Shores Black vs Rose Bowl - Q3' },
+                    { quarter: 'Q4', url: 'https://youtu.be/LHRjW8jjarY?si=PoKkEgInqVfrHGM3', title: 'SD Shores Black vs Rose Bowl - Q4' }
+                ];
+            }
+            
+            // Check for SD SHORES BLACK vs CLOVIS (18-3)
+            if ((whiteTeamName === 'SD SHORES BLACK' && darkTeamName === 'CLOVIS' && whiteScore === 18 && darkScore === 3) ||
+                (darkTeamName === 'SD SHORES BLACK' && whiteTeamName === 'CLOVIS' && darkScore === 18 && whiteScore === 3)) {
+                return [
+                    { quarter: 'Q1', url: 'https://youtu.be/q4ZNwVTJN5o?si=N2V0gDHpBXSFy5Xj', title: 'SD Shores Black vs Clovis - Q1' },
+                    { quarter: 'Q2', url: 'https://youtu.be/D5ns83BK2Ag?si=SbakkhkJrUqpolG2', title: 'SD Shores Black vs Clovis - Q2' },
+                    { quarter: 'Q3', url: 'https://youtu.be/-I76I6ksyfA?si=kOjXF5So6BbxzE6Z', title: 'SD Shores Black vs Clovis - Q3' },
+                    { quarter: 'Q4', url: 'https://youtu.be/v2YjF9Gii34?si=SxV-P0Gf3hLikcp4', title: 'SD Shores Black vs Clovis - Q4' }
+                ];
+            }
+            
+            // Check for second SD SHORES BLACK vs SOCAL match (14-5)
+            if ((whiteTeamName === 'SD SHORES BLACK' && darkTeamName === 'SOCAL' && whiteScore === 14 && darkScore === 5) ||
+                (darkTeamName === 'SD SHORES BLACK' && whiteTeamName === 'SOCAL' && darkScore === 14 && whiteScore === 5)) {
+                return [
+                    { quarter: 'Q1', url: 'https://youtu.be/d8GzqfVqxxY?si=pLv0tVxCPF_W0kxh', title: 'SD Shores Black vs SoCal - Q1' },
+                    { quarter: 'Q2', url: 'https://youtu.be/RUYXkTnuyEg?si=OqTFyaOKvQTdLfXO', title: 'SD Shores Black vs SoCal - Q2' },
+                    { quarter: 'Q3', url: 'https://youtu.be/RUYXkTnuyEg?si=mC2C3cZX_AhL2cBf', title: 'SD Shores Black vs SoCal - Q3' },
+                    { quarter: 'Q4', url: 'https://youtu.be/42ABPbSGc-o?si=dHR-pq4wgk8NoNOE', title: 'SD Shores Black vs SoCal - Q4' }
                 ];
             }
             
