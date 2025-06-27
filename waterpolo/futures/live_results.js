@@ -27,6 +27,48 @@ const SHORES_PATTERNS = [
     /\bshores red\b/i
 ];
 
+// Super Finals dates (June 27-29, 2025)
+const SUPER_FINALS_DATES = ['27-Jun', '28-Jun', '29-Jun'];
+
+function filterSuperFinalsMatches(lines) {
+    return lines.filter(line => {
+        // Check if the line contains any of the Super Finals dates
+        return SUPER_FINALS_DATES.some(date => line.includes(date));
+    });
+}
+
+function applyActiveFilters(lines) {
+    const filter16U = document.getElementById('filter16U')?.checked || false;
+    const filterShores = document.getElementById('filterShores')?.checked || false;
+    
+    let filteredLines = lines;
+    
+    // Apply 16U BOYS filter
+    if (filter16U) {
+        filteredLines = filteredLines.filter(line => 
+            line.includes('16U_BOYS') || line.includes('16U BOYS')
+        );
+    }
+    
+    // Apply Shores filter
+    if (filterShores) {
+        filteredLines = filteredLines.filter(line => 
+            detectShoresTeam(line)
+        );
+    }
+    
+    return filteredLines;
+}
+
+function applyFilters() {
+    // Re-run the display with current data to apply new filters
+    const statusBadge = document.getElementById('statusBadge');
+    if (statusBadge && !statusBadge.classList.contains('status-loading')) {
+        // Only re-filter if we have data loaded
+        loadLiveResults();
+    }
+}
+
 async function loadLiveResults() {
     console.log('🔄 Loading live tournament results...');
     updateStatus('loading', 'Fetching latest results...');
@@ -87,21 +129,28 @@ async function fetchViaProxy() {
 function displayMatchResults(data) {
     const lines = data.split('\n').filter(line => line.trim());
     
-    // Get the first 20 lines (newest matches are inserted at top)
-    const latestResults = lines.slice(0, 20); // Most recent first
+    // Process ALL lines first (don't limit to 50 yet)
+    // Filter for Super Finals dates (June 27-29, 2025)
+    const superFinalsResults = filterSuperFinalsMatches(lines);
     
-    matchCount = latestResults.length;
+    // Apply additional filters based on checkboxes
+    const allFilteredResults = applyActiveFilters(superFinalsResults);
+    
+    // FINALLY limit to 50 matches for display (after all filtering)
+    const filteredResults = allFilteredResults.slice(0, 50);
+    
+    matchCount = filteredResults.length;
     shoresCount = 0;
     
     const matchGrid = document.getElementById('matchGrid');
     matchGrid.innerHTML = '';
 
-    if (latestResults.length === 0) {
-        matchGrid.innerHTML = '<div class="empty-state">📭 No tournament results available at this time</div>';
+    if (filteredResults.length === 0) {
+        matchGrid.innerHTML = '<div class="empty-state">📭 No tournament results match the current filters</div>';
         return;
     }
 
-    latestResults.forEach((line, index) => {
+    filteredResults.forEach((line, index) => {
         const isShoresMatch = detectShoresTeam(line);
         if (isShoresMatch) shoresCount++;
         
