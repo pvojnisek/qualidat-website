@@ -288,8 +288,8 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
     let team2Winner = false;
     
     if (matchData.team1.score !== null && matchData.team2.score !== null) {
-        const score1 = parseInt(matchData.team1.score);
-        const score2 = parseInt(matchData.team2.score);
+        const score1 = parseFloat(matchData.team1.score);
+        const score2 = parseFloat(matchData.team2.score);
         if (score1 > score2) team1Winner = true;
         else if (score2 > score1) team2Winner = true;
         // Tie: no winner
@@ -402,8 +402,8 @@ function parseMatchLine(line) {
         const team1Match = fields[5]?.match(/^(.+?)=(.+)$/);
         if (team1Match) {
             let teamName = team1Match[1];
-            // Remove various prefixes: W#38-, E4(3rdB)-, D4(4thB)-, F3(3rdA)-, etc.
-            teamName = teamName.replace(/^[A-Z]+#?\d*[\(\)A-Za-z0-9]*-/, '');
+            // Remove various prefixes: W#38-, E4(3rdB)-, D4(4thB)-, F3(3rdA)-, 2ndA(L#6)-, etc.
+            teamName = teamName.replace(/^[A-Za-z0-9]+[\(\)A-Za-z0-9#]*-/, '');
             // Remove tournament level suffixes: au=Gold, ag=Silver, pt=Platinum, sl=Silver, br=Bronze, gd=Gold
             teamName = teamName.replace(/\s+(au|ag|pt|sl|br|gd)$/, '');
             result.team1.name = teamName.trim();
@@ -414,8 +414,8 @@ function parseMatchLine(line) {
         const team2Match = fields[6]?.match(/^(.+?)=(.+)$/);
         if (team2Match) {
             let teamName = team2Match[1];
-            // Remove various prefixes: W#40-, E7(4thC)-, etc.
-            teamName = teamName.replace(/^[A-Z]+#?\d*[\(\)A-Za-z0-9]*-/, '');
+            // Remove various prefixes: W#40-, E7(4thC)-, 2ndA(L#6)-, etc.
+            teamName = teamName.replace(/^[A-Za-z0-9]+[\(\)A-Za-z0-9#]*-/, '');
             // Remove tournament level suffixes: au=Gold, ag=Silver, pt=Platinum, sl=Silver, br=Bronze, gd=Gold
             teamName = teamName.replace(/\s+(au|ag|pt|sl|br|gd)$/, '');
             result.team2.name = teamName.trim();
