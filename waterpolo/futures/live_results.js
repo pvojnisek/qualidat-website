@@ -75,6 +75,14 @@ function applyActiveFilters(lines) {
         );
     }
     
+    // Apply custom team search filter
+    const customSearch = document.getElementById('customTeamSearch')?.value?.trim() || '';
+    if (customSearch) {
+        filteredLines = filteredLines.filter(line => 
+            applyCustomTeamFilter(line, customSearch)
+        );
+    }
+    
     return filteredLines;
 }
 
@@ -84,6 +92,87 @@ function applyFilters() {
     if (statusBadge && !statusBadge.classList.contains('status-loading')) {
         // Only re-filter if we have data loaded
         loadLiveResults();
+    }
+}
+
+function applyCustomTeamFilter(line, searchTerm) {
+    // Parse team names from the line
+    const matchData = parseMatchLine(line);
+    const team1Name = matchData.team1.name.toLowerCase();
+    const team2Name = matchData.team2.name.toLowerCase();
+    const search = searchTerm.toLowerCase();
+    
+    // Return true if either team name contains the search term
+    return team1Name.includes(search) || team2Name.includes(search);
+}
+
+function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+function selectTeam(teamName) {
+    // Update the search input with the selected team name
+    const searchInput = document.getElementById('customTeamSearch');
+    if (searchInput) {
+        searchInput.value = teamName;
+        // Trigger immediate filtering (no debounce for direct selection)
+        applyFilters();
+    }
+}
+
+function clearSearch() {
+    const searchInput = document.getElementById('customTeamSearch');
+    if (searchInput) {
+        searchInput.value = '';
+        applyFilters(); // Clear filters immediately
+        updateClearButtonVisibility(); // Hide clear button
+    }
+}
+
+function updateClearButtonVisibility() {
+    const searchInput = document.getElementById('customTeamSearch');
+    const clearBtn = document.getElementById('clearSearchBtn');
+    if (searchInput && clearBtn) {
+        clearBtn.style.display = searchInput.value.trim() ? 'block' : 'none';
+    }
+}
+
+function highlightSearchText(teamName, searchTerm) {
+    if (!searchTerm.trim()) return teamName;
+    
+    const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
+    return teamName.replace(regex, '<span class="highlight-match">$1</span>');
+}
+
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function setupCustomSearchListeners() {
+    const searchInput = document.getElementById('customTeamSearch');
+    const clearBtn = document.getElementById('clearSearchBtn');
+    
+    if (searchInput) {
+        // Create debounced filter function
+        const debouncedFilter = debounce(applyFilters, 300);
+        
+        // Add input event listener with debouncing
+        searchInput.addEventListener('input', (e) => {
+            debouncedFilter();
+            updateClearButtonVisibility();
+        });
+        
+        // Initialize clear button visibility
+        updateClearButtonVisibility();
+    }
+    
+    if (clearBtn) {
+        // Add clear button click listener
+        clearBtn.addEventListener('click', clearSearch);
     }
 }
 
@@ -194,6 +283,25 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
     const matchData = parseMatchLine(line);
     const matchStatus = detectMatchStatus(line);
     
+    // Determine winner
+    let team1Winner = false;
+    let team2Winner = false;
+    
+    if (matchData.team1.score !== null && matchData.team2.score !== null) {
+        const score1 = parseInt(matchData.team1.score);
+        const score2 = parseInt(matchData.team2.score);
+        if (score1 > score2) team1Winner = true;
+        else if (score2 > score1) team2Winner = true;
+        // Tie: no winner
+    }
+    
+    // Get current search term for highlighting
+    const searchTerm = document.getElementById('customTeamSearch')?.value?.trim() || '';
+    
+    // Generate team names with highlighting
+    const team1Html = highlightSearchText(matchData.team1.name, searchTerm);
+    const team2Html = highlightSearchText(matchData.team2.name, searchTerm);
+    
     matchDiv.innerHTML = `
         <div class="match-header">
             <div class="match-info-left">
@@ -211,7 +319,7 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
         
         <div class="match-teams">
             <div class="team-info team-left">
-                <div class="team-name ${matchData.team1.isShores ? 'shores-team' : ''}">${matchData.team1.name}</div>
+                <div class="team-name ${matchData.team1.isShores ? 'shores-team' : ''} ${team1Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team1.name).replace(/'/g, "\\'")}')">${team1Html}</div>
             </div>
             <div class="score-center">
                 ${matchData.team1.score !== null && matchData.team2.score !== null ?
@@ -222,7 +330,7 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
                 }
             </div>
             <div class="team-info team-right">
-                <div class="team-name ${matchData.team2.isShores ? 'shores-team' : ''}">${matchData.team2.name}</div>
+                <div class="team-name ${matchData.team2.isShores ? 'shores-team' : ''} ${team2Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team2.name).replace(/'/g, "\\'")}')">${team2Html}</div>
             </div>
         </div>
         
@@ -503,6 +611,7 @@ function updateCountdown() {
 // Initialize the page
 window.addEventListener('load', () => {
     console.log('🚀 Futures Super Finals Live Results page loaded');
+    setupCustomSearchListeners();
     loadLiveResults();
     startRefreshCycle();
 });

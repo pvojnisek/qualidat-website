@@ -194,6 +194,71 @@ body {
     font-size: clamp(0.65rem, 2vw, 0.75rem);
 }
 
+/* Custom Team Search Input */
+.search-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 200px;
+    margin-top: 8px;
+}
+
+#customTeamSearch {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 32px 8px 12px; /* Add right padding for clear button */
+    border-radius: 20px;
+    color: white;
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+#customTeamSearch::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+#customTeamSearch:focus {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+#customTeamSearch:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.clear-search-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    color: #666;
+    display: none; /* Hidden by default */
+    transition: all 0.2s ease;
+    font-family: Arial, sans-serif;
+}
+
+.clear-search-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    color: #333;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.clear-search-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
 .status-bar {
     padding: 8px 12px;
     display: flex;
@@ -545,6 +610,36 @@ body {
 .team-name.shores-team {
     color: #ff6b35;
     text-shadow: 0 1px 3px rgba(255, 107, 53, 0.2);
+}
+
+/* Team Name Hover Effects for Clickable Functionality */
+.team-name {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.team-name:hover {
+    opacity: 0.7;
+}
+
+/* Winner Team Styling */
+.team-name.winner {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}
+
+/* Search Text Highlighting */
+.highlight-match {
+    background-color: rgba(255, 235, 59, 0.6); /* Yellow highlight */
+    font-weight: bold;
+    border-radius: 2px;
+    padding: 1px 2px;
+    color: #2c3e50; /* Ensure good contrast */
+}
+
+/* Shores team highlight adjustment */
+.team-name.shores-team .highlight-match {
+    color: #ff6b35; /* Maintain Shores team color for highlighted text */
 }
 
 /* .team-score { */ /* Old style, replaced by .team-score-value and .center-score-display */

@@ -125,11 +125,11 @@ Document contains SD Shores Black team match recordings with YouTube links:
 - **Auto-refresh** every 3 minutes with countdown timer
 - **Enhanced team name parsing** - removes tournament prefixes and level suffixes
 - **Collapsible details system** - venue/time info hidden by default with toggle buttons
-- **Advanced filter system** - 6 independent filters with separated age and gender categories
+- **Advanced filter system** - 7 independent filters with separated age and gender categories plus custom team search
 
 #### Live Results Filter System
 
-**Filter Categories (6 total filters):**
+**Filter Categories (7 total filters):**
 1. **Age Group Filters** (OR logic within category):
    - `🏆 14U` - Filters for 14U_BOYS, 14U BOYS, 14U_GIRLS, 14U GIRLS
    - `🏆 16U` - Filters for 16U_BOYS, 16U BOYS, 16U_GIRLS, 16U GIRLS (default: checked)
@@ -141,6 +141,7 @@ Document contains SD Shores Black team match recordings with YouTube links:
 
 3. **Team Filters**:
    - `🌊 Shores` - Filters for SD Shores team matches using pattern matching
+   - `🔍 Custom Search` - Free text search for any team name (partial matching, debounced)
 
 **Filter Logic:**
 - **Between categories**: AND logic (Age AND Gender AND Teams)
@@ -162,6 +163,114 @@ const hasGenderFilters = filterBoys || filterGirls;
 if (hasGenderFilters) {
     // Show matches that match ANY selected gender (OR logic)
     return matchesBoys || matchesGirls;
+}
+
+// Custom team search: partial team name matching
+const customSearch = document.getElementById('customTeamSearch')?.value?.trim() || '';
+if (customSearch) {
+    filteredLines = filteredLines.filter(line => 
+        applyCustomTeamFilter(line, customSearch)
+    );
+}
+```
+
+**Interactive Features:**
+- **Clickable team names**: Click any team name in match cards to automatically populate search filter
+- **Clear button**: "×" button inside search input to instantly clear search text
+- **Debounced search**: 300ms delay prevents excessive filtering while typing
+- **Hover indication**: Team names show pointer cursor and subtle opacity change (0.7) on hover
+- **Case-insensitive matching**: Search works regardless of letter case
+- **Partial matching**: Search for any part of team name (e.g., "shores" matches "SD SHORES BLACK")
+- **Search highlighting**: Matched text highlighted with yellow background in real-time
+- **Winner indication**: Winning team names are underlined when match has completed scores
+
+**Enhanced Search Implementation:**
+```javascript
+// Team name highlighting with search term
+function highlightSearchText(teamName, searchTerm) {
+    if (!searchTerm.trim()) return teamName;
+    const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
+    return teamName.replace(regex, '<span class="highlight-match">$1</span>');
+}
+
+// Clear search functionality
+function clearSearch() {
+    const searchInput = document.getElementById('customTeamSearch');
+    if (searchInput) {
+        searchInput.value = '';
+        applyFilters(); // Clear filters immediately
+        updateClearButtonVisibility(); // Hide clear button
+    }
+}
+
+// Winner detection for team underlines
+function determineWinner(matchData) {
+    let team1Winner = false, team2Winner = false;
+    if (matchData.team1.score !== null && matchData.team2.score !== null) {
+        const score1 = parseInt(matchData.team1.score);
+        const score2 = parseInt(matchData.team2.score);
+        if (score1 > score2) team1Winner = true;
+        else if (score2 > score1) team2Winner = true;
+        // Tie: no winner gets underline
+    }
+    return { team1Winner, team2Winner };
+}
+
+// Team selection and search filtering
+function selectTeam(teamName) {
+    const searchInput = document.getElementById('customTeamSearch');
+    if (searchInput) {
+        searchInput.value = teamName;
+        applyFilters(); // Immediate filtering (no debounce)
+        updateClearButtonVisibility(); // Show clear button
+    }
+}
+```
+
+**CSS Enhancements:**
+```css
+/* Search wrapper with clear button */
+.search-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 200px;
+}
+
+/* Clear button styling */
+.clear-search-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: none; /* Hidden by default */
+    transition: all 0.2s ease;
+}
+
+/* Winner team underline */
+.team-name.winner {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}
+
+/* Search text highlighting */
+.highlight-match {
+    background-color: rgba(255, 235, 59, 0.6);
+    font-weight: bold;
+    border-radius: 2px;
+    padding: 1px 2px;
+    color: #2c3e50;
+}
+
+/* Shores team highlight adjustment */
+.team-name.shores-team .highlight-match {
+    color: #ff6b35; /* Maintain Shores team color */
 }
 ```
 
