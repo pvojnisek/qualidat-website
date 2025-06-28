@@ -318,19 +318,23 @@ function createMatchCard(line, cardNumber, isShoresMatch) {
         </div>
         
         <div class="match-teams">
-            <div class="team-info team-left">
-                <div class="team-name ${matchData.team1.isShores ? 'shores-team' : ''} ${team1Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team1.name).replace(/'/g, "\\'")}')">${team1Html}</div>
+            <div class="teams-row">
+                <div class="team-info team-left">
+                    <div class="team-name ${matchData.team1.isShores ? 'shores-team' : ''} ${team1Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team1.name).replace(/'/g, "\\'")}')">${team1Html}</div>
+                </div>
+                <div class="team-info team-right">
+                    <div class="team-name ${matchData.team2.isShores ? 'shores-team' : ''} ${team2Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team2.name).replace(/'/g, "\\'")}')">${team2Html}</div>
+                </div>
             </div>
-            <div class="score-center">
-                ${matchData.team1.score !== null && matchData.team2.score !== null ?
-                    `<span class="center-score-display">${matchData.team1.score} - ${matchData.team2.score}</span>` :
-                    (matchData.team1.score !== null || matchData.team2.score !== null ?
-                        `<span class="center-score-display">${matchData.team1.score !== null ? matchData.team1.score : '-'} - ${matchData.team2.score !== null ? matchData.team2.score : '-'}</span>` :
-                        `<span class="vs-text-center">VS</span>`)
-                }
-            </div>
-            <div class="team-info team-right">
-                <div class="team-name ${matchData.team2.isShores ? 'shores-team' : ''} ${team2Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team2.name).replace(/'/g, "\\'")}')">${team2Html}</div>
+            <div class="score-row">
+                <div class="score-center">
+                    ${matchData.team1.score !== null && matchData.team2.score !== null ?
+                        `<span class="center-score-display">${matchData.team1.score} - ${matchData.team2.score}</span>` :
+                        (matchData.team1.score !== null || matchData.team2.score !== null ?
+                            `<span class="center-score-display">${matchData.team1.score !== null ? matchData.team1.score : '-'} - ${matchData.team2.score !== null ? matchData.team2.score : '-'}</span>` :
+                            `<span class="vs-text-center">VS</span>`)
+                    }
+                </div>
             </div>
         </div>
         
