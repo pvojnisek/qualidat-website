@@ -125,6 +125,45 @@ Document contains SD Shores Black team match recordings with YouTube links:
 - **Auto-refresh** every 3 minutes with countdown timer
 - **Enhanced team name parsing** - removes tournament prefixes and level suffixes
 - **Collapsible details system** - venue/time info hidden by default with toggle buttons
+- **Advanced filter system** - 6 independent filters with separated age and gender categories
+
+#### Live Results Filter System
+
+**Filter Categories (6 total filters):**
+1. **Age Group Filters** (OR logic within category):
+   - `🏆 14U` - Filters for 14U_BOYS, 14U BOYS, 14U_GIRLS, 14U GIRLS
+   - `🏆 16U` - Filters for 16U_BOYS, 16U BOYS, 16U_GIRLS, 16U GIRLS (default: checked)
+   - `🏆 18U` - Filters for 18U_BOYS, 18U BOYS, 18U_GIRLS, 18U GIRLS
+
+2. **Gender Filters** (OR logic within category):
+   - `👦 BOYS` - Filters for _BOYS, BOYS (default: checked)
+   - `👧 GIRLS` - Filters for _GIRLS, GIRLS
+
+3. **Team Filters**:
+   - `🌊 Shores` - Filters for SD Shores team matches using pattern matching
+
+**Filter Logic:**
+- **Between categories**: AND logic (Age AND Gender AND Teams)
+- **Within categories**: OR logic (14U OR 16U OR 18U, BOYS OR GIRLS)
+- **Default behavior**: 16U + BOYS = shows only 16U boys matches
+- **Sequential filtering**: Each category filters the results from previous category
+
+**Filter Implementation:**
+```javascript
+// Age groups: if any age filter checked, show matches for selected ages
+const hasAgeFilters = filter14U || filter16U || filter18U;
+if (hasAgeFilters) {
+    // Show matches that match ANY selected age group (OR logic)
+    return matches14U || matches16U || matches18U;
+}
+
+// Gender: if any gender filter checked, show matches for selected genders  
+const hasGenderFilters = filterBoys || filterGirls;
+if (hasGenderFilters) {
+    // Show matches that match ANY selected gender (OR logic)
+    return matchesBoys || matchesGirls;
+}
+```
 
 #### SD Shores Team Detection Patterns
 ```javascript

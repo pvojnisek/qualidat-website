@@ -38,6 +38,7 @@ function filterSuperFinalsMatches(lines) {
 }
 
 function applyActiveFilters(lines) {
+    const filter14U = document.getElementById('filter14U')?.checked || false;
     const filter16U = document.getElementById('filter16U')?.checked || false;
     const filter18U = document.getElementById('filter18U')?.checked || false;
     const filterBoys = document.getElementById('filterBoys')?.checked || false;
@@ -47,12 +48,13 @@ function applyActiveFilters(lines) {
     let filteredLines = lines;
     
     // Apply age group filters (OR logic for age groups)
-    const hasAgeFilters = filter16U || filter18U;
+    const hasAgeFilters = filter14U || filter16U || filter18U;
     if (hasAgeFilters) {
         filteredLines = filteredLines.filter(line => {
+            const matches14U = filter14U && (line.includes('14U_BOYS') || line.includes('14U BOYS') || line.includes('14U_GIRLS') || line.includes('14U GIRLS'));
             const matches16U = filter16U && (line.includes('16U_BOYS') || line.includes('16U BOYS') || line.includes('16U_GIRLS') || line.includes('16U GIRLS'));
             const matches18U = filter18U && (line.includes('18U_BOYS') || line.includes('18U BOYS') || line.includes('18U_GIRLS') || line.includes('18U GIRLS'));
-            return matches16U || matches18U;
+            return matches14U || matches16U || matches18U;
         });
     }
     
