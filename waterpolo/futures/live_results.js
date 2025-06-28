@@ -37,6 +37,47 @@ function filterSuperFinalsMatches(lines) {
     });
 }
 
+function deduplicateMatches(lines) {
+    const seen = new Set();
+    const uniqueLines = [];
+    
+    for (const line of lines) {
+        // Create a unique identifier for each match
+        const matchSignature = createMatchSignature(line);
+        
+        if (!seen.has(matchSignature)) {
+            seen.add(matchSignature);
+            uniqueLines.push(line);
+        }
+    }
+    
+    return uniqueLines;
+}
+
+function createMatchSignature(line) {
+    // Parse the line to extract key identifying information
+    const fields = line.split(/\s{2,}/);
+    
+    if (fields.length >= 7) {
+        // Use game ID as primary identifier if available
+        const gameId = fields[4]?.trim();
+        if (gameId) {
+            return gameId;
+        }
+        
+        // Fallback: create signature from date + time + teams
+        const date = fields[1]?.trim() || '';
+        const time = fields[3]?.trim() || '';
+        const team1 = fields[5]?.split('=')[0] || '';
+        const team2 = fields[6]?.split('=')[0] || '';
+        
+        return `${date}_${time}_${team1}_${team2}`;
+    }
+    
+    // Last resort: use the entire line (but trim whitespace)
+    return line.trim();
+}
+
 function applyActiveFilters(lines) {
     const filter14U = document.getElementById('filter14U')?.checked || false;
     const filter16U = document.getElementById('filter16U')?.checked || false;
@@ -236,9 +277,12 @@ async function fetchViaProxy() {
 function displayMatchResults(data) {
     const lines = data.split('\n').filter(line => line.trim());
     
+    // Remove duplicate entries from source data
+    const uniqueLines = deduplicateMatches(lines);
+    
     // Process ALL lines first (don't limit to 50 yet)
     // Filter for Super Finals dates (June 27-29, 2025)
-    const superFinalsResults = filterSuperFinalsMatches(lines);
+    const superFinalsResults = filterSuperFinalsMatches(uniqueLines);
     
     // Apply additional filters based on checkboxes
     const allFilteredResults = applyActiveFilters(superFinalsResults);
