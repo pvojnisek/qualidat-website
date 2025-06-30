@@ -6,6 +6,7 @@ let shoresCount = 0;
 let refreshInterval = null;
 let countdownInterval = null;
 let nextRefreshTime = 0;
+let isArchivedMode = false; // Flag to track archived vs live data mode
 
 // CORS proxy configuration - ordered by speed (fastest first)
 // Speed test results: CodeTabs 0.67s, ThingProxy 1.40s, AllOrigins FAILED
@@ -61,15 +62,29 @@ function createMatchSignature(line) {
     if (fields.length >= 7) {
         // Use game ID as primary identifier if available
         const gameId = fields[4]?.trim();
-        if (gameId) {
+        
+        // Check if field 4 looks like a game ID (not like "Team A=10")
+        const isGameId = gameId && gameId.length > 0 && !gameId.includes('=');
+        
+        if (isGameId) {
             return gameId;
         }
         
         // Fallback: create signature from date + time + teams
         const date = fields[1]?.trim() || '';
         const time = fields[3]?.trim() || '';
-        const team1 = fields[5]?.split('=')[0] || '';
-        const team2 = fields[6]?.split('=')[0] || '';
+        
+        // Handle case where game ID is missing and team data shifted left
+        let team1, team2;
+        if (gameId && gameId.includes('=')) {
+            // Game ID field contains team data, so teams are at fields 4 and 5
+            team1 = fields[4]?.split('=')[0] || '';
+            team2 = fields[5]?.split('=')[0] || '';
+        } else {
+            // Normal case: teams at fields 5 and 6
+            team1 = fields[5]?.split('=')[0] || '';
+            team2 = fields[6]?.split('=')[0] || '';
+        }
         
         return `${date}_${time}_${team1}_${team2}`;
     }
@@ -227,6 +242,7 @@ async function loadLiveResults() {
             displayMatchResults(data);
             updateStatus('success', 'Results loaded successfully');
             updateLastRefreshTime();
+            updateLiveIndicatorVisibility(); // Update indicator visibility based on data mode
         } else {
             throw new Error('No data received from tournament feed');
         }
@@ -238,40 +254,59 @@ async function loadLiveResults() {
 }
 
 async function fetchViaProxy() {
-    for (const proxy of PROXIES) {
-        try {
-            console.log(`🔄 Trying ${proxy.name} for tournament data...`);
-            updateStatus('loading', `Connecting via ${proxy.name}...`);
-
-            const proxyUrl = proxy.name === 'ThingProxy' 
-                ? proxy.url + KAHUNA_URL
-                : proxy.url + encodeURIComponent(KAHUNA_URL);
-
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-            const response = await fetch(proxyUrl, {
-                signal: controller.signal,
-                mode: 'cors',
-                cache: 'no-cache'
-            });
-
-            clearTimeout(timeoutId);
-
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            const text = await response.text();
-            console.log(`✅ ${proxy.name} successful, data length: ${text.length}`);
-            return text;
-
-        } catch (error) {
-            console.warn(`❌ ${proxy.name} failed:`, error.message);
-            continue;
+    try {
+        console.log('🔄 Loading archived tournament data...');
+        updateStatus('loading', 'Loading archived tournament results...');
+        
+        const response = await fetch('futures_tournament_raw.txt');
+        if (!response.ok) {
+            throw new Error(`Failed to load archived data: ${response.status}`);
         }
+        
+        const text = await response.text();
+        isArchivedMode = true; // Set flag for archived data mode
+        console.log('✅ Archived data loaded, data length:', text.length);
+        return text;
+    } catch (error) {
+        console.warn('❌ Failed to load archived data:', error.message);
+        isArchivedMode = false; // Set flag for live data mode
+        
+        // Fallback to original live data loading if archived data fails
+        for (const proxy of PROXIES) {
+            try {
+                console.log(`🔄 Fallback: Trying ${proxy.name} for live tournament data...`);
+                updateStatus('loading', `Connecting via ${proxy.name}...`);
+
+                const proxyUrl = proxy.name === 'ThingProxy' 
+                    ? proxy.url + KAHUNA_URL
+                    : proxy.url + encodeURIComponent(KAHUNA_URL);
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+                const response = await fetch(proxyUrl, {
+                    signal: controller.signal,
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const text = await response.text();
+                console.log(`✅ ${proxy.name} successful, data length: ${text.length}`);
+                return text;
+
+            } catch (error) {
+                console.warn(`❌ ${proxy.name} failed:`, error.message);
+                continue;
+            }
+        }
+        return null;
     }
-    return null;
 }
 
 function displayMatchResults(data) {
@@ -294,6 +329,8 @@ function displayMatchResults(data) {
     shoresCount = 0;
     
     const matchGrid = document.getElementById('matchGrid');
+    if (!matchGrid) return; // Null check for test environments
+    
     matchGrid.innerHTML = '';
 
     if (filteredResults.length === 0) {
@@ -310,8 +347,10 @@ function displayMatchResults(data) {
     });
 
     // Update stats
-    document.getElementById('matchCount').textContent = matchCount;
-    document.getElementById('shoresCount').textContent = shoresCount;
+    const matchCountEl = document.getElementById('matchCount');
+    const shoresCountEl = document.getElementById('shoresCount');
+    if (matchCountEl) matchCountEl.textContent = matchCount;
+    if (shoresCountEl) shoresCountEl.textContent = shoresCount;
 }
 
 function detectShoresTeam(line) {
@@ -604,6 +643,7 @@ function escapeHtml(text) {
 
 function updateStatus(type, message) {
     const badge = document.getElementById('statusBadge');
+    if (!badge) return; // Null check for test environments
     badge.className = `status-badge status-${type}`;
     badge.innerHTML = type === 'loading' 
         ? `<span class="spinner"></span> ${message}`
@@ -612,6 +652,7 @@ function updateStatus(type, message) {
 
 function showError(message) {
     const matchGrid = document.getElementById('matchGrid');
+    if (!matchGrid) return; // Null check for test environments
     matchGrid.innerHTML = `
         <div class="empty-state">
             ❌ Error loading tournament results<br>
@@ -624,7 +665,21 @@ function showError(message) {
 function updateLastRefreshTime() {
     const now = new Date();
     const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    document.getElementById('lastUpdate').textContent = timeString;
+    const lastUpdate = document.getElementById('lastUpdate');
+    if (lastUpdate) lastUpdate.textContent = timeString; // Null check for test environments
+}
+
+function updateLiveIndicatorVisibility() {
+    const liveIndicator = document.getElementById('liveIndicator');
+    if (liveIndicator) {
+        if (isArchivedMode) {
+            liveIndicator.style.display = 'none'; // Hide for archived data
+            console.log('🏛️ Live indicator hidden for archived data mode');
+        } else {
+            liveIndicator.style.display = 'inline-flex'; // Show for live data
+            console.log('🔴 Live indicator visible for live data mode');
+        }
+    }
 }
 
 function startRefreshCycle() {
@@ -647,27 +702,49 @@ function updateCountdown() {
     const minutes = Math.floor(remaining / 60000);
     const seconds = Math.floor((remaining % 60000) / 1000);
     
+    const countdown = document.getElementById('countdown');
+    if (!countdown) return; // Null check for test environments
+    
     if (remaining > 0) {
-        document.getElementById('countdown').textContent = 
-            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        countdown.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     } else {
-        document.getElementById('countdown').textContent = 'Refreshing...';
+        countdown.textContent = 'Refreshing...';
         nextRefreshTime = Date.now() + (3 * 60 * 1000);
     }
 }
 
-// Initialize the page
+// Initialize the page only if we're in the live results environment
 window.addEventListener('load', () => {
-    console.log('🚀 Futures Super Finals Live Results page loaded');
-    setupCustomSearchListeners();
-    loadLiveResults();
-    startRefreshCycle();
+    // Check if we're in the live results page (has required DOM elements)
+    const isLiveResultsPage = document.getElementById('matchGrid') && 
+                              document.getElementById('statusBadge') && 
+                              document.getElementById('customTeamSearch');
+    
+    if (isLiveResultsPage) {
+        console.log('🚀 Futures Super Finals Live Results page loaded');
+        setupCustomSearchListeners();
+        loadLiveResults().then(() => {
+            // Only start refresh cycle if we're in live mode (not archived)
+            if (!isArchivedMode) {
+                console.log('🔴 Starting refresh cycle for live data mode');
+                startRefreshCycle();
+            } else {
+                console.log('🏛️ Skipping refresh cycle for archived data mode');
+            }
+        });
+    } else {
+        console.log('🧪 Live results functions loaded in test environment');
+    }
 });
 
-// Handle page visibility changes for better performance
+// Handle page visibility changes for better performance (only in live results environment)
 document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-        // Page became visible, refresh if it's been more than 1 minute
+    // Only run if we're in the live results environment and not in archived mode
+    const isLiveResultsPage = document.getElementById('matchGrid') && 
+                              document.getElementById('statusBadge');
+    
+    if (isLiveResultsPage && !document.hidden && !isArchivedMode) {
+        // Page became visible, refresh if it's been more than 1 minute (live mode only)
         const timeSinceRefresh = Date.now() - (nextRefreshTime - (3 * 60 * 1000));
         if (timeSinceRefresh > 60000) {
             console.log('🔄 Page visible again, refreshing results...');
