@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Junior Olympics Competition Analysis - SD Shores Tournament Path</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0077be 0%, #00a8cc 50%, #4fc3f7 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 40px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-section h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section .subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: #fff;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .seeding-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #333;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .section {
+            background: white;
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #0077be;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            border-bottom: 3px solid #4fc3f7;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            color: #00a8cc;
+            margin: 25px 0 15px 0;
+            font-size: 1.5rem;
+        }
+
+        .tournament-path {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .day-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #0077be;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 119, 190, 0.2);
+        }
+
+        .day-card h4 {
+            color: #0077be;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .game-info {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 3px solid #4fc3f7;
+        }
+
+        .game-info .game-number {
+            font-weight: bold;
+            color: #0077be;
+            font-size: 1.1rem;
+        }
+
+        .game-info .opponent {
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .game-info .stakes {
+            color: #ff6b35;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .rival-analysis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .rival-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .rival-card:hover {
+            border-color: #0077be;
+            transform: translateY(-3px);
+        }
+
+        .rival-card.elite {
+            border-color: #dc3545;
+            background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+        }
+
+        .rival-card.dangerous {
+            border-color: #ffc107;
+            background: linear-gradient(135deg, #fffbf0 0%, #fff 100%);
+        }
+
+        .rival-card.manageable {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #f8fff8 0%, #fff 100%);
+        }
+
+        .rival-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .rival-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #0077be;
+        }
+
+        .threat-level {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .threat-level.elite {
+            background: #dc3545;
+        }
+
+        .threat-level.dangerous {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .threat-level.manageable {
+            background: #28a745;
+        }
+
+        .head-to-head {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+
+        .scenario-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .scenario-tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .scenario-tab.active {
+            background: #0077be;
+            color: white;
+            box-shadow: 0 3px 10px rgba(0, 119, 190, 0.3);
+        }
+
+        .scenario-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .scenario-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .probability-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .probability-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            transition: width 1s ease-in-out;
+        }
+
+        .medal-prediction {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #333;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .championship-path {
+            background: linear-gradient(135deg, #0077be 0%, #00a8cc 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .championship-path h3 {
+            color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .key-games {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .key-game {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #FFD700;
+        }
+
+        .key-game .game-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .key-game .game-details {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .strategic-notes {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #17a2b8;
+            margin: 20px 0;
+            color: #333;
+        }
+
+        .strategic-notes h4 {
+            color: #17a2b8;
+            margin-bottom: 10px;
+        }
+
+        .strategic-notes ul {
+            margin-left: 20px;
+        }
+
+        .strategic-notes li {
+            margin: 5px 0;
+        }
+
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .tournament-path {
+                grid-template-columns: 1fr;
+            }
+
+            .rival-analysis {
+                grid-template-columns: 1fr;
+            }
+
+            .scenario-tabs {
+                flex-direction: column;
+            }
+
+            .scenario-tab {
+                margin: 2px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Back Button -->
+    <a href="../20250719_Junior_Olympics_16U_Boys_Champions.html" class="floating-back-btn" id="floatingBackBtn">
+        <img src="../images/logo.png" alt="SD Shores Logo" />
+    </a>
+    
+    <div class="container">
+        <div class="hero-section">
+            <h1>🏆 Junior Olympics 2025</h1>
+            <div class="subtitle">SD Shores Tournament Analysis</div>
+            <div class="seeding-badge">🥈 #2 OVERALL SEED</div>
+            <p style="color: #fff; font-size: 1.1rem; margin-top: 15px;">
+                48 Elite Teams • 4 Days • 192 Games • Championship Competition
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Tournament Overview</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 20px;">
+                SD Shores enters the Junior Olympics as the <strong>#2 overall seed</strong> in the most competitive 16U water polo tournament in the nation. 
+                With 48 elite teams competing over 4 days, we face the ultimate test against the country's best programs.
+            </p>
+            
+            <div class="medal-prediction">
+                🏆 TOURNAMENT POSITION: Strong Medal Contender
+                <div style="font-size: 1rem; margin-top: 10px; font-weight: normal;">
+                    Elite seeding + proven medal performance = Championship opportunity
+                </div>
+            </div>
+
+            <div class="strategic-notes">
+                <h4>🔍 Tournament Strengths & Challenges</h4>
+                <ul>
+                    <li><strong>Elite Seeding:</strong> #2 seed provides optimal bracket positioning</li>
+                    <li><strong>Medal Experience:</strong> Futures bronze proves we can compete at this level</li>
+                    <li><strong>Championship Pedigree:</strong> JO Qualification victory demonstrates clutch performance</li>
+                    <li><strong>Competitive Field:</strong> 48 elite teams means no easy games</li>
+                    <li><strong>Key Matchups:</strong> Likely to face top-tier opponents from Day 3 onwards</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🗺️ Tournament Path Analysis</h2>
+            
+            <div class="scenario-tabs">
+                <button class="scenario-tab active" onclick="showScenario('optimal')">🏆 Optimal Scenario</button>
+                <button class="scenario-tab" onclick="showScenario('strong')">⚔️ Competitive Scenario</button>
+                <button class="scenario-tab" onclick="showScenario('challenge')">🔥 Challenge Scenario</button>
+            </div>
+
+            <div id="optimal" class="scenario-content active">
+                <div class="championship-path">
+                    <h3>🏆 Optimal Tournament Run (40% Probability)</h3>
+                    <p style="margin-bottom: 15px;">Best-case scenario leveraging our #2 seeding and avoiding early upsets.</p>
+                    
+                    <div class="key-games">
+                        <div class="key-game">
+                            <div class="game-title">Day 1: Group B Advancement</div>
+                            <div class="game-details">Games 17 & 41<br>vs Oahu (#47) & Group B Winner<br>Advance to pt_N1</div>
+                        </div>
+                        <div class="key-game">
+                            <div class="game-title">Day 2: Platinum Group N</div>
+                            <div class="game-details">Games 81 & 97<br>Round-robin competition<br>Finish 1st-2nd for direct semifinal</div>
+                        </div>
+                        <div class="key-game">
+                            <div class="game-title">Day 3: Championship Semifinal</div>
+                            <div class="game-details">Game 133 (12:00 PM)<br>vs Orange County WPC (#1)<br>Winner advances to championship</div>
+                        </div>
+                        <div class="key-game">
+                            <div class="game-title">Day 4: Medal Opportunity</div>
+                            <div class="game-details">Championship Final or 3rd Place<br>Medal competition<br>Top-4 finish</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="probability-bar">
+                    <div class="probability-fill" style="width: 40%"></div>
+                </div>
+                <p style="text-align: center; margin-top: 10px;"><strong>40% Probability - Optimal Performance</strong></p>
+            </div>
+
+            <div id="strong" class="scenario-content">
+                <div class="tournament-path">
+                    <div class="day-card">
+                        <h4>⚔️ Competitive Scenario (45% Probability)</h4>
+                        <p>Strong performance with key rivals encountered in elimination rounds</p>
+                        <div class="game-info">
+                            <div class="game-number">Path: Group B → pt_N2 → Quarterfinals</div>
+                            <div class="stakes">Face CC United or Stanford in Day 3</div>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <h4>Key Rival Matchups</h4>
+                        <ul>
+                            <li><strong>CC United (#3):</strong> Potential Day 3 quarterfinal</li>
+                            <li><strong>Stanford (#4):</strong> Possible championship semifinal</li>
+                            <li><strong>Del Mar:</strong> Could meet in elimination rounds</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="probability-bar">
+                    <div class="probability-fill" style="width: 45%"></div>
+                </div>
+                <p style="text-align: center; margin-top: 10px;"><strong>45% Probability - Most Likely Scenario</strong></p>
+            </div>
+
+            <div id="challenge" class="scenario-content">
+                <div class="tournament-path">
+                    <div class="day-card">
+                        <h4>🔥 Challenge Scenario (15% Probability)</h4>
+                        <p>Tough early draws lead to difficult elimination path</p>
+                        <div class="game-info">
+                            <div class="game-number">Path: Group B → pt_N3 → Play-in Required</div>
+                            <div class="stakes">Must win Game 113 to advance</div>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <h4>Early Rival Encounters</h4>
+                        <ul>
+                            <li><strong>Play-in Game:</strong> Must win to reach Day 3</li>
+                            <li><strong>CC United or Del Mar:</strong> Potential early meeting</li>
+                            <li><strong>Championship Heart:</strong> Prove seeding with performance</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="probability-bar">
+                    <div class="probability-fill" style="width: 15%"></div>
+                </div>
+                <p style="text-align: center; margin-top: 10px;"><strong>15% Probability - Challenging but Manageable</strong></p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🗺️ Key Rival Matchup Analysis</h2>
+            <p style="margin-bottom: 20px;">When and where we might face our primary competitors throughout the tournament.</p>
+            
+            <div class="rival-analysis">
+                <div class="rival-card elite">
+                    <div class="rival-header">
+                        <div class="rival-name">Orange County WPC Blue A</div>
+                        <div class="threat-level elite">ELITE</div>
+                    </div>
+                    <div style="margin-bottom: 10px;"><strong>Seed:</strong> #1 Overall | <strong>When:</strong> Day 3 Semifinal (Game 133)</div>
+                    <div class="head-to-head">
+                        <strong>Tournament Path:</strong> Group A → pt_M1 → Direct to semifinal<br>
+                        <strong>Meeting Point:</strong> Championship semifinal if both teams win their groups
+                    </div>
+                    <div style="color: #dc3545; font-weight: bold;">🏆 CHAMPIONSHIP SEMIFINAL</div>
+                    <div style="margin-top: 10px;">
+                        <strong>Analysis:</strong> #1 seed with championship experience. This would be the ultimate test 
+                        of our medal credentials in a semifinal setting.
+                    </div>
+                </div>
+
+                <div class="rival-card elite">
+                    <div class="rival-header">
+                        <div class="rival-name">CC United Black A</div>
+                        <div class="threat-level elite">ELITE</div>
+                    </div>
+                    <div style="margin-bottom: 10px;"><strong>Seed:</strong> #3 | <strong>When:</strong> Day 3 Quarterfinal or Earlier</div>
+                    <div class="head-to-head">
+                        <strong>Head-to-Head:</strong> L 6-15 (Futures pool play)<br>
+                        <strong>Tournament Path:</strong> Group C → pt_M3 → Possible quarterfinal matchup
+                    </div>
+                    <div style="color: #dc3545; font-weight: bold;">⚠️ TOUGH MATCHUP</div>
+                    <div style="margin-top: 10px;">
+                        <strong>Analysis:</strong> They dominated us 15-6 in pool play at Futures. Could meet as early as 
+                        Day 3 quarterfinals depending on bracket progression.
+                    </div>
+                </div>
+
+                <div class="rival-card dangerous">
+                    <div class="rival-header">
+                        <div class="rival-name">Del Mar Blue</div>
+                        <div class="threat-level dangerous">RIVAL</div>
+                    </div>
+                    <div style="margin-bottom: 10px;"><strong>Seed:</strong> ~#19 | <strong>When:</strong> Day 3 Elimination or Day 4</div>
+                    <div class="head-to-head">
+                        <strong>Head-to-Head:</strong> 1-1 Series Split<br>
+                        <strong>Recent:</strong> L 11-12 (JO Quals), W 7-6 (Futures semifinal)
+                    </div>
+                    <div style="color: #ffc107; font-weight: bold;">🔥 CLASSIC RIVALRY</div>
+                    <div style="margin-top: 10px;">
+                        <strong>Analysis:</strong> Our closest rival - every game is decided by 1-2 goals. 
+                        Could meet anywhere from Day 3 onwards depending on both teams' performance.
+                    </div>
+                </div>
+
+                <div class="rival-card dangerous">
+                    <div class="rival-header">
+                        <div class="rival-name">Stanford Red A</div>
+                        <div class="threat-level dangerous">STRONG</div>
+                    </div>
+                    <div style="margin-bottom: 10px;"><strong>Seed:</strong> #4 | <strong>When:</strong> Day 3 Quarterfinal/Semifinal</div>
+                    <div class="head-to-head">
+                        <strong>Tournament Path:</strong> Group D → pt_N3 → Quarterfinal level<br>
+                        <strong>Program:</strong> Elite Bay Area, strong coaching, consistent performance
+                    </div>
+                    <div style="color: #ffc107; font-weight: bold;">🏆 CHAMPIONSHIP PROGRAM</div>
+                    <div style="margin-top: 10px;">
+                        <strong>Analysis:</strong> Elite program with championship pedigree. Would be a quality 
+                        test of our ability to compete against top-tier Northern California teams.
+                    </div>
+                </div>
+
+                <div class="rival-card dangerous">
+                    <div class="rival-header">
+                        <div class="rival-name">Channel Islands Gold A</div>
+                        <div class="threat-level dangerous">TESTED</div>
+                    </div>
+                    <div style="margin-bottom: 10px;"><strong>Seed:</strong> #5 | <strong>When:</strong> Day 3 Quarterfinal</div>
+                    <div class="head-to-head">
+                        <strong>Head-to-Head:</strong> W 10-7 (Futures Bronze Medal)<br>
+                        <strong>Analysis:</strong> We beat them in the medal game - they're a quality opponent
+                    </div>
+                    <div style="color: #ffc107; font-weight: bold;">✅ PROVEN MATCHUP</div>
+                    <div style="margin-top: 10px;">
+                        <strong>Analysis:</strong> We've already beaten them in a pressure situation. 
+                        A rematch would test whether we can repeat that performance.
+                    </div>
+                </div>
+
+                <div class="rival-card manageable">
+                    <div class="rival-header">
+                        <div class="rival-name">Group B Competition</div>
+                        <div class="threat-level manageable">EARLY ROUNDS</div>
+                    </div>
+                    <div style="margin-bottom: 10px;"><strong>Teams:</strong> Puget Sound Polo (#23), Praetorian (#26), Oahu (#47)</div>
+                    <div class="head-to-head">
+                        <strong>Games:</strong> Day 1 - Games 17, 21, 41<br>
+                        <strong>Seed Advantage:</strong> Significant seeding differential
+                    </div>
+                    <div style="color: #28a745; font-weight: bold;">🎯 TOURNAMENT OPENER</div>
+                    <div style="margin-top: 10px;">
+                        <strong>Analysis:</strong> Our early tournament tests. Important to advance cleanly 
+                        to set up optimal bracket positioning for the elimination rounds.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎮 Tournament Strategy</h2>
+            
+            <div class="tournament-path">
+                <div class="day-card">
+                    <h4>Day 1 Strategy: Clean Advancement</h4>
+                    <div class="game-info">
+                        <div class="game-number">Games 17 & 41</div>
+                        <div class="opponent">vs Oahu (#47) and Group B Winner</div>
+                        <div class="stakes">Objective: Advance to pt_N1 position</div>
+                    </div>
+                    <div class="strategic-notes">
+                        <ul>
+                            <li>Execute fundamentals and control tempo</li>
+                            <li>Build goal differential for potential tiebreakers</li>
+                            <li>Get all players tournament experience</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <h4>Day 2 Strategy: Secure Positioning</h4>
+                    <div class="game-info">
+                        <div class="game-number">Games 81 & 97</div>
+                        <div class="opponent">Platinum Group N Round-Robin</div>
+                        <div class="stakes">Objective: Finish 1st-2nd to avoid play-in</div>
+                    </div>
+                    <div class="strategic-notes">
+                        <ul>
+                            <li>Compete for group championship</li>
+                            <li>Scout potential Day 3 opponents</li>
+                            <li>Manage player health for elimination rounds</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <h4>Day 3 Strategy: Elite Competition</h4>
+                    <div class="game-info">
+                        <div class="game-number">Game 133 or Quarterfinal</div>
+                        <div class="opponent">Championship Level Teams</div>
+                        <div class="stakes">Medal contention begins</div>
+                    </div>
+                    <div class="strategic-notes">
+                        <ul>
+                            <li>Championship-level competition begins</li>
+                            <li>Leverage our elimination game experience</li>
+                            <li>Execute game plan against elite opponents</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <h4>Day 4 Strategy: Medal Opportunity</h4>
+                    <div class="game-info">
+                        <div class="game-number">Championship/Medal Games</div>
+                        <div class="opponent">Top-4 National Competition</div>
+                        <div class="stakes">🏆 Medal Competition</div>
+                    </div>
+                    <div class="strategic-notes">
+                        <ul>
+                            <li>Championship or medal games</li>
+                            <li>Execute under pressure</li>
+                            <li>Trust preparation and team chemistry</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🏆 Tournament Outlook</h2>
+            <div class="championship-path">
+                <h3>SD Shores Medal Potential</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h4>🥈 Elite Seeding</h4>
+                        <p>#2 overall seed provides optimal bracket positioning and recognition</p>
+                    </div>
+                    <div>
+                        <h4>🥉 Medal Experience</h4>
+                        <p>Futures bronze medal proves we can compete at the championship level</p>
+                    </div>
+                    <div>
+                        <h4>🏆 Elimination Success</h4>
+                        <p>JO Qualification victory demonstrates strong performance in bracket play</p>
+                    </div>
+                    <div>
+                        <h4>📈 Tournament Timing</h4>
+                        <p>Team chemistry and performance trending at the right moment</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px; font-size: 1.5rem;">
+                    <strong>Tournament Prediction: 🏆 MEDAL CONTENDER</strong>
+                    <div style="font-size: 1rem; margin-top: 10px;">
+                        Top-4 finish with strong medal opportunity
+                    </div>
+                </div>
+                
+                <div class="strategic-notes" style="margin-top: 20px;">
+                    <h4>🎯 Key Success Factors</h4>
+                    <ul>
+                        <li><strong>Day 1-2 Execution:</strong> Clean advancement to optimal bracket positioning</li>
+                        <li><strong>Elite Competition:</strong> Perform against top-tier opponents (OC WPC, CC United, Stanford)</li>
+                        <li><strong>Rival Matchups:</strong> Execute game plans against known opponents like Del Mar</li>
+                        <li><strong>Championship Moments:</strong> Leverage elimination game experience in pressure situations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🗓️ Potential Rival Encounter Timeline</h2>
+            <p style="margin-bottom: 20px;">Detailed analysis of when and where we might face our key competitors based on tournament bracket structure.</p>
+            
+            <div class="tournament-path">
+                <div class="day-card">
+                    <h4>Day 3 - Championship Semifinals</h4>
+                    <div class="game-info">
+                        <div class="game-number">Game 133 (12:00 PM)</div>
+                        <div class="opponent">Orange County WPC Blue A (#1)</div>
+                        <div class="stakes">IF: Both teams win their groups (most likely)</div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9rem;">
+                        <strong>Scenario:</strong> 1st pt_N vs 1st pt_O - the ultimate test against the #1 seed
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <h4>Day 3 - Alternative Paths</h4>
+                    <div class="game-info">
+                        <div class="game-number">Games 121, 125, 129</div>
+                        <div class="opponent">CC United (#3) or Stanford (#4)</div>
+                        <div class="stakes">IF: We need quarterfinal route</div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9rem;">
+                        <strong>Scenario:</strong> Quarterfinal matchups if we finish 2nd-3rd in Group N
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <h4>Del Mar Blue Encounter</h4>
+                    <div class="game-info">
+                        <div class="game-number">Variable timing</div>
+                        <div class="opponent">Del Mar Blue (~#19 seed)</div>
+                        <div class="stakes">Day 3 elimination or Day 4 placement</div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9rem;">
+                        <strong>Scenario:</strong> Our closest rival could meet us anywhere from Day 3 onwards
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <h4>Channel Islands Rematch</h4>
+                    <div class="game-info">
+                        <div class="game-number">Day 3 Quarterfinal Level</div>
+                        <div class="opponent">Channel Islands Gold A (#5)</div>
+                        <div class="stakes">Rematch of Futures bronze medal game</div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9rem;">
+                        <strong>Scenario:</strong> Test whether we can repeat our 10-7 medal game victory
+                    </div>
+                </div>
+            </div>
+
+            <div class="strategic-notes">
+                <h4>🎯 Bracket Intelligence</h4>
+                <ul>
+                    <li><strong>Most Likely Path:</strong> Orange County WPC in championship semifinal (Game 133)</li>
+                    <li><strong>Dangerous Scenario:</strong> CC United in quarterfinal after they dominated us 15-6</li>
+                    <li><strong>Classic Rivalry:</strong> Del Mar could appear in any elimination round</li>
+                    <li><strong>Redemption Opportunity:</strong> Channel Islands rematch to prove medal game wasn't a fluke</li>
+                    <li><strong>Key Factor:</strong> Day 2 group performance determines which elite teams we face</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showScenario(scenario) {
+            // Hide all scenario contents
+            document.querySelectorAll('.scenario-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.scenario-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected scenario
+            document.getElementById(scenario).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Animate probability bars on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -10px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.probability-fill');
+                    bars.forEach(bar => {
+                        bar.style.width = bar.style.width || '0%';
+                    });
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections with probability bars
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Add hover effects to rival cards
+        document.querySelectorAll('.rival-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -743,6 +743,29 @@
     text-decoration: none !important;
 }
 
+.analysis-link {
+    display: inline-block !important;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+    color: #333 !important;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem !important;
+    font-weight: 600;
+    text-decoration: none !important;
+    box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.analysis-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    text-decoration: none !important;
+}
+
 @keyframes pulse {
     0%, 100% { 
         opacity: 1; 
@@ -1403,5 +1426,332 @@
     .calendar-modal-body button {
         padding: 10px 12px;
         font-size: 0.9rem;
+    }
+}
+
+/* JO Competition Analysis Section */
+.jo-analysis-section {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 15px 40px rgba(255, 140, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.jo-analysis-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%);
+    background-size: 30px 30px;
+    animation: wave 15s linear infinite;
+}
+
+.jo-analysis-section .section-header {
+    color: #333;
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 25px 0 15px 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.jo-analysis-container {
+    position: relative;
+    z-index: 2;
+    padding: 20px;
+}
+
+.jo-overview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.jo-seeding {
+    text-align: center;
+}
+
+.seed-badge {
+    display: inline-block;
+    background: linear-gradient(45deg, #333, #555);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.jo-seeding p {
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.jo-quick-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 15px;
+    border-radius: 10px;
+    min-width: 80px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #555;
+    font-weight: 600;
+}
+
+.jo-scenarios {
+    margin: 30px 0;
+}
+
+.jo-scenarios h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.scenario-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.scenario-card {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.scenario-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.scenario-card.optimal {
+    border-color: #28a745;
+}
+
+.scenario-card.competitive {
+    border-color: #ffc107;
+}
+
+.scenario-card.challenge {
+    border-color: #dc3545;
+}
+
+.scenario-card h4 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.scenario-card p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.jo-key-rivals {
+    margin: 30px 0;
+}
+
+.jo-key-rivals h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.rival-timeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.rival-item {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.rival-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.rival-item.elite {
+    border-left-color: #dc3545;
+}
+
+.rival-item.dangerous {
+    border-left-color: #ffc107;
+}
+
+.rival-item.rival {
+    border-left-color: #ff6b35;
+}
+
+.rival-item.strong {
+    border-left-color: #17a2b8;
+}
+
+.rival-name {
+    font-weight: 700;
+    color: #333;
+    font-size: 1rem;
+}
+
+.rival-timing {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 600;
+}
+
+.jo-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.analysis-link,
+.tournament-link {
+    display: inline-block;
+    padding: 15px 30px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.analysis-link {
+    background: linear-gradient(45deg, #0077be, #00a8cc);
+    color: white;
+}
+
+.tournament-link {
+    background: linear-gradient(45deg, #333, #555);
+    color: white;
+}
+
+.analysis-link:hover,
+.tournament-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .jo-overview {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .jo-quick-stats {
+        justify-content: center;
+    }
+    
+    .scenario-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .rival-timeline {
+        grid-template-columns: 1fr;
+    }
+    
+    .jo-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .analysis-link,
+    .tournament-link {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+    }
+}
+
+/* Mobile responsive for live-link and analysis-link */
+@media (max-width: 768px) {
+    .live-link {
+        top: 15px;
+        right: 15px;
+        font-size: 0.75rem !important;
+        padding: 6px 10px;
+    }
+    
+    .analysis-link {
+        top: 15px;
+        right: 15px;
+        font-size: 0.75rem !important;
+        padding: 6px 10px;
+        background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .live-link {
+        position: relative;
+        top: auto;
+        right: auto;
+        display: block;
+        margin: 10px 0 5px 0;
+        text-align: center;
+    }
+    
+    .analysis-link {
+        position: relative;
+        top: auto;
+        right: auto;
+        display: block;
+        margin: 5px 0 10px 0;
+        text-align: center;
+        background: linear-gradient(135deg, #FFD700, #FFA500) !important;
     }
 }
