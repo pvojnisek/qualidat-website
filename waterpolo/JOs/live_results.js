@@ -11,7 +11,7 @@ let isArchivedMode = false; // Flag to track archived vs live data mode
 let archivedDataTimestamp = null; // Store timestamp from archived data
 
 // CORS proxy configuration - ordered by speed (fastest first)
-const JO_URL = 'https://feeds.kahunaevents.org/joboys16u.php';
+const JO_URL = 'https://feeds.kahunaevents.org/joboys16u';
 const PROXIES = [
     { name: 'CodeTabs', url: 'https://api.codetabs.com/v1/proxy/?quest=' },
     { name: 'ThingProxy', url: 'https://thingproxy.freeboard.io/fetch/' },
@@ -132,6 +132,65 @@ function applyActiveFilters(lines) {
     return filteredLines;
 }
 
+// **NEW FUNCTION**: Apply filters to structured match objects instead of raw lines
+function applyActiveFiltersToMatches(matchObjects) {
+    const filterShores = document.getElementById('filterShores')?.checked || false;
+    const filterVenue1 = document.getElementById('filterVenue1')?.checked || false;
+    const filterVenue2 = document.getElementById('filterVenue2')?.checked || false;
+    const filterVenue3 = document.getElementById('filterVenue3')?.checked || false;
+    const filterVenue4 = document.getElementById('filterVenue4')?.checked || false;
+    const filterVenue5 = document.getElementById('filterVenue5')?.checked || false;
+    const filterVenue6 = document.getElementById('filterVenue6')?.checked || false;
+    const filterVenue7 = document.getElementById('filterVenue7')?.checked || false;
+    const filterVenue8 = document.getElementById('filterVenue8')?.checked || false;
+    const filterRecent = document.getElementById('filterRecent')?.checked || false;
+    
+    let filteredMatches = matchObjects;
+    
+    // Apply venue filters (OR logic for venues) - use parsed venue data
+    const hasVenueFilters = filterVenue1 || filterVenue2 || filterVenue3 || filterVenue4 || 
+                           filterVenue5 || filterVenue6 || filterVenue7 || filterVenue8;
+    if (hasVenueFilters) {
+        filteredMatches = filteredMatches.filter(matchData => {
+            const venueNum = matchData.matchNumber;
+            const matchesVenue1 = filterVenue1 && venueNum === '1';
+            const matchesVenue2 = filterVenue2 && venueNum === '2';
+            const matchesVenue3 = filterVenue3 && venueNum === '3';
+            const matchesVenue4 = filterVenue4 && venueNum === '4';
+            const matchesVenue5 = filterVenue5 && venueNum === '5';
+            const matchesVenue6 = filterVenue6 && venueNum === '6';
+            const matchesVenue7 = filterVenue7 && venueNum === '7';
+            const matchesVenue8 = filterVenue8 && venueNum === '8';
+            return matchesVenue1 || matchesVenue2 || matchesVenue3 || matchesVenue4 ||
+                   matchesVenue5 || matchesVenue6 || matchesVenue7 || matchesVenue8;
+        });
+    }
+    
+    // Apply Shores filter using parsed team data
+    if (filterShores) {
+        filteredMatches = filteredMatches.filter(matchData => 
+            matchData.team1.isShores || matchData.team2.isShores
+        );
+    }
+    
+    // Apply recent filter (matches from last 2 hours) - use original line for compatibility
+    if (filterRecent) {
+        filteredMatches = filteredMatches.filter(matchData =>
+            isJOMatchFromLastHour(matchData.originalLine)
+        );
+    }
+    
+    // Apply custom team search filter using parsed team data
+    const customSearch = document.getElementById('customTeamSearch')?.value?.trim() || '';
+    if (customSearch) {
+        filteredMatches = filteredMatches.filter(matchData => 
+            applyCustomTeamFilterToMatch(matchData, customSearch)
+        );
+    }
+    
+    return filteredMatches;
+}
+
 function applyFilters() {
     // Re-run the display with current data to apply new filters
     const statusBadge = document.getElementById('statusBadge');
@@ -147,6 +206,17 @@ function applyCustomTeamFilter(line, searchTerm) {
     const team1Name = matchData.team1.name.toLowerCase();
     const team2Name = matchData.team2.name.toLowerCase();
     const venueName = matchData.venue ? matchData.venue.toLowerCase() : '';
+    const search = searchTerm.toLowerCase();
+    
+    // Return true if team names OR venue name contains the search term
+    return team1Name.includes(search) || team2Name.includes(search) || venueName.includes(search);
+}
+
+// **NEW FUNCTION**: Apply custom team filter to structured match objects
+function applyCustomTeamFilterToMatch(matchData, searchTerm) {
+    const team1Name = matchData.team1.name.toLowerCase();
+    const team2Name = matchData.team2.name.toLowerCase();
+    const venueName = matchData.venueDisplayName ? matchData.venueDisplayName.toLowerCase() : '';
     const search = searchTerm.toLowerCase();
     
     // Return true if team names OR venue name contains the search term
@@ -355,39 +425,48 @@ function displayJOMatchResults(data) {
     // Remove duplicate entries from source data
     const uniqueLines = deduplicateMatches(validLines);
     
-    // Apply filters based on checkboxes
-    const allFilteredResults = applyActiveFilters(uniqueLines);
+    // **NEW APPROACH**: Parse all data ONCE upfront into structured match objects
+    const allMatchObjects = uniqueLines.map(line => {
+        const matchData = parseJOMatchLine(line);
+        // Attach original line for backward compatibility
+        matchData.originalLine = line;
+        return matchData;
+    });
+    
+    // Apply filters using structured match objects
+    const allFilteredMatches = applyActiveFiltersToMatches(allMatchObjects);
     
     // FINALLY limit to 50 matches for display (after all filtering)
-    const filteredResults = allFilteredResults.slice(0, 50);
+    const filteredMatches = allFilteredMatches.slice(0, 50);
     
-    matchCount = filteredResults.length;
+    matchCount = filteredMatches.length;
     shoresCount = 0;
     venueCount = 0;
     
-    // Count venues in use
+    // **FIXED**: Count venues using parsed venueDisplayName instead of match numbers
     const venuesInUse = new Set();
     
     const matchGrid = document.getElementById('matchGrid');
     if (!matchGrid) return; // Null check for test environments
     
     matchGrid.innerHTML = '';
-    if (filteredResults.length === 0) {
+    if (filteredMatches.length === 0) {
         matchGrid.innerHTML = '<div class="empty-state">📭 No JO tournament results match the current filters</div>';
         return;
     }
 
-    filteredResults.forEach((line, index) => {
-        const isShoresMatch = detectShoresTeam(line);
+    filteredMatches.forEach((matchData, index) => {
+        // Count Shores matches using parsed data
+        const isShoresMatch = matchData.team1.isShores || matchData.team2.isShores;
         if (isShoresMatch) shoresCount++;
         
-        // Extract venue for counting
-        const venueMatch = line.match(/#(\d+)/);
-        if (venueMatch) {
-            venuesInUse.add(venueMatch[1]);
+        // **FIXED**: Count venues using venueDisplayName (not match numbers)
+        if (matchData.venueDisplayName) {
+            venuesInUse.add(matchData.venueDisplayName);
         }
         
-        const matchCard = createJOMatchCard(line, index, isShoresMatch);
+        // Create match card using structured data
+        const matchCard = createJOMatchCardFromData(matchData, index, isShoresMatch);
         matchGrid.appendChild(matchCard);
     });
     
@@ -406,6 +485,22 @@ function createJOMatchCard(line, cardNumber, isShoresMatch) {
     const matchData = parseJOMatchLine(line);
     const matchStatus = detectJOMatchStatus(line);
     
+    return createJOMatchCardFromData(matchData, cardNumber, isShoresMatch, matchStatus, line);
+}
+
+// **NEW FUNCTION**: Create match card from pre-parsed structured data
+function createJOMatchCardFromData(matchData, cardNumber, isShoresMatch, matchStatus = null, originalLine = null) {
+    const matchDiv = document.createElement('div');
+    matchDiv.className = `match-card ${isShoresMatch ? 'shores-highlight' : ''}`;
+    matchDiv.style.animationDelay = `${cardNumber * 0.1}s`;
+    
+    // Use provided status or detect from original line
+    if (!matchStatus && originalLine) {
+        matchStatus = detectJOMatchStatus(originalLine);
+    } else if (!matchStatus && matchData.originalLine) {
+        matchStatus = detectJOMatchStatus(matchData.originalLine);
+    }
+    
     // Determine winner
     let team1Winner = false;
     let team2Winner = false;
@@ -420,6 +515,9 @@ function createJOMatchCard(line, cardNumber, isShoresMatch) {
     const customSearch = document.getElementById('customTeamSearch')?.value?.trim() || '';
     const team1Html = highlightSearchText(matchData.team1.name, customSearch);
     const team2Html = highlightSearchText(matchData.team2.name, customSearch);
+    
+    // Use original line for raw data display
+    const lineForRawData = originalLine || matchData.originalLine || 'No raw data available';
     
     matchDiv.innerHTML = `
         <div class="match-header match-header-prominent">
@@ -470,7 +568,7 @@ function createJOMatchCard(line, cardNumber, isShoresMatch) {
             </div>
         </div>
         
-        <div class="raw-data">${escapeHtml(line)}</div>
+        <div class="raw-data">${escapeHtml(lineForRawData)}</div>
     `;
     
     return matchDiv;

@@ -613,6 +613,145 @@ testSuite.addTest('Integration', 'Consistent parsing results', () => {
 });
 
 // =============================================================================
+// VENUE COUNTING TESTS - NEW
+// =============================================================================
+
+testSuite.addTest('Venue Counting', 'Count unique venue display names', () => {
+    const matches = [
+        "19-Jul  #1 BELLFLOWER AQUATIC CENTER  8:10 AM  1-TEAM A=15  2-TEAM B=3  16U_BOYS_CHAMPIONSHIP",
+        "19-Jul  #1 BELLFLOWER AQUATIC CENTER  9:10 AM  3-TEAM C=12  4-TEAM D=8  16U_BOYS_CHAMPIONSHIP", // Same venue
+        "19-Jul  #2 CERRITOS COLLEGE  8:10 AM  5-TEAM E=11  6-TEAM F=7  16U_BOYS_CHAMPIONSHIP",
+        "19-Jul  #2 CERRITOS COLLEGE  10:10 AM  7-TEAM G=18  8-TEAM H=6  16U_BOYS_CHAMPIONSHIP", // Same venue
+        "19-Jul  #3 CYPRESS COLLEGE  8:10 AM  9-TEAM I=22  10-TEAM J=12  16U_BOYS_CHAMPIONSHIP"
+    ];
+    
+    // Parse all matches and count unique venue display names
+    const venuesInUse = new Set();
+    matches.forEach(line => {
+        const matchData = parseJOMatchLine(line);
+        if (matchData.venueDisplayName) {
+            venuesInUse.add(matchData.venueDisplayName);
+        }
+    });
+    
+    testSuite.assertEquals(venuesInUse.size, 3, "Should count 3 unique venue display names");
+    testSuite.assertTrue(venuesInUse.has("BELLFLOWER AQUATIC CENTER"), "Should include BELLFLOWER AQUATIC CENTER");
+    testSuite.assertTrue(venuesInUse.has("CERRITOS COLLEGE"), "Should include CERRITOS COLLEGE");
+    testSuite.assertTrue(venuesInUse.has("CYPRESS COLLEGE"), "Should include CYPRESS COLLEGE");
+});
+
+testSuite.addTest('Venue Counting', 'Count venue display names vs match numbers', () => {
+    const matches = [
+        "19-Jul  #5 SAN JUAN HILLS HS  7:50 AM  22-LONGHORN=10  27-CT PREMIER=14  16U_BOYS_CHAMPIONSHIP",
+        "19-Jul  #23 SAN JUAN HILLS HS  8:50 AM  30-TEAM A=12  31-TEAM B=9  16U_BOYS_CHAMPIONSHIP", // Different match numbers, same venue
+        "19-Jul  #47 SAN JUAN HILLS HS  9:50 AM  35-TEAM C=15  36-TEAM D=11  16U_BOYS_CHAMPIONSHIP"  // Different match numbers, same venue
+    ];
+    
+    // OLD WAY (incorrect): Count match numbers - would give 3 unique venues
+    const matchNumbersInUse = new Set();
+    matches.forEach(line => {
+        const venueMatch = line.match(/#(\d+)/);
+        if (venueMatch) {
+            matchNumbersInUse.add(venueMatch[1]); // This gets "5", "23", "47"
+        }
+    });
+    
+    // NEW WAY (correct): Count venue display names - should give 1 unique venue
+    const venueNamesInUse = new Set();
+    matches.forEach(line => {
+        const matchData = parseJOMatchLine(line);
+        if (matchData.venueDisplayName) {
+            venueNamesInUse.add(matchData.venueDisplayName);
+        }
+    });
+    
+    testSuite.assertEquals(matchNumbersInUse.size, 3, "Old method incorrectly counts 3 unique venues (match numbers)");
+    testSuite.assertEquals(venueNamesInUse.size, 1, "New method correctly counts 1 unique venue (display name)");
+    testSuite.assertTrue(venueNamesInUse.has("SAN JUAN HILLS HS"), "Should identify the actual venue name");
+});
+
+testSuite.addTest('Venue Counting', 'Handle matches with no venue data', () => {
+    const matches = [
+        "19-Jul  #1 VENUE A  8:10 AM  1-TEAM A=15  2-TEAM B=3  16U_BOYS_CHAMPIONSHIP",
+        "19-Jul  #2 VENUE B  8:10 AM  3-TEAM C=12  4-TEAM D=8  16U_BOYS_CHAMPIONSHIP",
+        "", // Empty line
+        "INVALID LINE FORMAT", // Invalid format
+        "19-Jul  #3 VENUE C  8:10 AM  5-TEAM E=11  6-TEAM F=7  16U_BOYS_CHAMPIONSHIP"
+    ];
+    
+    const venuesInUse = new Set();
+    matches.forEach(line => {
+        try {
+            const matchData = parseJOMatchLine(line);
+            if (matchData && matchData.venueDisplayName) {
+                venuesInUse.add(matchData.venueDisplayName);
+            }
+        } catch (error) {
+            // Should handle invalid lines gracefully
+        }
+    });
+    
+    testSuite.assertEquals(venuesInUse.size, 3, "Should count only valid venue display names");
+    testSuite.assertTrue(venuesInUse.has("VENUE A"), "Should include VENUE A");
+    testSuite.assertTrue(venuesInUse.has("VENUE B"), "Should include VENUE B");
+    testSuite.assertTrue(venuesInUse.has("VENUE C"), "Should include VENUE C");
+});
+
+testSuite.addTest('Venue Counting', 'Real tournament data venue counting', () => {
+    // Use actual sample match data
+    const sampleMatches = window.SAMPLE_JO_MATCHES || [];
+    
+    const venuesInUse = new Set();
+    sampleMatches.forEach(line => {
+        const matchData = parseJOMatchLine(line);
+        if (matchData.venueDisplayName) {
+            venuesInUse.add(matchData.venueDisplayName);
+        }
+    });
+    
+    // Based on SAMPLE_JO_MATCHES, we should have these unique venues:
+    const expectedVenues = [
+        "SAN JUAN HILLS HS",
+        "GOLDEN WEST COLLEGE 1", 
+        "BELLFLOWER AQUATIC CENTER",
+        "CERRITOS COLLEGE",
+        "CYPRESS COLLEGE",
+        "EL CAMINO COLLEGE",
+        "FULLERTON COLLEGE",
+        "IRVINE VALLEY COLLEGE"
+    ];
+    
+    testSuite.assertEquals(venuesInUse.size, expectedVenues.length, `Should count ${expectedVenues.length} unique venues in sample data`);
+    
+    expectedVenues.forEach(venue => {
+        testSuite.assertTrue(venuesInUse.has(venue), `Should include venue: ${venue}`);
+    });
+});
+
+testSuite.addTest('Venue Counting', 'Venue counting performance', async () => {
+    // Test venue counting performance with large dataset
+    const testData = window.PERFORMANCE_TEST_DATA || [];
+    
+    const startTime = performance.now();
+    
+    const venuesInUse = new Set();
+    testData.forEach(line => {
+        const matchData = parseJOMatchLine(line);
+        if (matchData.venueDisplayName) {
+            venuesInUse.add(matchData.venueDisplayName);
+        }
+    });
+    
+    const endTime = performance.now();
+    const duration = endTime - startTime;
+    
+    testSuite.assertTrue(duration < 100, `Venue counting should be fast (< 100ms), was ${duration.toFixed(2)}ms`);
+    testSuite.assertTrue(venuesInUse.size > 0, "Should count some venues from performance test data");
+    
+    console.log(`⚡ Venue counting performance: ${duration.toFixed(2)}ms for ${testData.length} matches`);
+});
+
+// =============================================================================
 // TEST RUNNER FUNCTIONS
 // =============================================================================
 
