@@ -381,11 +381,22 @@ body {
     gap: 6px;
 }
 
+.match-header-prominent {
+    padding: 8px 0;
+    margin-bottom: 12px;
+}
+
 .match-info-left {
     display: flex;
     flex-direction: column;
     gap: 3px;
     flex: 1;
+}
+
+.match-header-prominent .match-info-left {
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
 }
 
 .match-info-right {
@@ -419,6 +430,22 @@ body {
     display: inline-block;
 }
 
+.match-number-circle {
+    background: linear-gradient(135deg, #0077be, #00a8cc);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(0, 119, 190, 0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
 .venue-info {
     background: rgba(255, 107, 53, 0.1);
     color: #ff6b35;
@@ -428,6 +455,30 @@ body {
     font-weight: 600;
     white-space: nowrap;
     display: inline-block;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.venue-info:hover {
+    opacity: 0.7;
+}
+
+.venue-info-large {
+    background: rgba(255, 107, 53, 0.1);
+    color: #ff6b35;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: clamp(0.8rem, 3.5vw, 0.95rem);
+    font-weight: 700;
+    white-space: nowrap;
+    display: inline-block;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    line-height: 1.2;
+}
+
+.venue-info-large:hover {
+    opacity: 0.7;
 }
 
 .tournament-info {
@@ -446,7 +497,17 @@ body {
     box-shadow: 0 1px 4px rgba(255, 107, 53, 0.3);
 }
 
+.match-card.shores-highlight .match-number-circle {
+    background: linear-gradient(135deg, #ff6b35, #ffa726);
+    box-shadow: 0 3px 10px rgba(255, 107, 53, 0.3);
+}
+
 .match-card.shores-highlight .venue-info {
+    background: rgba(255, 107, 53, 0.15);
+    color: #e85a19;
+}
+
+.match-card.shores-highlight .venue-info-large {
     background: rgba(255, 107, 53, 0.15);
     color: #e85a19;
 }
@@ -892,5 +953,23 @@ body {
     
     .search-wrapper {
         max-width: 160px;
+    }
+    
+    /* Mobile responsive for prominent header */
+    .match-number-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+        margin-right: 8px;
+    }
+    
+    .venue-info-large {
+        font-size: clamp(0.8rem, 3.5vw, 0.95rem);
+        padding: 4px 8px;
+    }
+    
+    .match-header-prominent {
+        padding: 6px 0;
+        margin-bottom: 10px;
     }
 }

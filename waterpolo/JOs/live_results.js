@@ -142,14 +142,15 @@ function applyFilters() {
 }
 
 function applyCustomTeamFilter(line, searchTerm) {
-    // Parse team names from the JO line
+    // Parse team names and venue from the JO line
     const matchData = parseJOMatchLine(line);
     const team1Name = matchData.team1.name.toLowerCase();
     const team2Name = matchData.team2.name.toLowerCase();
+    const venueName = matchData.venue ? matchData.venue.toLowerCase() : '';
     const search = searchTerm.toLowerCase();
     
-    // Return true if either team name contains the search term
-    return team1Name.includes(search) || team2Name.includes(search);
+    // Return true if team names OR venue name contains the search term
+    return team1Name.includes(search) || team2Name.includes(search) || venueName.includes(search);
 }
 
 function debounce(func, delay) {
@@ -165,6 +166,17 @@ function selectTeam(teamName) {
     const searchInput = document.getElementById('customTeamSearch');
     if (searchInput) {
         searchInput.value = teamName;
+        // Trigger immediate filtering (no debounce for direct selection)
+        applyFilters();
+        updateClearButtonVisibility(); // Show clear button
+    }
+}
+
+function selectVenue(venueName) {
+    // Update the search input with the selected venue name
+    const searchInput = document.getElementById('customTeamSearch');
+    if (searchInput) {
+        searchInput.value = venueName;
         // Trigger immediate filtering (no debounce for direct selection)
         applyFilters();
         updateClearButtonVisibility(); // Show clear button
@@ -410,10 +422,10 @@ function createJOMatchCard(line, cardNumber, isShoresMatch) {
     const team2Html = highlightSearchText(matchData.team2.name, customSearch);
     
     matchDiv.innerHTML = `
-        <div class="match-header">
+        <div class="match-header match-header-prominent">
             <div class="match-info-left">
-                ${matchData.venue ? `<span class="venue-info">${matchData.venue}</span>` : ''}
-                ${matchData.category ? `<span class="tournament-info">${matchData.category}</span>` : ''}
+                ${matchData.matchNumber ? `<span class="match-number-circle">#${matchData.matchNumber}</span>` : ''}
+                ${matchData.venueDisplayName ? `<span class="venue-info-large" onclick="selectVenue('${escapeHtml(matchData.venueDisplayName).replace(/'/g, "\\'")}')">${highlightSearchText(matchData.venueDisplayName, customSearch)}</span>` : ''}
             </div>
             <div class="match-info-right">
                 ${matchData.time ? `<span class="datetime-combined">⏰ ${matchData.time}</span>` : ''}
@@ -471,6 +483,8 @@ function parseJOMatchLine(line) {
         team2: { name: 'Team B', score: null, isShores: false, prefix: null },
         time: null,
         venue: null,
+        venueDisplayName: null,
+        matchNumber: null,
         date: null,
         category: null
     };
@@ -484,8 +498,18 @@ function parseJOMatchLine(line) {
         // Parse date (field 0)
         result.date = fields[0]?.trim();
         
-        // Parse venue (field 1)
-        result.venue = fields[1]?.trim();
+        // Parse venue (field 1) and extract match number
+        const venueField = fields[1]?.trim();
+        result.venue = venueField;
+        
+        // Extract match number from venue (e.g., "#23 PORTOLA HS 1" → "23", "PORTOLA HS 1")
+        const venueMatch = venueField?.match(/^#(\d+)\s+(.+)$/);
+        if (venueMatch) {
+            result.matchNumber = venueMatch[1];
+            result.venueDisplayName = venueMatch[2];
+        } else {
+            result.venueDisplayName = venueField;
+        }
         
         // Parse time (field 2)
         result.time = fields[2]?.trim();
