@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 Junior Olympics 2025 - Live Results</title>
+    <link rel="stylesheet" href="live_results.css">
+</head>
+<body>
+    <!-- Floating Back Button -->
+    <a href="../20250719_Junior_Olympics_16U_Boys_Champions.html" class="floating-back-btn" id="floatingBackBtn">
+        <img src="../images/logo.png" alt="SD Shores Logo" />
+    </a>
+    
+    <!-- Fixed Header -->
+    <div class="header">
+        <h1 class="title">🏆 Junior Olympics 2025</h1>
+        <div class="subtitle">16U Boys Championship</div>
+        <div class="live-indicator" id="liveIndicator">
+            <div class="live-dot"></div>
+            <span>Live Results • <span class="countdown" id="countdown">Loading...</span></span>
+        </div>
+        
+        <!-- Filter Controls -->
+        <!-- Simplified filter interface: Shores filter + Team search only -->
+        <!-- Note: Venue filters and Recent filter removed from GUI but backend functions preserved -->
+        <div class="filter-controls">
+            <div class="filter-section">
+                <label class="filter-checkbox">
+                    <input type="checkbox" id="filterShores" onchange="applyFilters()">
+                    <span class="checkmark"></span>
+                    <span class="filter-label">🌊 Shores</span>
+                </label>
+                <div class="search-wrapper">
+                    <input type="text" id="customTeamSearch" placeholder="🔍 Search teams..." autocomplete="off">
+                    <button type="button" id="clearSearchBtn" class="clear-search-btn">×</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="container">
+        <div class="status-bar">
+            <div class="status-info">
+                <div id="statusBadge" class="status-badge status-loading">
+                    <span class="spinner"></span> Loading latest results...
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="matchCount">0</div>
+                        <div class="stat-label">Latest Results</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="shoresCount">0</div>
+                        <div class="stat-label">SD Shores Matches</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="venueCount">0</div>
+                        <div class="stat-label">Active Venues</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="lastUpdate">--:--</div>
+                        <div class="stat-label">Last Update</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-container">
+            <div id="matchGrid" class="match-grid">
+                <div class="empty-state">
+                    🔄 Loading latest Junior Olympics results...<br>
+                    <small style="margin-top: 10px; display: block;">Showing 16U Boys Championship • Max 50 matches • SD Shores teams highlighted</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div>Data source: <strong>Junior Olympics 16U Boys Championship official feed</strong></div>
+            <div><small>Live tournament data • Venue filters • Team search • Auto-refresh every 3 minutes</small></div>
+        </div>
+    </div>
+
+    <script src="live_results.js"></script>
+</body>
+</html>
