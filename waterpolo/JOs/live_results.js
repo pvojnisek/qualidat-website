@@ -10,8 +10,43 @@ let nextRefreshTime = 0;
 let isArchivedMode = false; // Flag to track archived vs live data mode
 let archivedDataTimestamp = null; // Store timestamp from archived data
 
-// CORS proxy configuration - ordered by speed (fastest first)
-const JO_URL = 'https://feeds.kahunaevents.org/joboys16u';
+// Age group configurations
+const JO_CONFIGS = {
+    '14-championship': {
+        title: '14U Boys Championship',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys14u',
+        category: '14U_BOYS_CHAMPIONSHIP'
+    },
+    '14-classic': {
+        title: '14U Boys Classic',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys14ux',
+        category: '14U_BOYS_CLASSIC'
+    },
+    '16-championship': {
+        title: '16U Boys Championship',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys16u',
+        category: '16U_BOYS_CHAMPIONSHIP'
+    },
+    '16-classic': {
+        title: '16U Boys Classic',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys16ux',
+        category: '16U_BOYS_CLASSIC'
+    },
+    '18-championship': {
+        title: '18U Boys Championship',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys18u',
+        category: '18U_BOYS_CHAMPIONSHIP'
+    },
+    '18-classic': {
+        title: '18U Boys Classic',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys18ux',
+        category: '18U_BOYS_CLASSIC'
+    }
+};
+
+// Global configuration and CORS proxy configuration
+let currentConfig = null;
+let JO_URL = 'https://feeds.kahunaevents.org/joboys16u'; // Default URL, will be updated dynamically
 const PROXIES = [
     { name: 'CodeTabs', url: 'https://api.codetabs.com/v1/proxy/?quest=' },
     { name: 'ThingProxy', url: 'https://thingproxy.freeboard.io/fetch/' },
@@ -314,6 +349,72 @@ function parseArchivedDataTimestamp(data) {
         }
     }
     return null;
+}
+
+// Parse URL parameters and get current configuration
+function getCurrentConfig() {
+    const params = new URLSearchParams(window.location.search);
+    const age = params.get('age') || '16';
+    const classType = params.get('class') || 'championship';
+    const configKey = `${age}-${classType}`;
+    return JO_CONFIGS[configKey] || JO_CONFIGS['16-championship'];
+}
+
+// Switch age group function
+function switchAgeGroup() {
+    const dropdown = document.getElementById('ageGroupDropdown');
+    const selectedValue = dropdown.value;
+    const [age, classType] = selectedValue.split('-');
+    
+    // Navigate to same page with new parameters
+    const newUrl = `${window.location.pathname}?age=${age}&class=${classType}`;
+    window.location.href = newUrl;
+}
+
+// Initialize page with current configuration
+function initializePage() {
+    // Set current configuration from URL parameters
+    currentConfig = getCurrentConfig();
+    
+    // Update JO_URL for data fetching
+    JO_URL = currentConfig.feedUrl;
+    
+    // Update page elements
+    updatePageElements();
+    
+    console.log(`🏊‍♂️ Initialized page for ${currentConfig.title}`);
+    console.log(`📡 Data source: ${currentConfig.feedUrl}`);
+}
+
+// Update page elements based on current configuration
+function updatePageElements() {
+    // Update subtitle
+    const subtitle = document.querySelector('.subtitle');
+    if (subtitle) {
+        subtitle.textContent = currentConfig.title;
+    }
+    
+    // Update dropdown selection
+    const dropdown = document.getElementById('ageGroupDropdown');
+    if (dropdown) {
+        const params = new URLSearchParams(window.location.search);
+        const age = params.get('age') || '16';
+        const classType = params.get('class') || 'championship';
+        const configKey = `${age}-${classType}`;
+        dropdown.value = configKey;
+    }
+    
+    // Update footer text
+    const footerElement = document.querySelector('.footer div:first-child');
+    if (footerElement) {
+        footerElement.innerHTML = `Data source: <strong>Junior Olympics ${currentConfig.title} official feed</strong>`;
+    }
+    
+    // Update empty state text
+    const emptyState = document.querySelector('.empty-state small');
+    if (emptyState) {
+        emptyState.textContent = `Showing ${currentConfig.title} • Max 50 matches • SD Shores teams highlighted`;
+    }
 }
 
 function setupCustomSearchListeners() {
@@ -1283,6 +1384,10 @@ window.addEventListener('load', () => {
     
     if (isJOLiveResultsPage) {
         console.log('🚀 Junior Olympics Live Results page loaded');
+        
+        // Initialize page configuration first
+        initializePage();
+        
         setupCustomSearchListeners();
         loadLiveResults().then(() => {
             // Only start refresh cycle if we're in live mode (not archived)

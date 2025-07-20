@@ -17,10 +17,12 @@ This is a static website (microsite under /waterpolo/) for water polo tournament
 - **TOURNAMENT_FUTURES_SUPER_FINALS.md** - Kahuna Events live data tournament
 - **TOURNAMENT_US_CLUB_CHAMPIONSHIP.md** - Google Sheets CSV tournament
 - **TOURNAMENT_JO_QUALIFICATION.md** - Google Sheets bracket tournament
+- **TOURNAMENT_JUNIOR_OLYMPICS_LIVE.md** - Multi-age group live results system
 
 ### Usage Guidelines
 - **Individual tournament work**: Refer to specific TOURNAMENT_*.md files
 - **Live results development**: Use MATCH_BROWSER.md for TDD workflow
+- **Junior Olympics development**: Use TOURNAMENT_JUNIOR_OLYMPICS_LIVE.md for multi-age group system
 - **Venue management**: Use POOLS.md for adding new pool locations
 - **Core architecture changes**: Use this file for general project guidance
 
@@ -128,6 +130,7 @@ The website follows a simple static architecture:
 
 - **index.html**: Main landing page with tournament schedule and navigation
 - **Tournament pages**: Individual HTML files for specific tournaments (e.g., `20250607_KJVR_memorial_18U.html`, `20250613_16U_JOs_Quals.html`)
+- **Junior Olympics Live Results**: Dynamic single-page system (`JOs/live_results.html`) supporting multiple age groups via URL parameters
 - **style.css**: Comprehensive CSS with water polo-themed styling, responsive design, and interactive elements
 - **script.js**: JavaScript for animations, interactive stats, collapsible content, and hover effects
 
@@ -352,6 +355,7 @@ SAN FRANCISCO:
 - **TOURNAMENT_FUTURES_SUPER_FINALS.md** - Kahuna Events data, live results system
 - **TOURNAMENT_US_CLUB_CHAMPIONSHIP.md** - Google Sheets CSV procedures
 - **TOURNAMENT_JO_QUALIFICATION.md** - Bracket structure and placements
+- **TOURNAMENT_JUNIOR_OLYMPICS_LIVE.md** - Multi-age group live results system
 - **MATCH_BROWSER.md** - Live results system and TDD workflow
 - **POOLS.md** - Venue management templates
 
