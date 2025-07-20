@@ -18,7 +18,7 @@ const PROXIES = [
     { name: 'AllOrigins', url: 'https://api.allorigins.win/raw?url=' }
 ];
 
-// SD Shores team detection patterns for JO format - more specific to avoid false positives
+// SD Shores team detection patterns for JO format - covers both ID prefix and team-only formats
 const SHORES_PATTERNS = [
     /\bsd shores\b/i,
     /\bsan diego shores\b/i,
@@ -27,9 +27,15 @@ const SHORES_PATTERNS = [
     /\bshores white\b/i,
     /\bshores blue\b/i,
     /\bshores red\b/i,
-    /\d+-shores/i,                    // JO format: "22-SHORES"
-    /\d+-san diego shores/i,          // JO format: "22-SAN DIEGO SHORES"
-    /\d+-sd shores/i                  // JO format: "22-SD SHORES"
+    /\d+-shores/i,                    // JO format with ID: "22-SHORES"
+    /\d+-san diego shores/i,          // JO format with ID: "22-SAN DIEGO SHORES"
+    /\d+-sd shores/i,                 // JO format with ID: "22-SD SHORES"
+    /^shores\b/i,                     // Team name only: "SHORES" (start of string)
+    /^san diego shores\b/i,           // Team name only: "SAN DIEGO SHORES"
+    /^sd shores\b/i,                  // Team name only: "SD SHORES"
+    /shores=\d+/i,                    // In score format: "SHORES=12"
+    /san diego shores=\d+/i,          // In score format: "SAN DIEGO SHORES=12"
+    /sd shores=\d+/i                  // In score format: "SD SHORES=12"
 ];
 
 // JO Tournament dates and venues
@@ -410,7 +416,22 @@ async function fetchViaProxy() {
 }
 
 function displayJOMatchResults(data) {
-    const lines = data.split('\n').filter(line => line.trim() && !line.startsWith('#'));
+    // First, parse the data format - handle both archived format and live email format
+    let lines = data.split('\n').filter(line => line.trim() && !line.startsWith('#'));
+    
+    // If data contains email-style headers, extract match lines only
+    if (data.includes('Subject:') || data.includes('HOT!')) {
+        lines = data.split('\n').filter(line => {
+            // Look for lines that match JO tournament format (date at start)
+            return line.trim() && 
+                   !line.startsWith('#') && 
+                   !line.includes('Subject:') && 
+                   !line.includes('HOT!') && 
+                   !line.includes('ADVANCEMENT UPDATE') && 
+                   !line.includes('RESULT UPDATE') &&
+                   /^\d{1,2}-[A-Za-z]{3}\s/.test(line.trim());
+        });
+    }
     
     // Filter out invalid/malformed match lines
     const validLines = lines.filter(line => isValidJOMatchLine(line));
@@ -612,20 +633,34 @@ function parseJOMatchLine(line) {
         // Parse time (field 2)
         result.time = fields[2]?.trim();
         
-        // Parse team 1 and score (field 3) - format: "22-LONGHORN=10"
-        const team1Match = fields[3]?.match(/^(\d+)-(.+?)=(.+)$/);
-        if (team1Match) {
-            result.team1.prefix = team1Match[1];
-            result.team1.name = team1Match[2].trim();
-            result.team1.score = team1Match[3];
+        // Parse team 1 and score (field 3) - handle both formats:
+        // Format 1: "22-LONGHORN=10" (with ID prefix)
+        // Format 2: "OAHU=4" (team name only)
+        const team1WithPrefix = fields[3]?.match(/^(\d+)-(.+?)=(.+)$/);
+        const team1WithoutPrefix = fields[3]?.match(/^([^=]+)=(.+)$/);
+        
+        if (team1WithPrefix) {
+            result.team1.prefix = team1WithPrefix[1];
+            result.team1.name = team1WithPrefix[2].trim();
+            result.team1.score = team1WithPrefix[3];
+        } else if (team1WithoutPrefix) {
+            result.team1.prefix = null;
+            result.team1.name = team1WithoutPrefix[1].trim();
+            result.team1.score = team1WithoutPrefix[2];
         }
         
-        // Parse team 2 and score (field 4) - format: "27-CT PREMIER=14"
-        const team2Match = fields[4]?.match(/^(\d+)-(.+?)=(.+)$/);
-        if (team2Match) {
-            result.team2.prefix = team2Match[1];
-            result.team2.name = team2Match[2].trim();
-            result.team2.score = team2Match[3];
+        // Parse team 2 and score (field 4) - handle both formats:
+        const team2WithPrefix = fields[4]?.match(/^(\d+)-(.+?)=(.+)$/);
+        const team2WithoutPrefix = fields[4]?.match(/^([^=]+)=(.+)$/);
+        
+        if (team2WithPrefix) {
+            result.team2.prefix = team2WithPrefix[1];
+            result.team2.name = team2WithPrefix[2].trim();
+            result.team2.score = team2WithPrefix[3];
+        } else if (team2WithoutPrefix) {
+            result.team2.prefix = null;
+            result.team2.name = team2WithoutPrefix[1].trim();
+            result.team2.score = team2WithoutPrefix[2];
         }
         
         // Parse category (field 5)
@@ -760,15 +795,17 @@ function isValidJOMatchLine(line) {
         return false;
     }
     
-    // Validate team 1 format (should be like "22-LONGHORN=10")
+    // Validate team 1 format - accept both formats:
+    // Format 1: "22-LONGHORN=10" (with ID prefix)
+    // Format 2: "OAHU=4" (team name only)
     const team1Field = fields[3]?.trim();
-    if (!team1Field || !/^\d+-[^=]+=.+$/.test(team1Field)) {
+    if (!team1Field || !/^(\d+-[^=]+=.+|[^=]+=.+)$/.test(team1Field)) {
         return false;
     }
     
-    // Validate team 2 format (should be like "27-CT PREMIER=14")
+    // Validate team 2 format - accept both formats:
     const team2Field = fields[4]?.trim();
-    if (!team2Field || !/^\d+-[^=]+=.+$/.test(team2Field)) {
+    if (!team2Field || !/^(\d+-[^=]+=.+|[^=]+=.+)$/.test(team2Field)) {
         return false;
     }
     
