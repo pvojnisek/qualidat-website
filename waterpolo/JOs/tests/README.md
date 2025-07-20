@@ -3,6 +3,8 @@
 ## Overview
 Comprehensive test suite for the Junior Olympics 16U Boys Championship live results system. This TDD-compliant testing infrastructure ensures reliable parsing, filtering, and display of tournament data.
 
+**Recent Updates**: UI-related functions and tests have been removed as part of code cleanup. The core functionality for displaying future matches with game IDs is preserved while removing unused UI overhead.
+
 ## Test Structure
 
 ### Test Runner
@@ -149,10 +151,10 @@ Comprehensive test suite for the Junior Olympics 16U Boys Championship live resu
 
 ## Test Coverage
 
-### Current Coverage: 90+ Tests
+### Current Coverage: 70+ Tests
 - **Parsing**: 25+ tests covering all JO data formats
 - **Team Detection**: 8+ tests for Shores identification
-- **Future Matches**: 10+ tests for advancement parsing and UI integration
+- **Future Matches**: 6+ tests for advancement parsing (UI integration tests removed)
 - **Deduplication**: 15+ tests for duplicate removal
 - **Filtering**: 10+ tests for search and venue filters
 - **Status**: 8+ tests for match status detection

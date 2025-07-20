@@ -436,26 +436,6 @@ testSuite.addTest('Future Match Parsing', 'buildFutureMatchesData functionality'
     testSuite.assertTrue(!futureData.LONGHORN, "Completed match teams should not be in future data");
 });
 
-testSuite.addTest('Future Match Parsing', 'teamHasFutureMatches check', () => {
-    // Set up test data
-    const originalData = futureMatchesData;
-    futureMatchesData = {
-        "SHORES": [
-            { team: "SHORES", gameId: "16B-033" },
-            { team: "SHORES", gameId: "16B-044" }
-        ],
-        "OAHU": [
-            { team: "OAHU", gameId: "16B-084" }
-        ]
-    };
-    
-    testSuite.assertTrue(teamHasFutureMatches("SHORES"), "SHORES should have future matches");
-    testSuite.assertTrue(teamHasFutureMatches("OAHU"), "OAHU should have future matches");
-    testSuite.assertFalse(teamHasFutureMatches("NONEXISTENT"), "Non-existent team should not have future matches");
-    
-    // Restore original data
-    futureMatchesData = originalData;
-});
 
 testSuite.addTest('Future Match Parsing', 'Parse multiple matches per line', () => {
     const multiMatchLine = "LOWPO is 2 in bracket 47 is DARK in game 16B-064 on 20-Jul at 7:00 AM at SADDLEBACK COLLEGE 1; and WHITE in game 16B-096 on 20-Jul at 1:40 PM in SADDLEBACK COLLEGE 1";
@@ -665,56 +645,8 @@ testSuite.addTest('Future Match Integration', 'Future match filtering integratio
     document.body.removeChild(mockShoresFilter);
 });
 
-testSuite.addTest('Future Match Integration', 'Team advancement resolution basic', () => {
-    const futureMatch = {
-        type: "future",
-        team1: { name: "Winner of 16B-047", isShores: false },
-        team2: { name: "Winner of 16B-048", isShores: false },
-        gameId: "16B-059"
-    };
-    
-    const completedMatches = [
-        { gameId: "16B-047", team1: { name: "LOWPO", score: "7" }, team2: { name: "SAN FRANCISCO", score: "11" } },
-        { gameId: "16B-048", team1: { name: "CHICAGO PARKS", score: "7" }, team2: { name: "VIPER PIGEON BLUE", score: "8" } }
-    ];
-    
-    const resolvedMatch = resolveTeamAdvancement(futureMatch, completedMatches);
-    
-    testSuite.assertEquals(resolvedMatch.team1.name, "SAN FRANCISCO", "Should resolve first team from completed match");
-    testSuite.assertEquals(resolvedMatch.team2.name, "VIPER PIGEON BLUE", "Should resolve second team from completed match");
-    testSuite.assertEquals(resolvedMatch.status, "READY", "Should update status when teams resolved");
-});
 
-testSuite.addTest('Future Match Integration', 'Mixed match type sorting and display', () => {
-    const mixedMatches = [
-        { type: "completed", date: "19-Jul", time: "7:50 AM", team1: { name: "LONGHORN" } },
-        { type: "future", date: "20-Jul", time: "11:10 AM", team1: { name: "SHORES" } },
-        { type: "completed", date: "19-Jul", time: "4:10 PM", team1: { name: "LOWPO" } },
-        { type: "future", date: "19-Jul", time: "7:30 PM", team1: { name: "SAN FRANCISCO" } }
-    ];
-    
-    const sorted = sortMatchesByDateTime(mixedMatches);
-    
-    // Should be chronologically sorted regardless of type
-    testSuite.assertEquals(sorted[0].time, "7:50 AM", "First chronologically");
-    testSuite.assertEquals(sorted[1].time, "4:10 PM", "Second chronologically");
-    testSuite.assertEquals(sorted[2].time, "7:30 PM", "Third chronologically");
-    testSuite.assertEquals(sorted[3].time, "11:10 AM", "Fourth chronologically (next day)");
-});
 
-testSuite.addTest('Future Match Integration', 'Future match status transitions', () => {
-    const scheduledMatch = { status: "SCHEDULED", date: "20-Jul", time: "11:10 AM" };
-    const readyMatch = { status: "READY", date: "20-Jul", time: "7:30 PM" };
-    
-    // Mock current time for testing
-    const now = new Date('July 20, 2025 10:30:00');
-    
-    const scheduledStatus = updateMatchStatus(scheduledMatch, now);
-    const readyStatus = updateMatchStatus(readyMatch, now);
-    
-    testSuite.assertEquals(scheduledStatus, "NEXT_UP", "Should transition to NEXT_UP when within 1 hour");
-    testSuite.assertEquals(readyStatus, "READY", "Should maintain READY status when not imminent");
-});
 
 testSuite.addTest('Future Match Integration', 'Performance with mixed match types', () => {
     const mixedData = [];

@@ -9,7 +9,6 @@ let countdownInterval = null;
 let nextRefreshTime = 0;
 let isArchivedMode = false; // Flag to track archived vs live data mode
 let archivedDataTimestamp = null; // Store timestamp from archived data
-let futureMatchesData = {}; // Store future matches by team name
 
 // CORS proxy configuration - ordered by speed (fastest first)
 const JO_URL = 'https://feeds.kahunaevents.org/joboys16u';
@@ -476,8 +475,6 @@ function displayJOMatchResults(data) {
         console.log(`🧹 Filtered out ${allFutureLines.length - filteredFutureLines.length} completed future matches (${filteredFutureLines.length} remaining)`);
     }
     
-    // **NEW**: Build future matches data from filtered lines only
-    buildFutureMatchesData(filteredFutureLines);
     
     // **NEW**: Group future matches by game ID to create proper match objects
     const groupedFutureMatches = groupFutureMatchesByGameId(filteredFutureLines);
@@ -551,15 +548,12 @@ function createJOMatchCard(line, cardNumber, isShoresMatch) {
 // **NEW FUNCTION**: Create match card from pre-parsed structured data
 function createJOMatchCardFromData(matchData, cardNumber, isShoresMatch, matchStatus = null, originalLine = null) {
     const matchDiv = document.createElement('div');
-    const futureClass = matchData.type === 'future' ? 'future-match' : '';
-    matchDiv.className = `match-card ${futureClass} ${isShoresMatch ? 'shores-highlight' : ''}`.trim();
+    matchDiv.className = `match-card ${isShoresMatch ? 'shores-highlight' : ''}`.trim();
     matchDiv.style.animationDelay = `${cardNumber * 0.1}s`;
     
     // Use provided status or detect from match data and original line
     if (!matchStatus) {
-        if (matchData.type === 'future') {
-            matchStatus = detectFutureMatchStatus(matchData);
-        } else if (originalLine) {
+        if (originalLine) {
             matchStatus = detectJOMatchStatus(originalLine);
         } else if (matchData.originalLine) {
             matchStatus = detectJOMatchStatus(matchData.originalLine);
@@ -592,7 +586,7 @@ function createJOMatchCardFromData(matchData, cardNumber, isShoresMatch, matchSt
                 ${matchData.venueDisplayName ? `<span class="venue-info-large" onclick="selectVenue('${escapeHtml(matchData.venueDisplayName).replace(/'/g, "\\'")}')">${highlightSearchText(matchData.venueDisplayName, customSearch)}</span>` : ''}
             </div>
             <div class="match-info-right">
-                ${matchData.time ? `<span class="datetime-combined">⏰ ${matchData.time}${matchData.date ? ` • 📅 ${matchData.date}` : ''}</span>` : ''}
+                ${matchData.time ? `<span class="datetime-combined">⏰ ${matchData.time}${matchData.date ? ` • ${matchData.date}` : ''}</span>` : ''}
                 ${matchStatus ? `<span class="match-status status-${matchStatus.type}">${matchStatus.label}</span>` : ''}
             </div>
         </div>
@@ -600,10 +594,10 @@ function createJOMatchCardFromData(matchData, cardNumber, isShoresMatch, matchSt
         <div class="match-teams">
             <div class="teams-row">
                 <div class="team-info team-left">
-                    <div class="team-name ${matchData.team1.isShores ? 'shores-team' : ''} ${team1Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team1.name).replace(/'/g, "\\'")}')">${matchData.team1.prefix ? `<span class="team-prefix">${matchData.team1.prefix}-</span>` : ''}${team1Html}${getFutureMatchIcon(matchData.team1.name)}</div>
+                    <div class="team-name ${matchData.team1.isShores ? 'shores-team' : ''} ${team1Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team1.name).replace(/'/g, "\\'")}')">${matchData.team1.prefix ? `<span class="team-prefix">${matchData.team1.prefix}-</span>` : ''}${team1Html}</div>
                 </div>
                 <div class="team-info team-right">
-                    <div class="team-name ${matchData.team2.isShores ? 'shores-team' : ''} ${team2Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team2.name).replace(/'/g, "\\'")}')">${matchData.team2.prefix ? `<span class="team-prefix">${matchData.team2.prefix}-</span>` : ''}${team2Html}${getFutureMatchIcon(matchData.team2.name)}</div>
+                    <div class="team-name ${matchData.team2.isShores ? 'shores-team' : ''} ${team2Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team2.name).replace(/'/g, "\\'")}')">${matchData.team2.prefix ? `<span class="team-prefix">${matchData.team2.prefix}-</span>` : ''}${team2Html}</div>
                 </div>
             </div>
             <div class="score-row">
@@ -631,8 +625,6 @@ function createJOMatchCardFromData(matchData, cardNumber, isShoresMatch, matchSt
                 ${matchData.category ? `<span class="meta-item championship">🏆 ${matchData.category}</span>` : ''}
                 ${matchData.team1.prefix ? `<span class="meta-item">Team 1 ID: ${matchData.team1.prefix}</span>` : ''}
                 ${matchData.team2.prefix ? `<span class="meta-item">Team 2 ID: ${matchData.team2.prefix}</span>` : ''}
-                
-                ${getFutureMatchesForDetails(matchData.team1.name, matchData.team2.name)}
             </div>
         </div>
         
@@ -861,105 +853,8 @@ function parseFutureMatchAsJOFormat(line) {
     return result;
 }
 
-function resolveTeamAdvancement(futureMatch, completedMatches) {
-    // Resolve team advancement placeholders like "Winner of 16B-047"
-    const resolved = { ...futureMatch };
-    
-    try {
-        // Check if team1 needs resolution
-        if (futureMatch.team1.name.startsWith('Winner of ')) {
-            const sourceGameId = futureMatch.team1.name.replace('Winner of ', '');
-            const sourceMatch = completedMatches.find(m => m.gameId === sourceGameId);
-            
-            if (sourceMatch && sourceMatch.team1.score !== null && sourceMatch.team2.score !== null) {
-                const score1 = parseInt(sourceMatch.team1.score);
-                const score2 = parseInt(sourceMatch.team2.score);
-                
-                if (score1 > score2) {
-                    resolved.team1.name = sourceMatch.team1.name;
-                    resolved.team1.isShores = sourceMatch.team1.isShores;
-                } else if (score2 > score1) {
-                    resolved.team1.name = sourceMatch.team2.name;
-                    resolved.team1.isShores = sourceMatch.team2.isShores;
-                }
-            }
-        }
-        
-        // Check if team2 needs resolution
-        if (futureMatch.team2.name.startsWith('Winner of ')) {
-            const sourceGameId = futureMatch.team2.name.replace('Winner of ', '');
-            const sourceMatch = completedMatches.find(m => m.gameId === sourceGameId);
-            
-            if (sourceMatch && sourceMatch.team1.score !== null && sourceMatch.team2.score !== null) {
-                const score1 = parseInt(sourceMatch.team1.score);
-                const score2 = parseInt(sourceMatch.team2.score);
-                
-                if (score1 > score2) {
-                    resolved.team2.name = sourceMatch.team1.name;
-                    resolved.team2.isShores = sourceMatch.team1.isShores;
-                } else if (score2 > score1) {
-                    resolved.team2.name = sourceMatch.team2.name;
-                    resolved.team2.isShores = sourceMatch.team2.isShores;
-                }
-            }
-        }
-        
-        // Update status if teams are resolved
-        if (resolved.team1.name !== 'TBD' && resolved.team1.name !== futureMatch.team1.name &&
-            resolved.team2.name !== 'TBD' && resolved.team2.name !== futureMatch.team2.name) {
-            resolved.status = 'READY';
-        }
-        
-    } catch (error) {
-        console.warn('Error resolving team advancement:', error);
-    }
-    
-    return resolved;
-}
 
-function sortMatchesByDateTime(matches) {
-    // Sort matches chronologically regardless of type
-    return matches.sort((a, b) => {
-        try {
-            // Parse dates and times for comparison
-            const dateTimeA = parseJODateTime(a.date, a.time, new Date().getFullYear());
-            const dateTimeB = parseJODateTime(b.date, b.time, new Date().getFullYear());
-            
-            if (!dateTimeA) return 1;  // Put invalid dates at end
-            if (!dateTimeB) return -1;
-            
-            return dateTimeA - dateTimeB;
-        } catch (error) {
-            console.warn('Error sorting matches by date/time:', error);
-            return 0;
-        }
-    });
-}
 
-function updateMatchStatus(match, currentTime = new Date()) {
-    // Update match status based on current time and match time
-    if (match.status === 'COMPLETED') return 'COMPLETED';
-    
-    try {
-        const matchDateTime = parseJODateTime(match.date, match.time, currentTime.getFullYear());
-        if (!matchDateTime) return match.status;
-        
-        const timeDiff = matchDateTime - currentTime;
-        const threeHours = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
-        const ninetyMinutes = 90 * 60 * 1000; // 90 minutes for match duration
-        
-        if (timeDiff <= threeHours && timeDiff > 0) {
-            return 'COMING_UP';
-        } else if (timeDiff <= 0 && Math.abs(timeDiff) <= ninetyMinutes) {
-            return 'LIVE';
-        }
-        
-        return match.status;
-    } catch (error) {
-        console.warn('Error updating match status:', error);
-        return match.status;
-    }
-}
 
 function isFutureMatchLine(line) {
     // Check if line matches future match format pattern
@@ -971,44 +866,6 @@ function isFutureMatchLine(line) {
            (line.includes(' is DARK ') || line.includes(' is WHITE '));
 }
 
-function buildFutureMatchesData(lines) {
-    // Reset the global future matches data
-    futureMatchesData = {};
-    
-    console.log('🔮 Processing future match data...');
-    
-    // Filter and parse future match lines
-    const futureLines = lines.filter(line => isFutureMatchLine(line));
-    console.log(`📅 Found ${futureLines.length} future match lines`);
-    
-    futureLines.forEach(line => {
-        const parseResult = parseFutureMatchLine(line);
-        
-        // Handle both single match objects and arrays of matches
-        const matches = Array.isArray(parseResult) ? parseResult : [parseResult];
-        
-        matches.forEach(futureMatch => {
-            if (futureMatch && futureMatch.team) {
-                // Initialize team array if it doesn't exist
-                if (!futureMatchesData[futureMatch.team]) {
-                    futureMatchesData[futureMatch.team] = [];
-                }
-                
-                // Add the future match to the team's array
-                futureMatchesData[futureMatch.team].push(futureMatch);
-            }
-        });
-    });
-    
-    // Log results for debugging
-    const teamsWithFutureMatches = Object.keys(futureMatchesData).length;
-    const totalFutureMatches = Object.values(futureMatchesData).reduce((total, matches) => total + matches.length, 0);
-    
-    console.log(`📊 Future matches processed: ${teamsWithFutureMatches} teams, ${totalFutureMatches} total matches`);
-    console.log(`🔄 Multi-match lines now supported - teams can have multiple future games`);
-    
-    return futureMatchesData;
-}
 
 function buildCompletedMatchIndex(completedLines) {
     // Build fast lookup index: "date|time|venue" → Set<teamNames>
@@ -1147,123 +1004,10 @@ function groupFutureMatchesByGameId(lines) {
     return groupedMatches;
 }
 
-function teamHasFutureMatches(teamName) {
-    return futureMatchesData[teamName] && futureMatchesData[teamName].length > 0;
-}
 
-function getFutureMatchIcon(teamName) {
-    const hasFuture = teamHasFutureMatches(teamName);
-    
-    // Debug logging
-    if (teamName && teamName.includes('SHORES') || teamName.includes('LOWPO') || teamName.includes('SAN FRANCISCO')) {
-        console.log(`🔍 getFutureMatchIcon for "${teamName}": ${hasFuture ? 'HAS future matches' : 'NO future matches'}`);
-        console.log(`📊 futureMatchesData keys:`, Object.keys(futureMatchesData));
-    }
-    
-    if (hasFuture) {
-        return `<span class="future-match-icon" onclick="showFutureMatches('${escapeHtml(teamName).replace(/'/g, "\\'")}'); event.stopPropagation();" title="View upcoming matches">📅</span>`;
-    }
-    return '';
-}
 
-function showFutureMatches(teamName) {
-    const matches = futureMatchesData[teamName];
-    if (!matches || matches.length === 0) {
-        console.warn('No future matches found for team:', teamName);
-        return;
-    }
 
-    // Remove any existing popup
-    closeFutureMatchesPopup();
 
-    // Create popup HTML
-    const popupHtml = `
-        <div id="futureMatchesPopup" class="future-matches-popup">
-            <div class="future-matches-content">
-                <div class="future-matches-header">
-                    <h3>Upcoming Matches - ${escapeHtml(teamName)}</h3>
-                    <button onclick="closeFutureMatchesPopup()" class="close-popup">×</button>
-                </div>
-                <div class="future-matches-list">
-                    ${matches.map(match => `
-                        <div class="future-match-item">
-                            <div class="future-match-header">
-                                <span class="game-id">${escapeHtml(match.gameId || 'TBD')}</span>
-                                <span class="match-color ${match.color ? match.color.toLowerCase() : ''}">${escapeHtml(match.color || 'TBD')}</span>
-                            </div>
-                            <div class="future-match-details">
-                                <div class="match-time">
-                                    <span class="date">📅 ${escapeHtml(match.date || 'TBD')}</span>
-                                    <span class="time">⏰ ${escapeHtml(match.time || 'TBD')}</span>
-                                </div>
-                                <div class="match-venue">
-                                    <span class="venue">📍 ${escapeHtml(match.venue || 'TBD')}</span>
-                                </div>
-                                <div class="match-bracket">
-                                    <span class="bracket">🏆 Bracket ${escapeHtml(match.bracket || 'TBD')} - Position ${escapeHtml(match.position || 'TBD')}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-            <div class="popup-overlay" onclick="closeFutureMatchesPopup()"></div>
-        </div>
-    `;
-
-    // Add popup to DOM
-    document.body.insertAdjacentHTML('beforeend', popupHtml);
-}
-
-function closeFutureMatchesPopup() {
-    const popup = document.getElementById('futureMatchesPopup');
-    if (popup) {
-        popup.remove();
-    }
-}
-
-function getFutureMatchesForDetails(team1Name, team2Name) {
-    const team1Matches = futureMatchesData[team1Name] || [];
-    const team2Matches = futureMatchesData[team2Name] || [];
-    
-    if (team1Matches.length === 0 && team2Matches.length === 0) {
-        return ''; // No future matches for either team
-    }
-    
-    let html = '<div class="future-matches-details">';
-    html += '<div class="future-matches-header">🔮 Upcoming Matches:</div>';
-    
-    // Team 1 future matches
-    if (team1Matches.length > 0) {
-        html += `<div class="team-future-matches">`;
-        html += `<div class="team-future-name">${escapeHtml(team1Name)}:</div>`;
-        team1Matches.forEach(match => {
-            html += `<div class="future-match-item-details">`;
-            html += `<span class="future-game-info">${match.color} in game ${match.gameId}</span>`;
-            html += `<span class="future-schedule">${match.date} at ${match.time}</span>`;
-            html += `<span class="future-venue">${match.venue}</span>`;
-            html += `</div>`;
-        });
-        html += `</div>`;
-    }
-    
-    // Team 2 future matches
-    if (team2Matches.length > 0) {
-        html += `<div class="team-future-matches">`;
-        html += `<div class="team-future-name">${escapeHtml(team2Name)}:</div>`;
-        team2Matches.forEach(match => {
-            html += `<div class="future-match-item-details">`;
-            html += `<span class="future-game-info">${match.color} in game ${match.gameId}</span>`;
-            html += `<span class="future-schedule">${match.date} at ${match.time}</span>`;
-            html += `<span class="future-venue">${match.venue}</span>`;
-            html += `</div>`;
-        });
-        html += `</div>`;
-    }
-    
-    html += '</div>';
-    return html;
-}
 
 function detectJOMatchStatus(line) {
     const upperLine = line.toUpperCase();
@@ -1291,36 +1035,6 @@ function detectJOMatchStatus(line) {
     return null;
 }
 
-function detectFutureMatchStatus(matchData) {
-    // Detect status for future matches based on match data
-    if (!matchData || matchData.type !== 'future') {
-        return null;
-    }
-    
-    try {
-        const currentTime = new Date();
-        const status = updateMatchStatus(matchData, currentTime);
-        
-        switch (status) {
-            case 'COMING_UP':
-                return { type: 'coming_up', label: 'COMING UP ⏰' };
-            case 'LIVE':
-                return { type: 'live', label: 'LIVE 🔥' };
-            case 'READY':
-                return { type: 'ready', label: 'READY ✅' };
-            case 'SCHEDULED':
-            default:
-                if (matchData.team2.name === 'TBD') {
-                    return { type: 'waiting', label: 'WAITING 📝' };
-                } else {
-                    return { type: 'scheduled', label: 'SCHEDULED 📅' };
-                }
-        }
-    } catch (error) {
-        console.warn('Error detecting future match status:', error);
-        return { type: 'scheduled', label: 'SCHEDULED 📅' };
-    }
-}
 
 function isJOMatchFromLastHour(line) {
     try {
