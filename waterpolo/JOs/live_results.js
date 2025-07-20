@@ -588,7 +588,7 @@ function createJOMatchCardFromData(matchData, cardNumber, isShoresMatch, matchSt
         <div class="match-header match-header-prominent">
             <div class="match-info-left">
                 ${matchData.matchNumber ? `<span class="match-number-circle">#${matchData.matchNumber}</span>` : ''}
-                ${matchData.gameId ? `<span class="game-id-circle">${matchData.gameId}</span>` : ''}
+                ${matchData.type === 'future' && matchData.gameId ? `<span class="game-id-circle">${matchData.gameId}</span>` : ''}
                 ${matchData.venueDisplayName ? `<span class="venue-info-large" onclick="selectVenue('${escapeHtml(matchData.venueDisplayName).replace(/'/g, "\\'")}')">${highlightSearchText(matchData.venueDisplayName, customSearch)}</span>` : ''}
             </div>
             <div class="match-info-right">
