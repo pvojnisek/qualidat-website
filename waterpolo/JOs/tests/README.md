@@ -24,13 +24,22 @@ Comprehensive test suite for the Junior Olympics 16U Boys Championship live resu
 - Case-insensitive detection
 - False positive prevention
 
-#### 3. Deduplication Tests (15+ tests)
+#### 3. Future Match Tests (10+ tests)
+- **parseFutureMatchLine()** function validation for single and multiple matches per line
+- **buildFutureMatchesData()** array processing and team lookup structure
+- **isFutureMatchLine()** detection of advancement update format
+- Multiple match parsing with "; and" separator format
+- Team name matching and SD Shores detection in future format
+- Venue format variations ("at VENUE" vs "in VENUE")
+- Backward compatibility testing with single match format
+
+#### 4. Deduplication Tests (15+ tests)
 - **deduplicateMatches()** and **createJOMatchSignature()** validation
 - Duplicate match removal based on unique signatures
 - Performance testing with large datasets
 - Edge case handling
 
-#### 4. Filter Tests (10+ tests)
+#### 5. Filter Tests (10+ tests)
 - **applyCustomTeamFilter()** team search functionality
 - Venue-based filtering (backend functions preserved, GUI removed)
 - Recent match filtering (backend functions preserved, GUI removed)
@@ -99,7 +108,7 @@ Comprehensive test suite for the Junior Olympics 16U Boys Championship live resu
 4. View real-time results and performance metrics
 
 ### Command Options
-- **Run All Tests**: Execute complete 80+ test suite
+- **Run All Tests**: Execute complete 90+ test suite
 - **Parsing Tests**: Focus on JO data parsing validation
 - **Filter Tests**: Test search and filtering functionality  
 - **Performance Tests**: Benchmark speed and efficiency
@@ -140,9 +149,10 @@ Comprehensive test suite for the Junior Olympics 16U Boys Championship live resu
 
 ## Test Coverage
 
-### Current Coverage: 80+ Tests
+### Current Coverage: 90+ Tests
 - **Parsing**: 25+ tests covering all JO data formats
 - **Team Detection**: 8+ tests for Shores identification
+- **Future Matches**: 10+ tests for advancement parsing and UI integration
 - **Deduplication**: 15+ tests for duplicate removal
 - **Filtering**: 10+ tests for search and venue filters
 - **Status**: 8+ tests for match status detection

@@ -169,6 +169,9 @@ The script.js handles:
 - **Tournament data loading**: Supports both external JSON files and embedded data
 - **Live data streaming**: Real-time tournament results via CORS proxy systems
 - **Team highlighting**: Automatic detection and highlighting of SD Shores teams
+- **Future match integration**: Displays upcoming matches for teams in match card details
+- **Calendar icons**: Visual indicators for teams with scheduled future games  
+- **Match advancement tracking**: Parses tournament progression and next game scheduling
 - Animated stat counters that count up when scrolled into view
 - Hover effects for cards (match-card, fact-card, stat-card)
 - Collapsible content functionality for tournament details
@@ -269,6 +272,64 @@ The Match Browser provides real-time tournament data streaming with:
 - **Fallback systems**: Multiple data sources for reliability
 - **Performance optimization**: Efficient parsing and rendering
 - **Error handling**: Graceful degradation for data issues
+
+## Future Match System
+
+### Overview
+The Junior Olympics live results system now includes **future match tracking** that displays upcoming scheduled games for teams based on tournament advancement data from Kahuna Events feeds.
+
+### Data Processing
+- **Multi-match parsing**: Handles lines with multiple future games using "; and" separator format
+- **Real-time updates**: Future matches update automatically with live tournament data feeds
+- **Team association**: Links future games to current match participants for easy access
+- **Complex parsing**: Supports descriptive advancement format vs. standard match results
+
+### User Interface Features
+
+#### Dual Display Approach
+1. **Calendar Icons**: 📅 icons appear next to teams with upcoming matches (includes debug logging)
+2. **Details Integration**: Future matches display in expanded match card details section
+
+#### User Experience
+When users click "📋 Details" on any match card, they see:
+```
+📋 Details (expanded):
+⏰ 4:10 PM  📍 PORTOLA HS 1  📅 19-Jul  🏆 16U_BOYS_CHAMPIONSHIP
+
+🔮 Upcoming Matches:
+LOWPO:
+  DARK in game 16B-064    20-Jul at 7:00 AM    SADDLEBACK COLLEGE 1
+  WHITE in game 16B-096   20-Jul at 1:40 PM    SADDLEBACK COLLEGE 1
+
+SAN FRANCISCO:
+  DARK in game 16B-059    19-Jul at 7:30 PM    PORTOLA HS 1
+```
+
+### Data Format Support
+
+#### Kahuna Events Future Match Format
+- **Single match**: `TEAM is 1 in bracket 47 is DARK in game 16B-064 on 20-Jul at 7:00 AM at VENUE`
+- **Multiple matches**: `TEAM is 1 in bracket 47 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at VENUE; and WHITE in game 16B-097 on 20-Jul at 2:30 PM in VENUE`
+
+#### Technical Capabilities
+- **Multiple venues**: Supports various venue formats ("at VENUE" vs "in VENUE")  
+- **Complex team names**: Handles full team names like "SAN DIEGO SHORES BLACK"
+- **Team color assignments**: Displays DARK/WHITE color designations for each game
+- **Bracket information**: Shows bracket numbers and team positions
+- **Complete scheduling**: Includes dates, times, venues, and game IDs
+
+### Implementation Features
+- **Backward compatibility**: Single matches work seamlessly alongside multiple matches
+- **Performance optimized**: Efficient parsing and lookup with minimal performance impact
+- **Error handling**: Graceful degradation for malformed future match data
+- **Mobile responsive**: Future match displays work on all screen sizes
+- **No filter interference**: Future matches shown regardless of active result filters
+
+### Testing Coverage
+- **10+ comprehensive tests** covering all future match scenarios
+- **Real data validation** with actual tournament advancement feeds
+- **Multiple match parsing** including complex team name and venue variations
+- **Edge case handling** for malformed input and missing data
 
 # Documentation Cross-References
 

@@ -337,6 +337,420 @@ testSuite.addTest('Team Detection', 'Detect all Shores variations', () => {
 });
 
 // =============================================================================
+// FUTURE MATCH TESTS - 10+ tests
+// =============================================================================
+
+testSuite.addTest('Future Match Parsing', 'Parse standard future match line', () => {
+    const line = "LOWPO is 2 in bracket 47 is DARK in game 16B-064 on 20-Jul at 7:00 AM at SADDLEBACK COLLEGE 1";
+    const result = parseFutureMatchLine(line);
+    
+    testSuite.assertEquals(result.team, "LOWPO", "Team name parsing");
+    testSuite.assertEquals(result.position, "2", "Position parsing");
+    testSuite.assertEquals(result.bracket, "47", "Bracket number parsing");
+    testSuite.assertEquals(result.color, "DARK", "Team color parsing");
+    testSuite.assertEquals(result.gameId, "16B-064", "Game ID parsing");
+    testSuite.assertEquals(result.date, "20-Jul", "Date parsing");
+    testSuite.assertEquals(result.time, "7:00 AM", "Time parsing");
+    testSuite.assertEquals(result.venue, "SADDLEBACK COLLEGE 1", "Venue parsing");
+});
+
+testSuite.addTest('Future Match Parsing', 'Parse WHITE team future match', () => {
+    const line = "OAHU is 1 in bracket 45 is WHITE in game 16B-084 on 20-Jul at 11:10 AM at PORTOLA HS 2";
+    const result = parseFutureMatchLine(line);
+    
+    testSuite.assertEquals(result.team, "OAHU", "Team name parsing");
+    testSuite.assertEquals(result.position, "1", "Position parsing");
+    testSuite.assertEquals(result.bracket, "45", "Bracket number parsing");
+    testSuite.assertEquals(result.color, "WHITE", "Team color parsing");
+    testSuite.assertEquals(result.gameId, "16B-084", "Game ID parsing");
+    testSuite.assertEquals(result.venue, "PORTOLA HS 2", "Venue parsing");
+});
+
+testSuite.addTest('Future Match Parsing', 'Parse SD Shores future match', () => {
+    const line = "SHORES is 1 in bracket 12 is DARK in game 16B-033 on 21-Jul at 2:30 PM at SAN JUAN HILLS HS";
+    const result = parseFutureMatchLine(line);
+    
+    testSuite.assertEquals(result.team, "SHORES", "Shores team name parsing");
+    testSuite.assertEquals(result.color, "DARK", "Team color parsing");
+    testSuite.assertEquals(result.time, "2:30 PM", "PM time parsing");
+});
+
+testSuite.addTest('Future Match Parsing', 'Parse complex team name future match', () => {
+    const line = "SAN DIEGO SHORES BLACK is 2 in bracket 33 is WHITE in game 16B-099 on 22-Jul at 9:15 AM at WOOLLETT NEAR LEFT";
+    const result = parseFutureMatchLine(line);
+    
+    testSuite.assertEquals(result.team, "SAN DIEGO SHORES BLACK", "Complex team name parsing");
+    testSuite.assertEquals(result.venue, "WOOLLETT NEAR LEFT", "Complex venue name parsing");
+});
+
+testSuite.addTest('Future Match Parsing', 'Parse different game ID formats', () => {
+    const gameIds = ["16B-001", "16B-999", "16A-055", "18U-123"];
+    
+    gameIds.forEach(gameId => {
+        const line = `TEAM is 1 in bracket 10 is DARK in game ${gameId} on 20-Jul at 10:00 AM at VENUE`;
+        const result = parseFutureMatchLine(line);
+        testSuite.assertEquals(result.gameId, gameId, `Game ID parsing: ${gameId}`);
+    });
+});
+
+testSuite.addTest('Future Match Parsing', 'isFutureMatchLine detection', () => {
+    const futureLine = "LOWPO is 2 in bracket 47 is DARK in game 16B-064 on 20-Jul at 7:00 AM at SADDLEBACK COLLEGE 1";
+    const completedLine = "19-Jul  #5 SAN JUAN HILLS HS  7:50 AM  22-LONGHORN=10  27-CT PREMIER=14  16U_BOYS_CHAMPIONSHIP";
+    
+    testSuite.assertTrue(isFutureMatchLine(futureLine), "Should detect future match line");
+    testSuite.assertFalse(isFutureMatchLine(completedLine), "Should not detect completed match as future");
+    testSuite.assertFalse(isFutureMatchLine(""), "Should handle empty string");
+    testSuite.assertFalse(isFutureMatchLine("Random text"), "Should handle random text");
+});
+
+testSuite.addTest('Future Match Parsing', 'Handle malformed future match lines', () => {
+    const malformedLines = [
+        "",
+        "TEAM is in bracket",
+        "TEAM is 1 in bracket 10 is DARK",
+        "incomplete future match data",
+        "TEAM is 1 in bracket 10 is DARK in game 16B-064"
+    ];
+    
+    malformedLines.forEach(line => {
+        const result = parseFutureMatchLine(line);
+        // Should return object with null values for malformed input
+        testSuite.assertTrue(result.team === null || result.team === "", `Malformed line should return null team: ${line}`);
+    });
+});
+
+testSuite.addTest('Future Match Parsing', 'buildFutureMatchesData functionality', () => {
+    const testLines = [
+        "LOWPO is 2 in bracket 47 is DARK in game 16B-064 on 20-Jul at 7:00 AM at SADDLEBACK COLLEGE 1",
+        "OAHU is 1 in bracket 45 is WHITE in game 16B-084 on 20-Jul at 11:10 AM at PORTOLA HS 2",
+        "SHORES is 1 in bracket 12 is DARK in game 16B-033 on 21-Jul at 2:30 PM at SAN JUAN HILLS HS",
+        "SHORES is 2 in bracket 15 is WHITE in game 16B-044 on 21-Jul at 4:00 PM at VENUE 2",
+        "19-Jul  #5 SAN JUAN HILLS HS  7:50 AM  22-LONGHORN=10  27-CT PREMIER=14  16U_BOYS_CHAMPIONSHIP"
+    ];
+    
+    const futureData = buildFutureMatchesData(testLines);
+    
+    testSuite.assertTrue(futureData.LOWPO && futureData.LOWPO.length === 1, "LOWPO should have 1 future match");
+    testSuite.assertTrue(futureData.OAHU && futureData.OAHU.length === 1, "OAHU should have 1 future match");
+    testSuite.assertTrue(futureData.SHORES && futureData.SHORES.length === 2, "SHORES should have 2 future matches");
+    testSuite.assertTrue(!futureData.LONGHORN, "Completed match teams should not be in future data");
+});
+
+testSuite.addTest('Future Match Parsing', 'teamHasFutureMatches check', () => {
+    // Set up test data
+    const originalData = futureMatchesData;
+    futureMatchesData = {
+        "SHORES": [
+            { team: "SHORES", gameId: "16B-033" },
+            { team: "SHORES", gameId: "16B-044" }
+        ],
+        "OAHU": [
+            { team: "OAHU", gameId: "16B-084" }
+        ]
+    };
+    
+    testSuite.assertTrue(teamHasFutureMatches("SHORES"), "SHORES should have future matches");
+    testSuite.assertTrue(teamHasFutureMatches("OAHU"), "OAHU should have future matches");
+    testSuite.assertFalse(teamHasFutureMatches("NONEXISTENT"), "Non-existent team should not have future matches");
+    
+    // Restore original data
+    futureMatchesData = originalData;
+});
+
+testSuite.addTest('Future Match Parsing', 'Parse multiple matches per line', () => {
+    const multiMatchLine = "LOWPO is 2 in bracket 47 is DARK in game 16B-064 on 20-Jul at 7:00 AM at SADDLEBACK COLLEGE 1; and WHITE in game 16B-096 on 20-Jul at 1:40 PM in SADDLEBACK COLLEGE 1";
+    const result = parseFutureMatchLine(multiMatchLine);
+    
+    testSuite.assertTrue(Array.isArray(result), "Should return array for multiple matches");
+    testSuite.assertEquals(result.length, 2, "Should parse 2 matches");
+    
+    // First match
+    testSuite.assertEquals(result[0].team, "LOWPO", "First match team");
+    testSuite.assertEquals(result[0].color, "DARK", "First match color");
+    testSuite.assertEquals(result[0].gameId, "16B-064", "First match game ID");
+    testSuite.assertEquals(result[0].time, "7:00 AM", "First match time");
+    
+    // Second match
+    testSuite.assertEquals(result[1].team, "LOWPO", "Second match team should be same");
+    testSuite.assertEquals(result[1].color, "WHITE", "Second match color");
+    testSuite.assertEquals(result[1].gameId, "16B-096", "Second match game ID");
+    testSuite.assertEquals(result[1].time, "1:40 PM", "Second match time");
+});
+
+testSuite.addTest('Future Match Parsing', 'Parse SD Shores multiple matches', () => {
+    const shoresMultiLine = "SAN DIEGO SHORES BLACK is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at WOOLLETT NEAR RIGHT; and WHITE in game 16B-097 on 20-Jul at 2:30 PM in WOOLLETT NEAR RIGHT";
+    const result = parseFutureMatchLine(shoresMultiLine);
+    
+    testSuite.assertTrue(Array.isArray(result), "Should return array for SD Shores multiple matches");
+    testSuite.assertEquals(result.length, 2, "Should parse 2 matches for SD Shores");
+    testSuite.assertEquals(result[0].team, "SAN DIEGO SHORES BLACK", "Team name parsing");
+    testSuite.assertEquals(result[1].team, "SAN DIEGO SHORES BLACK", "Second match should have same team");
+    testSuite.assertEquals(result[0].venue, "WOOLLETT NEAR RIGHT", "First venue");
+    testSuite.assertEquals(result[1].venue, "WOOLLETT NEAR RIGHT", "Second venue");
+});
+
+testSuite.addTest('Future Match Parsing', 'Handle venue format variations', () => {
+    const atVenue = "TEAM is 1 in bracket 10 is DARK in game 16B-001 on 20-Jul at 9:00 AM at VENUE NAME";
+    const inVenue = "TEAM is 1 in bracket 10 is DARK in game 16B-001 on 20-Jul at 9:00 AM in VENUE NAME";
+    
+    const result1 = parseFutureMatchLine(atVenue);
+    const result2 = parseFutureMatchLine(inVenue);
+    
+    testSuite.assertEquals(result1.venue, "VENUE NAME", "Should parse 'at VENUE' format");
+    testSuite.assertEquals(result2.venue, "VENUE NAME", "Should parse 'in VENUE' format");
+});
+
+testSuite.addTest('Future Match Parsing', 'buildFutureMatchesData with multiple matches', () => {
+    const testLines = [
+        "LOWPO is 2 in bracket 47 is DARK in game 16B-064 on 20-Jul at 7:00 AM at SADDLEBACK COLLEGE 1; and WHITE in game 16B-096 on 20-Jul at 1:40 PM in SADDLEBACK COLLEGE 1",
+        "SAN DIEGO SHORES BLACK is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at WOOLLETT NEAR RIGHT; and WHITE in game 16B-097 on 20-Jul at 2:30 PM in WOOLLETT NEAR RIGHT",
+        "SINGLE is 1 in bracket 10 is DARK in game 16B-001 on 20-Jul at 9:00 AM at VENUE"
+    ];
+    
+    const futureData = buildFutureMatchesData(testLines);
+    
+    testSuite.assertTrue(futureData.LOWPO && futureData.LOWPO.length === 2, "LOWPO should have 2 future matches");
+    testSuite.assertTrue(futureData["SAN DIEGO SHORES BLACK"] && futureData["SAN DIEGO SHORES BLACK"].length === 2, "SD Shores should have 2 future matches");
+    testSuite.assertTrue(futureData.SINGLE && futureData.SINGLE.length === 1, "SINGLE should have 1 future match");
+    
+    // Verify specific matches
+    const lowpoMatches = futureData.LOWPO;
+    testSuite.assertEquals(lowpoMatches[0].color, "DARK", "LOWPO first match color");
+    testSuite.assertEquals(lowpoMatches[1].color, "WHITE", "LOWPO second match color");
+});
+
+testSuite.addTest('Future Match Parsing', 'Backward compatibility with single matches', () => {
+    const singleMatchLine = "TEAM is 1 in bracket 10 is DARK in game 16B-001 on 20-Jul at 9:00 AM at VENUE";
+    const result = parseFutureMatchLine(singleMatchLine);
+    
+    testSuite.assertFalse(Array.isArray(result), "Should return single object for single match (backward compatibility)");
+    testSuite.assertEquals(result.team, "TEAM", "Single match team parsing");
+    testSuite.assertEquals(result.gameId, "16B-001", "Single match game ID");
+});
+
+// =============================================================================
+// FUTURE MATCH INTEGRATION TESTS - 15+ tests for unified match handling
+// =============================================================================
+
+testSuite.addTest('Future Match Integration', 'parseFutureMatchAsJOFormat basic conversion', () => {
+    const futureLine = "SHORES is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at WOOLLETT NEAR RIGHT";
+    const result = parseFutureMatchAsJOFormat(futureLine);
+    
+    testSuite.assertEquals(result.type, "future", "Should identify as future match");
+    testSuite.assertEquals(result.date, "20-Jul", "Should extract date");
+    testSuite.assertEquals(result.time, "11:10 AM", "Should extract time");
+    testSuite.assertEquals(result.venue, "WOOLLETT NEAR RIGHT", "Should extract venue");
+    testSuite.assertEquals(result.team1.name, "SHORES", "Should extract team name");
+    testSuite.assertEquals(result.team1.color, "WHITE", "Should extract team color");
+    testSuite.assertEquals(result.gameId, "16B-081", "Should extract game ID");
+    testSuite.assertEquals(result.status, "SCHEDULED", "Should set future status");
+});
+
+testSuite.addTest('Future Match Integration', 'parseFutureMatchAsJOFormat with full team name', () => {
+    const futureLine = "SAN DIEGO SHORES BLACK is 1 in bracket 41 is DARK in game 16B-097 on 20-Jul at 2:30 PM in VENUE 2";
+    const result = parseFutureMatchAsJOFormat(futureLine);
+    
+    testSuite.assertEquals(result.team1.name, "SAN DIEGO SHORES BLACK", "Should handle complex team names");
+    testSuite.assertTrue(result.team1.isShores, "Should detect Shores team");
+    testSuite.assertEquals(result.team1.color, "DARK", "Should extract DARK color");
+    testSuite.assertEquals(result.team2.name, "TBD", "Second team should be TBD");
+    testSuite.assertFalse(result.team2.isShores, "TBD team should not be Shores");
+});
+
+testSuite.addTest('Future Match Integration', 'parseJOMatchLine extended for future format', () => {
+    const completedLine = "19-Jul  #5 SAN JUAN HILLS HS  7:50 AM  22-LONGHORN=10  27-CT PREMIER=14  16U_BOYS_CHAMPIONSHIP";
+    const futureLine = "SAN FRANCISCO is 1 in bracket 47 is DARK in game 16B-059 on 19-Jul at 7:30 PM at PORTOLA HS 1";
+    
+    const completedResult = parseJOMatchLine(completedLine);
+    const futureResult = parseJOMatchLine(futureLine);
+    
+    // Completed match should work as before
+    testSuite.assertEquals(completedResult.type, "completed", "Completed match type");
+    testSuite.assertEquals(completedResult.team1.score, "10", "Completed match score");
+    
+    // Future match should be parsed as future
+    testSuite.assertEquals(futureResult.type, "future", "Future match type");
+    testSuite.assertEquals(futureResult.team1.name, "SAN FRANCISCO", "Future match team");
+    testSuite.assertEquals(futureResult.team2.name, "TBD", "Future match opponent TBD");
+    testSuite.assertEquals(futureResult.status, "SCHEDULED", "Future match status");
+});
+
+testSuite.addTest('Future Match Integration', 'Mixed data parsing with displayJOMatchResults', () => {
+    const mixedData = `Subject: HOT! RESULT UPDATE
+
+19-Jul  #47 PORTOLA HS 1  4:10 PM  LOWPO=7  SAN FRANCISCO=11  16U_BOYS_CHAMPIONSHIP
+
+Subject: HOT! ADVANCEMENT UPDATE: 
+
+SAN FRANCISCO is 1 in bracket 47 is DARK in game 16B-059 on 19-Jul at 7:30 PM at PORTOLA HS 1`;
+
+    // Mock DOM elements for testing
+    const mockMatchGrid = document.createElement('div');
+    mockMatchGrid.id = 'matchGrid';
+    document.body.appendChild(mockMatchGrid);
+
+    // Should not throw errors when processing mixed data
+    let errorThrown = false;
+    try {
+        displayJOMatchResults(mixedData);
+    } catch (error) {
+        errorThrown = true;
+        console.error('Mixed data parsing error:', error);
+    }
+    
+    testSuite.assertFalse(errorThrown, "Should handle mixed completed and future match data");
+    
+    // Cleanup
+    document.body.removeChild(mockMatchGrid);
+});
+
+testSuite.addTest('Future Match Integration', 'createJOMatchCardFromData for future matches', () => {
+    const futureMatchData = {
+        type: "future",
+        team1: { name: "SHORES", score: null, isShores: true, color: "WHITE", prefix: null },
+        team2: { name: "TBD", score: null, isShores: false, color: null, prefix: null },
+        time: "11:10 AM",
+        venue: "WOOLLETT NEAR RIGHT",
+        venueDisplayName: "WOOLLETT NEAR RIGHT",
+        matchNumber: null,
+        date: "20-Jul",
+        category: "16U_BOYS_CHAMPIONSHIP",
+        gameId: "16B-081",
+        status: "SCHEDULED"
+    };
+
+    const mockDiv = createJOMatchCardFromData(futureMatchData, 0, true);
+    
+    testSuite.assertTrue(mockDiv.innerHTML.includes("SHORES"), "Should display team name");
+    testSuite.assertTrue(mockDiv.innerHTML.includes("TBD"), "Should display TBD for unknown opponent");
+    testSuite.assertTrue(mockDiv.innerHTML.includes("SCHEDULED"), "Should display scheduled status");
+    testSuite.assertTrue(mockDiv.innerHTML.includes("vs"), "Should show vs instead of score");
+    testSuite.assertTrue(mockDiv.classList.contains("shores-highlight"), "Should highlight Shores matches");
+});
+
+testSuite.addTest('Future Match Integration', 'Future match filtering integration', () => {
+    const futureMatch = {
+        type: "future",
+        team1: { name: "SHORES", isShores: true },
+        team2: { name: "TBD", isShores: false },
+        venueDisplayName: "PORTOLA HS 1",
+        matchNumber: "1",
+        originalLine: "SHORES is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at PORTOLA HS 1"
+    };
+    
+    const completedMatch = {
+        type: "completed",
+        team1: { name: "LONGHORN", isShores: false },
+        team2: { name: "CT PREMIER", isShores: false },
+        venueDisplayName: "SAN JUAN HILLS HS",
+        matchNumber: "5",
+        originalLine: "19-Jul  #5 SAN JUAN HILLS HS  7:50 AM  22-LONGHORN=10  27-CT PREMIER=14  16U_BOYS_CHAMPIONSHIP"
+    };
+    
+    const matches = [futureMatch, completedMatch];
+    
+    // Mock the filter DOM elements
+    const mockShoresFilter = document.createElement('input');
+    mockShoresFilter.type = 'checkbox';
+    mockShoresFilter.id = 'filterShores';
+    mockShoresFilter.checked = true;
+    document.body.appendChild(mockShoresFilter);
+    
+    const filteredMatches = applyActiveFiltersToMatches(matches);
+    
+    testSuite.assertEquals(filteredMatches.length, 1, "Should filter to only Shores matches");
+    testSuite.assertEquals(filteredMatches[0].team1.name, "SHORES", "Should include future Shores match");
+    
+    // Cleanup
+    document.body.removeChild(mockShoresFilter);
+});
+
+testSuite.addTest('Future Match Integration', 'Team advancement resolution basic', () => {
+    const futureMatch = {
+        type: "future",
+        team1: { name: "Winner of 16B-047", isShores: false },
+        team2: { name: "Winner of 16B-048", isShores: false },
+        gameId: "16B-059"
+    };
+    
+    const completedMatches = [
+        { gameId: "16B-047", team1: { name: "LOWPO", score: "7" }, team2: { name: "SAN FRANCISCO", score: "11" } },
+        { gameId: "16B-048", team1: { name: "CHICAGO PARKS", score: "7" }, team2: { name: "VIPER PIGEON BLUE", score: "8" } }
+    ];
+    
+    const resolvedMatch = resolveTeamAdvancement(futureMatch, completedMatches);
+    
+    testSuite.assertEquals(resolvedMatch.team1.name, "SAN FRANCISCO", "Should resolve first team from completed match");
+    testSuite.assertEquals(resolvedMatch.team2.name, "VIPER PIGEON BLUE", "Should resolve second team from completed match");
+    testSuite.assertEquals(resolvedMatch.status, "READY", "Should update status when teams resolved");
+});
+
+testSuite.addTest('Future Match Integration', 'Mixed match type sorting and display', () => {
+    const mixedMatches = [
+        { type: "completed", date: "19-Jul", time: "7:50 AM", team1: { name: "LONGHORN" } },
+        { type: "future", date: "20-Jul", time: "11:10 AM", team1: { name: "SHORES" } },
+        { type: "completed", date: "19-Jul", time: "4:10 PM", team1: { name: "LOWPO" } },
+        { type: "future", date: "19-Jul", time: "7:30 PM", team1: { name: "SAN FRANCISCO" } }
+    ];
+    
+    const sorted = sortMatchesByDateTime(mixedMatches);
+    
+    // Should be chronologically sorted regardless of type
+    testSuite.assertEquals(sorted[0].time, "7:50 AM", "First chronologically");
+    testSuite.assertEquals(sorted[1].time, "4:10 PM", "Second chronologically");
+    testSuite.assertEquals(sorted[2].time, "7:30 PM", "Third chronologically");
+    testSuite.assertEquals(sorted[3].time, "11:10 AM", "Fourth chronologically (next day)");
+});
+
+testSuite.addTest('Future Match Integration', 'Future match status transitions', () => {
+    const scheduledMatch = { status: "SCHEDULED", date: "20-Jul", time: "11:10 AM" };
+    const readyMatch = { status: "READY", date: "20-Jul", time: "7:30 PM" };
+    
+    // Mock current time for testing
+    const now = new Date('July 20, 2025 10:30:00');
+    
+    const scheduledStatus = updateMatchStatus(scheduledMatch, now);
+    const readyStatus = updateMatchStatus(readyMatch, now);
+    
+    testSuite.assertEquals(scheduledStatus, "NEXT_UP", "Should transition to NEXT_UP when within 1 hour");
+    testSuite.assertEquals(readyStatus, "READY", "Should maintain READY status when not imminent");
+});
+
+testSuite.addTest('Future Match Integration', 'Performance with mixed match types', () => {
+    const mixedData = [];
+    
+    // Generate test data with mix of completed and future matches
+    for (let i = 0; i < 500; i++) {
+        if (i % 2 === 0) {
+            mixedData.push(`19-Jul  #${i % 8 + 1} VENUE  7:50 AM  ${i}-TEAM1=${i % 20}  ${i+1}-TEAM2=${(i+1) % 20}  16U_BOYS_CHAMPIONSHIP`);
+        } else {
+            mixedData.push(`TEAM${i} is 1 in bracket ${i % 50} is WHITE in game 16B-${String(i).padStart(3, '0')} on 20-Jul at 11:10 AM at VENUE ${i % 5 + 1}`);
+        }
+    }
+    
+    const startTime = performance.now();
+    
+    // Process mixed data (should not throw errors)
+    let processedData = [];
+    mixedData.forEach(line => {
+        if (isFutureMatchLine(line)) {
+            processedData.push(parseFutureMatchAsJOFormat(line));
+        } else if (isValidJOMatchLine(line)) {
+            processedData.push(parseJOMatchLine(line));
+        }
+    });
+    
+    const endTime = performance.now();
+    const processingTime = endTime - startTime;
+    
+    testSuite.assertTrue(processingTime < 100, `Mixed data processing should be fast: ${processingTime.toFixed(2)}ms`);
+    testSuite.assertEquals(processedData.length, 500, "Should process all mixed match types");
+    
+    // Log performance for debugging
+    testSuite.logPerformance('Mixed Match Processing', processingTime, 100);
+});
+
+// =============================================================================
 // DEDUPLICATION TESTS - 15+ tests  
 // =============================================================================
 

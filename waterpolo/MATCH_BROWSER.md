@@ -28,7 +28,8 @@ futures/
 - **Mobile-First Design**: Responsive cards optimized for mobile screens
 - **Advanced Filtering**: 7-category filter system with search functionality
 - **Interactive Features**: Clickable teams, search highlighting, collapsible details
-- **Test-Driven Development**: Comprehensive test suite with 80+ test cases
+- **Future Match Tracking**: Displays upcoming scheduled games for tournament advancement
+- **Test-Driven Development**: Comprehensive test suite with 90+ test cases
 
 ## Test-Driven Development (TDD) - MANDATORY WORKFLOW
 
@@ -41,7 +42,7 @@ futures/
 4. ✅ **Validate all tests pass** - 100% pass rate required
 
 **AFTER making ANY changes:**
-1. ✅ **Run complete test suite** - All 80+ tests must pass
+1. ✅ **Run complete test suite** - All 90+ tests must pass
 2. ✅ **Check performance benchmarks** - No speed regressions
 3. ✅ **Update tests if needed** - Reflect behavior changes
 4. ✅ **Document test updates** - If new tests added
@@ -194,6 +195,68 @@ if (customSearch) {
 - **Within categories**: OR logic (14U OR 16U OR 18U, BOYS OR GIRLS)
 - **Default behavior**: 16U + BOYS = shows only 16U boys matches
 - **Sequential filtering**: Each category filters results from previous category
+
+## Future Match Integration
+
+### Parsing System
+The system parses future match data from Kahuna Events advancement updates with support for complex formats:
+
+#### Supported Data Formats
+- **Single matches**: `TEAM is 1 in bracket 47 is DARK in game 16B-064 on 20-Jul at 7:00 AM at VENUE`
+- **Multiple matches**: `TEAM is 1 in bracket 47 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at VENUE; and WHITE in game 16B-097 on 20-Jul at 2:30 PM in VENUE`
+- **Venue variations**: Supports both "at VENUE" and "in VENUE" formats
+- **Complex team names**: Handles full names like "SAN DIEGO SHORES BLACK"
+
+#### Processing Flow
+1. **Data filtering**: Identifies future match lines using pattern matching
+2. **Multi-match splitting**: Parses "; and" separators for multiple games per line
+3. **Team association**: Links future matches to completed match participants
+4. **Data structure**: Builds efficient lookup table by team name
+
+### Display Methods
+
+#### 1. Calendar Icons
+- **Visual indicators**: 📅 icons appear next to team names with future matches
+- **Debug logging**: Enhanced logging to troubleshoot display issues
+- **Click functionality**: Opens detailed popup modal with all future match information
+
+#### 2. Details Section Integration
+- **Seamless integration**: Future matches appear in existing match card details
+- **No extra clicks**: Information available when users expand match details
+- **Comprehensive display**: Shows all upcoming games for both teams in a match
+
+#### Details Display Format
+```
+🔮 Upcoming Matches:
+LOWPO:
+  DARK in game 16B-064    20-Jul at 7:00 AM    SADDLEBACK COLLEGE 1
+  WHITE in game 16B-096   20-Jul at 1:40 PM    SADDLEBACK COLLEGE 1
+
+SAN DIEGO SHORES BLACK:
+  WHITE in game 16B-081   20-Jul at 11:10 AM   WOOLLETT NEAR RIGHT
+  WHITE in game 16B-097   20-Jul at 2:30 PM    WOOLLETT NEAR RIGHT
+```
+
+### Technical Implementation
+
+#### Key Functions
+- **`parseFutureMatchLine()`**: Enhanced to handle single and multiple matches per line
+- **`buildFutureMatchesData()`**: Processes arrays and flattens into team lookup structure
+- **`getFutureMatchesForDetails()`**: Formats future matches for details section display
+- **`teamHasFutureMatches()`**: Efficient lookup for calendar icon display
+
+#### Performance Features
+- **Backward compatibility**: Single matches work seamlessly alongside multiple matches
+- **Efficient parsing**: Optimized regex patterns with proper error handling
+- **Memory management**: Future matches stored in global lookup for fast access
+- **No filter interference**: Future matches display regardless of active result filters
+
+### Testing Coverage
+- **10+ new tests** added for future match parsing functionality
+- **Multiple match scenarios** validated with real tournament data
+- **Edge case handling** for malformed input and missing fields
+- **Integration testing** for complete workflow validation
+- **Real data validation** with actual Kahuna Events advancement feeds
 
 ## Interactive Features
 
