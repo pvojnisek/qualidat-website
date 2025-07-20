@@ -199,7 +199,7 @@ if (customSearch) {
 ## Future Match Integration
 
 ### Parsing System
-The system parses future match data from Kahuna Events advancement updates with support for complex formats:
+The system parses future match data from Kahuna Events advancement updates with support for complex formats and **automatic game grouping**.
 
 #### Supported Data Formats
 - **Single matches**: `TEAM is 1 in bracket 47 is DARK in game 16B-064 on 20-Jul at 7:00 AM at VENUE`
@@ -207,11 +207,29 @@ The system parses future match data from Kahuna Events advancement updates with 
 - **Venue variations**: Supports both "at VENUE" and "in VENUE" formats
 - **Complex team names**: Handles full names like "SAN DIEGO SHORES BLACK"
 
+#### Future Match Grouping
+**NEW**: The system now automatically groups teams scheduled for the same game ID into single match cards:
+
+**Example Input:**
+- Line 1: `SAN DIEGO SHORES BLACK is WHITE in game 16B-081...`
+- Line 2: `COMMERCE is DARK in game 16B-081...`
+
+**Result:** One match card showing "SAN DIEGO SHORES BLACK vs COMMERCE" instead of two separate cards.
+
+#### Water Polo Positioning Convention
+**CRITICAL**: The system follows official water polo conventions:
+- **WHITE team always positioned on LEFT (team1)**
+- **DARK team always positioned on RIGHT (team2)**
+- This positioning is maintained regardless of the order lines appear in the data feed
+- Ensures consistent display that matches official water polo scorekeeping standards
+
 #### Processing Flow
 1. **Data filtering**: Identifies future match lines using pattern matching
 2. **Multi-match splitting**: Parses "; and" separators for multiple games per line
-3. **Team association**: Links future matches to completed match participants
-4. **Data structure**: Builds efficient lookup table by team name
+3. **Game ID grouping**: Groups teams by game ID (e.g., "16B-081") into single match objects
+4. **Position assignment**: Assigns WHITE teams to left (team1), DARK teams to right (team2)
+5. **Team association**: Links future matches to completed match participants
+6. **Data structure**: Builds efficient lookup table by team name
 
 ### Display Methods
 
@@ -240,19 +258,35 @@ SAN DIEGO SHORES BLACK:
 ### Technical Implementation
 
 #### Key Functions
+- **`groupFutureMatchesByGameId()`**: **NEW** - Groups teams by game ID with water polo positioning
 - **`parseFutureMatchLine()`**: Enhanced to handle single and multiple matches per line
 - **`buildFutureMatchesData()`**: Processes arrays and flattens into team lookup structure
 - **`getFutureMatchesForDetails()`**: Formats future matches for details section display
 - **`teamHasFutureMatches()`**: Efficient lookup for calendar icon display
+- **`createJOMatchCardFromData()`**: Enhanced to display team colors for future matches
+
+#### Future Match Grouping Algorithm
+```javascript
+// 1. Parse all future match lines into individual team objects
+// 2. Group by game ID (e.g., "16B-081")
+// 3. Apply water polo positioning:
+//    - Find WHITE team → assign to team1 (left)
+//    - Find DARK team → assign to team2 (right)
+// 4. Handle partial information (TBD for unknown teams)
+// 5. Create single match object per game
+```
 
 #### Performance Features
 - **Backward compatibility**: Single matches work seamlessly alongside multiple matches
 - **Efficient parsing**: Optimized regex patterns with proper error handling
 - **Memory management**: Future matches stored in global lookup for fast access
 - **No filter interference**: Future matches display regardless of active result filters
+- **Consistent positioning**: Water polo convention enforced regardless of data order
 
 ### Testing Coverage
-- **10+ new tests** added for future match parsing functionality
+- **15+ new tests** added for future match grouping and water polo positioning
+- **Future match grouping**: Tests for same game ID consolidation, team positioning, partial information
+- **Water polo conventions**: Tests ensuring WHITE teams always appear on left regardless of data order
 - **Multiple match scenarios** validated with real tournament data
 - **Edge case handling** for malformed input and missing fields
 - **Integration testing** for complete workflow validation

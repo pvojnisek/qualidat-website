@@ -461,19 +461,25 @@ function displayJOMatchResults(data) {
         console.log(`✅ Processing ${validLines.length} valid match rows`);
     }
     
-    // Remove duplicate entries from source data
-    const uniqueLines = deduplicateMatches(validLines);
+    // Remove duplicate entries from completed matches only
+    const uniqueCompletedLines = deduplicateMatches(completedLines);
     
     // **NEW**: Build future matches data from ALL lines (before filtering)
     buildFutureMatchesData(lines);
     
-    // **NEW APPROACH**: Parse all data ONCE upfront into structured match objects
-    const allMatchObjects = uniqueLines.map(line => {
+    // **NEW**: Group future matches by game ID to create proper match objects
+    const groupedFutureMatches = groupFutureMatchesByGameId(lines);
+    
+    // **NEW APPROACH**: Parse completed matches and combine with grouped future matches
+    const completedMatchObjects = uniqueCompletedLines.map(line => {
         const matchData = parseJOMatchLine(line);
         // Attach original line for backward compatibility
         matchData.originalLine = line;
         return matchData;
     });
+    
+    // Combine completed and future match objects
+    const allMatchObjects = [...completedMatchObjects, ...groupedFutureMatches];
     
     // Apply filters using structured match objects
     const allFilteredMatches = applyActiveFiltersToMatches(allMatchObjects);
@@ -989,6 +995,87 @@ function buildFutureMatchesData(lines) {
     console.log(`🔄 Multi-match lines now supported - teams can have multiple future games`);
     
     return futureMatchesData;
+}
+
+function groupFutureMatchesByGameId(lines) {
+    // Group future matches by game ID to create proper match objects
+    // Water polo convention: WHITE team always on left (team1), DARK team on right (team2)
+    
+    console.log('🏆 Grouping future matches by game ID...');
+    
+    // Filter and parse all future match lines
+    const futureLines = lines.filter(line => isFutureMatchLine(line));
+    const allFutureMatches = [];
+    
+    // Parse all future matches first
+    futureLines.forEach(line => {
+        const parseResult = parseFutureMatchLine(line);
+        const matches = Array.isArray(parseResult) ? parseResult : [parseResult];
+        
+        matches.forEach(futureMatch => {
+            if (futureMatch && futureMatch.team && futureMatch.gameId) {
+                allFutureMatches.push(futureMatch);
+            }
+        });
+    });
+    
+    // Group by game ID
+    const gameGroups = {};
+    allFutureMatches.forEach(match => {
+        if (!gameGroups[match.gameId]) {
+            gameGroups[match.gameId] = [];
+        }
+        gameGroups[match.gameId].push(match);
+    });
+    
+    // Create grouped match objects
+    const groupedMatches = [];
+    
+    Object.entries(gameGroups).forEach(([gameId, matches]) => {
+        if (matches.length === 0) return;
+        
+        // Find WHITE and DARK teams (water polo positioning convention)
+        const whiteTeam = matches.find(m => m.color === 'WHITE');
+        const darkTeam = matches.find(m => m.color === 'DARK');
+        
+        // Use first match as template for shared data
+        const templateMatch = matches[0];
+        
+        // Create grouped match object following water polo convention
+        const groupedMatch = {
+            type: 'future',
+            team1: { // LEFT side - WHITE team in water polo
+                name: whiteTeam ? whiteTeam.team : 'TBD',
+                score: null,
+                isShores: whiteTeam ? detectShoresTeam(whiteTeam.team) : false,
+                prefix: null,
+                color: 'WHITE'
+            },
+            team2: { // RIGHT side - DARK team in water polo
+                name: darkTeam ? darkTeam.team : 'TBD',
+                score: null,
+                isShores: darkTeam ? detectShoresTeam(darkTeam.team) : false,
+                prefix: null,
+                color: 'DARK'
+            },
+            time: templateMatch.time,
+            venue: templateMatch.venue,
+            venueDisplayName: templateMatch.venue,
+            matchNumber: null,
+            date: templateMatch.date,
+            category: '16U_BOYS_CHAMPIONSHIP',
+            gameId: gameId,
+            status: 'SCHEDULED',
+            originalLine: `Future match: ${gameId}` // Composite original line
+        };
+        
+        groupedMatches.push(groupedMatch);
+    });
+    
+    console.log(`🏊‍♂️ Grouped ${allFutureMatches.length} individual future matches into ${groupedMatches.length} game objects`);
+    console.log(`⚪ WHITE teams positioned left (team1), ⚫ DARK teams positioned right (team2)`);
+    
+    return groupedMatches;
 }
 
 function teamHasFutureMatches(teamName) {

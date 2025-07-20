@@ -1236,6 +1236,183 @@ function displayPerformanceResults() {
     perfContainer.style.display = 'block';
 }
 
+// =============================================
+// Future Match Grouping Tests
+// =============================================
+
+testSuite.addTest('Future Match Grouping', 'Group same game ID from different lines', () => {
+    const lines = [
+        "SAN DIEGO SHORES BLACK is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at WOOLLETT NEAR RIGHT",
+        "COMMERCE is 1 in bracket 28 is DARK in game 16B-081 on 20-Jul at 11:10 AM at WOOLLETT NEAR RIGHT"
+    ];
+    
+    const groupedMatches = groupFutureMatchesByGameId(lines);
+    
+    testSuite.assertEquals(groupedMatches.length, 1, "Should create 1 grouped match from 2 lines with same game ID");
+    
+    const match = groupedMatches[0];
+    testSuite.assertEquals(match.gameId, "16B-081", "Should preserve game ID");
+    testSuite.assertEquals(match.team1.name, "SAN DIEGO SHORES BLACK", "WHITE team should be on left (team1)");
+    testSuite.assertEquals(match.team2.name, "COMMERCE", "DARK team should be on right (team2)");
+    testSuite.assertEquals(match.team1.color, "WHITE", "Team1 should have WHITE color stored internally");
+    testSuite.assertEquals(match.team2.color, "DARK", "Team2 should have DARK color stored internally");
+    testSuite.assertTrue(match.team1.isShores, "Should detect Shores team");
+    testSuite.assertFalse(match.team2.isShores, "Should not mark COMMERCE as Shores");
+});
+
+testSuite.addTest('Future Match Grouping', 'Handle single team known', () => {
+    const lines = [
+        "SAN DIEGO SHORES BLACK is 1 in bracket 41 is WHITE in game 16B-082 on 20-Jul at 12:10 PM at WOOLLETT NEAR RIGHT"
+    ];
+    
+    const groupedMatches = groupFutureMatchesByGameId(lines);
+    
+    testSuite.assertEquals(groupedMatches.length, 1, "Should create 1 match even with only 1 team known");
+    
+    const match = groupedMatches[0];
+    testSuite.assertEquals(match.team1.name, "SAN DIEGO SHORES BLACK", "Known WHITE team should be on left");
+    testSuite.assertEquals(match.team2.name, "TBD", "Unknown DARK team should be TBD");
+    testSuite.assertEquals(match.team1.color, "WHITE", "Known team should have WHITE color");
+    testSuite.assertEquals(match.team2.color, "DARK", "TBD team should have DARK color");
+});
+
+testSuite.addTest('Future Match Grouping', 'Handle DARK team only known', () => {
+    const lines = [
+        "LOWPO is 2 in bracket 47 is DARK in game 16B-064 on 20-Jul at 7:00 AM at SADDLEBACK COLLEGE 1"
+    ];
+    
+    const groupedMatches = groupFutureMatchesByGameId(lines);
+    
+    testSuite.assertEquals(groupedMatches.length, 1, "Should create 1 match with DARK team only");
+    
+    const match = groupedMatches[0];
+    testSuite.assertEquals(match.team1.name, "TBD", "Unknown WHITE team should be TBD on left");
+    testSuite.assertEquals(match.team2.name, "LOWPO", "Known DARK team should be on right");
+    testSuite.assertEquals(match.team1.color, "WHITE", "TBD team should have WHITE color");
+    testSuite.assertEquals(match.team2.color, "DARK", "Known team should have DARK color");
+});
+
+testSuite.addTest('Future Match Grouping', 'Handle multiple different games', () => {
+    const lines = [
+        "TEAM A is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at VENUE 1",
+        "TEAM B is 1 in bracket 28 is DARK in game 16B-081 on 20-Jul at 11:10 AM at VENUE 1",
+        "TEAM C is 2 in bracket 47 is WHITE in game 16B-064 on 20-Jul at 7:00 AM at VENUE 2",
+        "TEAM D is 3 in bracket 52 is DARK in game 16B-064 on 20-Jul at 7:00 AM at VENUE 2"
+    ];
+    
+    const groupedMatches = groupFutureMatchesByGameId(lines);
+    
+    testSuite.assertEquals(groupedMatches.length, 2, "Should create 2 grouped matches from 4 lines with 2 different game IDs");
+    
+    // Find the matches by game ID
+    const match081 = groupedMatches.find(m => m.gameId === "16B-081");
+    const match064 = groupedMatches.find(m => m.gameId === "16B-064");
+    
+    testSuite.assertTrue(match081 !== undefined, "Should find match for game 16B-081");
+    testSuite.assertTrue(match064 !== undefined, "Should find match for game 16B-064");
+    
+    testSuite.assertEquals(match081.team1.name, "TEAM A", "WHITE team should be on left for 16B-081");
+    testSuite.assertEquals(match081.team2.name, "TEAM B", "DARK team should be on right for 16B-081");
+    testSuite.assertEquals(match064.team1.name, "TEAM C", "WHITE team should be on left for 16B-064");
+    testSuite.assertEquals(match064.team2.name, "TEAM D", "DARK team should be on right for 16B-064");
+});
+
+testSuite.addTest('Future Match Grouping', 'Handle malformed future match lines', () => {
+    const lines = [
+        "SAN DIEGO SHORES BLACK is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at VENUE",
+        "INVALID LINE FORMAT",
+        "",
+        "COMMERCE is 1 in bracket 28 is DARK in game 16B-081 on 20-Jul at 11:10 AM at VENUE"
+    ];
+    
+    const groupedMatches = groupFutureMatchesByGameId(lines);
+    
+    testSuite.assertEquals(groupedMatches.length, 1, "Should handle malformed lines gracefully");
+    
+    const match = groupedMatches[0];
+    testSuite.assertEquals(match.team1.name, "SAN DIEGO SHORES BLACK", "Should process valid WHITE team");
+    testSuite.assertEquals(match.team2.name, "COMMERCE", "Should process valid DARK team");
+});
+
+testSuite.addTest('Future Match Grouping', 'Preserve venue and time information', () => {
+    const lines = [
+        "SHORES is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at WOOLLETT NEAR RIGHT",
+        "TEAM B is 1 in bracket 28 is DARK in game 16B-081 on 20-Jul at 11:10 AM at WOOLLETT NEAR RIGHT"
+    ];
+    
+    const groupedMatches = groupFutureMatchesByGameId(lines);
+    
+    testSuite.assertEquals(groupedMatches.length, 1, "Should create 1 grouped match");
+    
+    const match = groupedMatches[0];
+    testSuite.assertEquals(match.date, "20-Jul", "Should preserve date");
+    testSuite.assertEquals(match.time, "11:10 AM", "Should preserve time");
+    testSuite.assertEquals(match.venue, "WOOLLETT NEAR RIGHT", "Should preserve venue");
+    testSuite.assertEquals(match.venueDisplayName, "WOOLLETT NEAR RIGHT", "Should set venue display name");
+    testSuite.assertEquals(match.category, "16U_BOYS_CHAMPIONSHIP", "Should set default category");
+    testSuite.assertEquals(match.status, "SCHEDULED", "Should set default status");
+    testSuite.assertEquals(match.type, "future", "Should mark as future match");
+});
+
+testSuite.addTest('Future Match Grouping', 'Handle multi-match lines properly', () => {
+    const lines = [
+        "SAN DIEGO SHORES BLACK is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at WOOLLETT NEAR RIGHT; and WHITE in game 16B-097 on 20-Jul at 2:30 PM in WOOLLETT NEAR RIGHT",
+        "COMMERCE is 1 in bracket 28 is DARK in game 16B-081 on 20-Jul at 11:10 AM at WOOLLETT NEAR RIGHT"
+    ];
+    
+    const groupedMatches = groupFutureMatchesByGameId(lines);
+    
+    // Should create matches for both games mentioned in multi-match line
+    testSuite.assertTrue(groupedMatches.length >= 2, "Should create matches for multiple games");
+    
+    const match081 = groupedMatches.find(m => m.gameId === "16B-081");
+    const match097 = groupedMatches.find(m => m.gameId === "16B-097");
+    
+    testSuite.assertTrue(match081 !== undefined, "Should find match for game 16B-081");
+    testSuite.assertTrue(match097 !== undefined, "Should find match for game 16B-097");
+    
+    // Game 16B-081 should have both teams
+    testSuite.assertEquals(match081.team1.name, "SAN DIEGO SHORES BLACK", "Should have Shores as WHITE team");
+    testSuite.assertEquals(match081.team2.name, "COMMERCE", "Should have Commerce as DARK team");
+    
+    // Game 16B-097 should have only Shores team
+    testSuite.assertEquals(match097.team1.name, "SAN DIEGO SHORES BLACK", "Should have Shores as WHITE team");
+    testSuite.assertEquals(match097.team2.name, "TBD", "Should have TBD as opponent");
+});
+
+// =============================================
+// Water Polo Positioning Convention Tests
+// =============================================
+
+testSuite.addTest('Water Polo Convention', 'WHITE team always on left (team1)', () => {
+    const lines = [
+        "TEAM DARK is 1 in bracket 28 is DARK in game 16B-081 on 20-Jul at 11:10 AM at VENUE",
+        "TEAM WHITE is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at VENUE"
+    ];
+    
+    const groupedMatches = groupFutureMatchesByGameId(lines);
+    const match = groupedMatches[0];
+    
+    testSuite.assertEquals(match.team1.name, "TEAM WHITE", "WHITE team should always be team1 (left) regardless of line order");
+    testSuite.assertEquals(match.team2.name, "TEAM DARK", "DARK team should always be team2 (right) regardless of line order");
+    testSuite.assertEquals(match.team1.color, "WHITE", "Team1 should have WHITE color");
+    testSuite.assertEquals(match.team2.color, "DARK", "Team2 should have DARK color");
+});
+
+testSuite.addTest('Water Polo Convention', 'Handle reversed line order correctly', () => {
+    // Test with DARK team line first, WHITE team line second
+    const lines = [
+        "COMMERCE is 1 in bracket 28 is DARK in game 16B-081 on 20-Jul at 11:10 AM at VENUE",
+        "SHORES is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at VENUE"
+    ];
+    
+    const groupedMatches = groupFutureMatchesByGameId(lines);
+    const match = groupedMatches[0];
+    
+    testSuite.assertEquals(match.team1.name, "SHORES", "WHITE team should be team1 even when line appears second");
+    testSuite.assertEquals(match.team2.name, "COMMERCE", "DARK team should be team2 even when line appears first");
+});
+
 // Initialize and display test count on page load
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🧪 JO Test Suite initialized');

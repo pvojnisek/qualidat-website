@@ -276,10 +276,25 @@ The Match Browser provides real-time tournament data streaming with:
 ## Future Match System
 
 ### Overview
-The Junior Olympics live results system now includes **future match tracking** that displays upcoming scheduled games for teams based on tournament advancement data from Kahuna Events feeds.
+The Junior Olympics live results system now includes **future match tracking** that displays upcoming scheduled games for teams based on tournament advancement data from Kahuna Events feeds. The system features **automatic game grouping** and follows official water polo positioning conventions.
+
+### Water Polo Positioning Convention
+**CRITICAL RULE**: The system follows official water polo standards:
+- **WHITE team is ALWAYS positioned on the LEFT (team1)**
+- **DARK team is ALWAYS positioned on the RIGHT (team2)**
+- This positioning is maintained regardless of the order data appears in feeds
+- Ensures consistency with official water polo scorekeeping and broadcasting standards
+
+### Future Match Grouping
+**NEW FEATURE**: Teams scheduled for the same game are automatically grouped into single match cards:
+- **Before**: Two separate cards for "SHORES vs TBD" and "COMMERCE vs TBD"
+- **After**: One card showing "SHORES vs COMMERCE" for the same game
+- **Benefits**: More accurate representation, cleaner UI, follows water polo conventions
 
 ### Data Processing
 - **Multi-match parsing**: Handles lines with multiple future games using "; and" separator format
+- **Game ID grouping**: Consolidates teams by game ID (e.g., "16B-081") into single match objects
+- **Position assignment**: Enforces WHITE left/DARK right positioning regardless of data order
 - **Real-time updates**: Future matches update automatically with live tournament data feeds
 - **Team association**: Links future games to current match participants for easy access
 - **Complex parsing**: Supports descriptive advancement format vs. standard match results
