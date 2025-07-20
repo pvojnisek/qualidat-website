@@ -9,44 +9,10 @@ let countdownInterval = null;
 let nextRefreshTime = 0;
 let isArchivedMode = false; // Flag to track archived vs live data mode
 let archivedDataTimestamp = null; // Store timestamp from archived data
+let futureMatchesData = {}; // Store future matches by team name
 
-// Age group configurations
-const JO_CONFIGS = {
-    '14-championship': {
-        title: '14U Boys Championship',
-        feedUrl: 'https://feeds.kahunaevents.org/joboys14u',
-        category: '14U_BOYS_CHAMPIONSHIP'
-    },
-    '14-classic': {
-        title: '14U Boys Classic',
-        feedUrl: 'https://feeds.kahunaevents.org/joboys14ux',
-        category: '14U_BOYS_CLASSIC'
-    },
-    '16-championship': {
-        title: '16U Boys Championship',
-        feedUrl: 'https://feeds.kahunaevents.org/joboys16u',
-        category: '16U_BOYS_CHAMPIONSHIP'
-    },
-    '16-classic': {
-        title: '16U Boys Classic',
-        feedUrl: 'https://feeds.kahunaevents.org/joboys16ux',
-        category: '16U_BOYS_CLASSIC'
-    },
-    '18-championship': {
-        title: '18U Boys Championship',
-        feedUrl: 'https://feeds.kahunaevents.org/joboys18u',
-        category: '18U_BOYS_CHAMPIONSHIP'
-    },
-    '18-classic': {
-        title: '18U Boys Classic',
-        feedUrl: 'https://feeds.kahunaevents.org/joboys18ux',
-        category: '18U_BOYS_CLASSIC'
-    }
-};
-
-// Global configuration and CORS proxy configuration
-let currentConfig = null;
-let JO_URL = 'https://feeds.kahunaevents.org/joboys16u'; // Default URL, will be updated dynamically
+// CORS proxy configuration - ordered by speed (fastest first)
+const JO_URL = 'https://feeds.kahunaevents.org/joboys16u';
 const PROXIES = [
     { name: 'CodeTabs', url: 'https://api.codetabs.com/v1/proxy/?quest=' },
     { name: 'ThingProxy', url: 'https://thingproxy.freeboard.io/fetch/' },
@@ -76,435 +42,176 @@ const SHORES_PATTERNS = [
 // JO Tournament dates and venues
 const JO_VENUES = ['#1', '#2', '#3', '#4', '#5', '#6', '#7', '#8'];
 
-// NEW MATCH DATABASE SYSTEM - API Functions
-
-// Global match database for centralized storage
-let matchDatabase = new Map();
-
-function get_match(match_id) {
-    return matchDatabase.get(match_id) || null;
-}
-
-function update_match(match_id, data) {
-    // Get existing match or create new one
-    let match = matchDatabase.get(match_id) || createEmptyMatch(match_id);
+function deduplicateMatches(lines) {
+    const seen = new Set();
+    const uniqueLines = [];
     
-    // Merge new data into match
-    mergeDataIntoMatch(match, data);
-    
-    // Store updated match
-    matchDatabase.set(match_id, match);
-    
-    return match;
-}
-
-function mergeDataIntoMatch(match, data) {
-    // Always add source line for debugging
-    if (data.sourceLine) {
-        match.sourceLines.push(data.sourceLine);
-    }
-    
-    // Handle different types of data updates
-    if (data.type === 'advancement') {
-        // From advancement lines: team positioning
-        if (data.position === 1) {
-            match.whiteTeam = data.team;
-        } else if (data.position === 2) {
-            match.darkTeam = data.team;
-        }
+    for (const line of lines) {
+        // Create a unique identifier for each match
+        const matchSignature = createJOMatchSignature(line);
         
-        // Store advancement info
-        if (data.color && data.team) {
-            if (data.position === 1) {
-                match.winnerAdvancement.push({
-                    team: data.team,
-                    color: data.color,
-                    futureGames: data.futureGames || []
-                });
-            } else if (data.position === 2) {
-                match.loserAdvancement.push({
-                    team: data.team,
-                    color: data.color,
-                    futureGames: data.futureGames || []
-                });
-            }
+        if (!seen.has(matchSignature)) {
+            seen.add(matchSignature);
+            uniqueLines.push(line);
         }
     }
     
-    else if (data.type === 'future_assignment') {
-        // Team assigned to future match
-        if (data.color === 'WHITE') {
-            match.whiteTeam = data.team;
-        } else if (data.color === 'DARK') {
-            match.darkTeam = data.team;
-        }
+    return uniqueLines;
+}
+
+function createJOMatchSignature(line) {
+    // Parse the JO line to extract key identifying information
+    // JO Format: "19-Jul  #5 SAN JUAN HILLS HS  7:50 AM  22-LONGHORN=10  27-CT PREMIER=14  16U_BOYS_CHAMPIONSHIP"
+    const fields = line.split(/\s{2,}/);
+    
+    if (fields.length >= 5) {
+        const date = fields[0]?.trim() || '';
+        const venue = fields[1]?.trim() || '';
+        const time = fields[2]?.trim() || '';
+        const team1Data = fields[3]?.trim() || '';
+        const team2Data = fields[4]?.trim() || '';
         
-        // Update match scheduling info if provided
-        if (data.date) match.date = data.date;
-        if (data.time) match.time = data.time;
-        if (data.venue) match.venue = data.venue;
+        // Extract team names from JO format (e.g., "22-LONGHORN=10")
+        const team1Name = team1Data.split('=')[0]?.replace(/^\d+-/, '') || '';
+        const team2Name = team2Data.split('=')[0]?.replace(/^\d+-/, '') || '';
         
-        match.status = 'SCHEDULED';
+        return `${date}_${venue}_${time}_${team1Name}_${team2Name}`;
     }
     
-    else if (data.type === 'result') {
-        // From result lines: scores, venue, timing, completion
-        match.date = data.date;
-        match.time = data.time;
-        match.venue = data.venue;
-        match.whiteTeam = data.team1;
-        match.darkTeam = data.team2;
-        match.score = { white: data.score1, dark: data.score2 };
-        match.status = 'COMPLETED';
-        match.category = data.category;
-        match.isComplete = true;
-    }
-    
-    // Update computed properties
-    updateMatchShoresStatus(match);
-    
-    // Update match status based on available data
-    if (match.isComplete) {
-        match.status = 'COMPLETED';
-    } else if (match.whiteTeam || match.darkTeam) {
-        match.status = 'SCHEDULED';
-    } else {
-        match.status = 'BUILDING';
-    }
+    // Last resort: use the entire line (but trim whitespace)
+    return line.trim();
 }
 
-function parseLineData(line, matchId) {
-    const data = {
-        sourceLine: line,
-        targetMatchId: matchId
-    };
-    
-    if (isAdvancementLine(line)) {
-        const advancement = parseAdvancementLine(line);
-        if (advancement && advancement.currentBracket === matchId) {
-            // Team played in this match (past)
-            data.type = 'advancement';
-            data.team = advancement.team;
-            data.position = advancement.position;
-            data.color = advancement.color;
-            data.futureGames = advancement.futureMatches;
-        } else if (advancement && advancement.futureMatches) {
-            // Check if this match is a future game for the team
-            const futureGame = advancement.futureMatches.find(game => game.matchId === matchId);
-            if (futureGame) {
-                data.type = 'future_assignment';
-                data.team = advancement.team;
-                data.color = advancement.color;
-                data.date = futureGame.date;
-                data.time = futureGame.time;
-                data.venue = futureGame.venue;
-            }
-        }
-    }
-    
-    else if (isResultLine(line)) {
-        const result = parseResultLine(line);
-        if (result && result.matchId === matchId) {
-            data.type = 'result';
-            data.date = result.date;
-            data.time = result.time;
-            data.venue = result.venue;
-            data.team1 = result.team1;
-            data.team2 = result.team2;
-            data.score1 = result.score1;
-            data.score2 = result.score2;
-            data.category = result.category;
-        }
-    }
-    
-    return data;
-}
-
-// NEW MATCH DATABASE SYSTEM - Core Functions
-
-function extractMatchIds(line) {
-    const matchIds = [];
-    
-    // Extract from bracket numbers: "bracket 41" → 41
-    const bracketMatch = line.match(/bracket\s+(\d+)/);
-    if (bracketMatch) {
-        matchIds.push(parseInt(bracketMatch[1]));
-    }
-    
-    // Extract from game IDs: "game 16B-081" → 81
-    const gameMatches = line.matchAll(/game\s+\d+[A-Z]-(\d+)/g);
-    for (const match of gameMatches) {
-        matchIds.push(parseInt(match[1]));
-    }
-    
-    // Extract from venue numbers: "#41" → 41
-    const venueMatch = line.match(/#(\d+)\s/);
-    if (venueMatch) {
-        matchIds.push(parseInt(venueMatch[1]));
-    }
-    
-    return [...new Set(matchIds)]; // Remove duplicates
-}
-
-function createEmptyMatch(id) {
-    return {
-        id: id,
-        date: null,
-        time: null,
-        venue: null,
-        whiteTeam: null,
-        darkTeam: null,
-        score: { white: null, dark: null },
-        status: 'BUILDING',
-        category: null,
-        bracket: id,
-        winnerAdvancement: [],
-        loserAdvancement: [],
-        sourceLines: [],
-        isComplete: false,
-        isShoresMatch: false
-    };
-}
-
-function isAdvancementLine(line) {
-    return line.includes(' is ') && 
-           line.includes(' in bracket ') && 
-           (line.includes(' is DARK ') || line.includes(' is WHITE '));
-}
-
-function isResultLine(line) {
-    return /^\d{1,2}-[A-Za-z]{3}\s+#\d+/.test(line.trim());
-}
-
-function buildMatchesDatabase(rawData) {
-    console.log('🔨 Building matches database with API functions...');
-    
-    // Clear database for fresh build
-    matchDatabase.clear();
-    
-    const lines = rawData.split('\n').filter(line => line.trim() && !line.startsWith('#'));
-    
-    lines.forEach((line, lineNumber) => {
-        const lineNum = lineNumber + 1;
-        console.log(`Processing line ${lineNum}: ${line.substring(0, 50)}...`);
-        
-        // Extract match IDs from this line
-        const matchIds = extractMatchIds(line);
-        
-        // Process each match mentioned in this line
-        matchIds.forEach(matchId => {
-            console.log(`  → Updating match ${matchId}`);
-            
-            // Parse data from this line for this specific match
-            const data = parseLineData(line, matchId);
-            
-            // Update match with new data using API
-            update_match(matchId, data);
-        });
-    });
-    
-    // Return all matches as array
-    const matches = Array.from(matchDatabase.values());
-    console.log(`✅ Built database with ${matches.length} matches using API`);
-    
-    // Debug: Show match details
-    matches.forEach(match => {
-        console.log(`  Match ${match.id}: ${match.status} - ${match.whiteTeam || 'TBD'} vs ${match.darkTeam || 'TBD'}`);
-    });
-    
-    return matches;
-}
-
-
-function parseAdvancementLine(line) {
-    // Handle advancement lines: "TEAM is POSITION in bracket BRACKET is COLOR in game GAME..."
-    const pattern = /^(.+?)\s+is\s+(\d+)\s+in\s+bracket\s+(\d+)\s+is\s+(DARK|WHITE)\s+in\s+game\s+(\d+[A-Z]-\d+)(.*)$/i;
-    const match = line.match(pattern);
-    
-    if (!match) {
-        console.warn('Failed to parse advancement line:', line);
-        return null;
-    }
-    
-    const team = match[1].trim();
-    const position = parseInt(match[2]);
-    const bracket = parseInt(match[3]);
-    const color = match[4].toUpperCase();
-    const gameId = match[5];
-    const remainder = match[6];
-    
-    const futureMatches = parseFutureGames(gameId + remainder);
-    
-    return {
-        team,
-        position,
-        currentBracket: bracket,
-        color,
-        futureMatches
-    };
-}
-
-function parseFutureGames(gameString) {
-    const games = [];
-    // Updated pattern to capture venue information too
-    const gamePattern = /(\d+[A-Z]-\d+)\s+on\s+([\d-A-Za-z]+)\s+at\s+([\d:]+\s*(?:AM|PM))(?:\s+(?:at|in)\s+(.+?))?(?:\s*;|$)/gi;
-    let match;
-    
-    while ((match = gamePattern.exec(gameString)) !== null) {
-        const gameId = match[1];
-        const matchId = parseInt(gameId.split('-')[1]);
-        games.push({
-            gameId,
-            matchId,
-            date: match[2],
-            time: match[3],
-            venue: match[4] ? match[4].trim() : null
-        });
-    }
-    
-    return games;
-}
-
-function parseResultLine(line) {
-    const pattern = /^(\d{1,2}-[A-Za-z]{3})\s+#(\d+)\s+(.+?)\s+(\d{1,2}:\d{2}\s*(?:AM|PM))\s+(.+?)=(\d+)\s+(.+?)=(\d+)\s+(.+)$/;
-    const match = line.match(pattern);
-    
-    if (!match) return null;
-    
-    return {
-        date: match[1],
-        matchId: parseInt(match[2]),
-        venue: match[3].trim(),
-        time: match[4],
-        team1: match[5].trim(),
-        score1: parseInt(match[6]),
-        team2: match[7].trim(),
-        score2: parseInt(match[8]),
-        category: match[9].trim()
-    };
-}
-
-function updateMatchShoresStatus(match) {
-    match.isShoresMatch = (match.whiteTeam && detectShoresTeam(match.whiteTeam)) || 
-                         (match.darkTeam && detectShoresTeam(match.darkTeam));
-}
-
-function applyFiltersToMatchDatabase(matches) {
+function applyActiveFilters(lines) {
     const filterShores = document.getElementById('filterShores')?.checked || false;
-    const customSearch = document.getElementById('customTeamSearch')?.value?.trim() || '';
+    const filterVenue1 = document.getElementById('filterVenue1')?.checked || false;
+    const filterVenue2 = document.getElementById('filterVenue2')?.checked || false;
+    const filterVenue3 = document.getElementById('filterVenue3')?.checked || false;
+    const filterVenue4 = document.getElementById('filterVenue4')?.checked || false;
+    const filterVenue5 = document.getElementById('filterVenue5')?.checked || false;
+    const filterVenue6 = document.getElementById('filterVenue6')?.checked || false;
+    const filterVenue7 = document.getElementById('filterVenue7')?.checked || false;
+    const filterVenue8 = document.getElementById('filterVenue8')?.checked || false;
+    const filterRecent = document.getElementById('filterRecent')?.checked || false;
     
-    let filteredMatches = matches;
+    let filteredLines = lines;
+    
+    // Apply venue filters (OR logic for venues)
+    const hasVenueFilters = filterVenue1 || filterVenue2 || filterVenue3 || filterVenue4 || 
+                           filterVenue5 || filterVenue6 || filterVenue7 || filterVenue8;
+    if (hasVenueFilters) {
+        filteredLines = filteredLines.filter(line => {
+            const matchesVenue1 = filterVenue1 && line.includes('#1 ');
+            const matchesVenue2 = filterVenue2 && line.includes('#2 ');
+            const matchesVenue3 = filterVenue3 && line.includes('#3 ');
+            const matchesVenue4 = filterVenue4 && line.includes('#4 ');
+            const matchesVenue5 = filterVenue5 && line.includes('#5 ');
+            const matchesVenue6 = filterVenue6 && line.includes('#6 ');
+            const matchesVenue7 = filterVenue7 && line.includes('#7 ');
+            const matchesVenue8 = filterVenue8 && line.includes('#8 ');
+            return matchesVenue1 || matchesVenue2 || matchesVenue3 || matchesVenue4 ||
+                   matchesVenue5 || matchesVenue6 || matchesVenue7 || matchesVenue8;
+        });
+    }
     
     // Apply Shores filter
     if (filterShores) {
-        filteredMatches = filteredMatches.filter(match => match.isShoresMatch);
+        filteredLines = filteredLines.filter(line => 
+            detectShoresTeam(line)
+        );
     }
     
-    // Apply custom team/venue search
+    // Apply recent filter (matches from last 2 hours)
+    if (filterRecent) {
+        filteredLines = filteredLines.filter(line =>
+            isJOMatchFromLastHour(line)
+        );
+    }
+    
+    // Apply custom team search filter
+    const customSearch = document.getElementById('customTeamSearch')?.value?.trim() || '';
     if (customSearch) {
-        filteredMatches = filteredMatches.filter(match => 
-            applySearchToMatch(match, customSearch)
+        filteredLines = filteredLines.filter(line => 
+            applyCustomTeamFilter(line, customSearch)
+        );
+    }
+    
+    return filteredLines;
+}
+
+// **NEW FUNCTION**: Apply filters to structured match objects instead of raw lines
+function applyActiveFiltersToMatches(matchObjects) {
+    const filterShores = document.getElementById('filterShores')?.checked || false;
+    const filterVenue1 = document.getElementById('filterVenue1')?.checked || false;
+    const filterVenue2 = document.getElementById('filterVenue2')?.checked || false;
+    const filterVenue3 = document.getElementById('filterVenue3')?.checked || false;
+    const filterVenue4 = document.getElementById('filterVenue4')?.checked || false;
+    const filterVenue5 = document.getElementById('filterVenue5')?.checked || false;
+    const filterVenue6 = document.getElementById('filterVenue6')?.checked || false;
+    const filterVenue7 = document.getElementById('filterVenue7')?.checked || false;
+    const filterVenue8 = document.getElementById('filterVenue8')?.checked || false;
+    const filterRecent = document.getElementById('filterRecent')?.checked || false;
+    
+    let filteredMatches = matchObjects;
+    
+    // Apply venue filters (OR logic for venues) - use parsed venue data and venue names for future matches
+    const hasVenueFilters = filterVenue1 || filterVenue2 || filterVenue3 || filterVenue4 || 
+                           filterVenue5 || filterVenue6 || filterVenue7 || filterVenue8;
+    if (hasVenueFilters) {
+        filteredMatches = filteredMatches.filter(matchData => {
+            // For completed matches, use match number
+            const venueNum = matchData.matchNumber;
+            let matchesVenue1 = filterVenue1 && venueNum === '1';
+            let matchesVenue2 = filterVenue2 && venueNum === '2';
+            let matchesVenue3 = filterVenue3 && venueNum === '3';
+            let matchesVenue4 = filterVenue4 && venueNum === '4';
+            let matchesVenue5 = filterVenue5 && venueNum === '5';
+            let matchesVenue6 = filterVenue6 && venueNum === '6';
+            let matchesVenue7 = filterVenue7 && venueNum === '7';
+            let matchesVenue8 = filterVenue8 && venueNum === '8';
+            
+            // For future matches, also check venue names (fallback for matches without numbers)
+            if (matchData.type === 'future' && matchData.venueDisplayName) {
+                const venueName = matchData.venueDisplayName.toUpperCase();
+                if (filterVenue1) matchesVenue1 = matchesVenue1 || venueName.includes('1') || venueName.includes('ONE');
+                if (filterVenue2) matchesVenue2 = matchesVenue2 || venueName.includes('2') || venueName.includes('TWO');
+                if (filterVenue3) matchesVenue3 = matchesVenue3 || venueName.includes('3') || venueName.includes('THREE');
+                if (filterVenue4) matchesVenue4 = matchesVenue4 || venueName.includes('4') || venueName.includes('FOUR');
+                if (filterVenue5) matchesVenue5 = matchesVenue5 || venueName.includes('5') || venueName.includes('FIVE');
+                if (filterVenue6) matchesVenue6 = matchesVenue6 || venueName.includes('6') || venueName.includes('SIX');
+                if (filterVenue7) matchesVenue7 = matchesVenue7 || venueName.includes('7') || venueName.includes('SEVEN');
+                if (filterVenue8) matchesVenue8 = matchesVenue8 || venueName.includes('8') || venueName.includes('EIGHT');
+            }
+            
+            return matchesVenue1 || matchesVenue2 || matchesVenue3 || matchesVenue4 ||
+                   matchesVenue5 || matchesVenue6 || matchesVenue7 || matchesVenue8;
+        });
+    }
+    
+    // Apply Shores filter using parsed team data
+    if (filterShores) {
+        filteredMatches = filteredMatches.filter(matchData => 
+            matchData.team1.isShores || matchData.team2.isShores
+        );
+    }
+    
+    // Apply recent filter (matches from last 2 hours) - use original line for compatibility
+    if (filterRecent) {
+        filteredMatches = filteredMatches.filter(matchData =>
+            isJOMatchFromLastHour(matchData.originalLine)
+        );
+    }
+    
+    // Apply custom team search filter using parsed team data
+    const customSearch = document.getElementById('customTeamSearch')?.value?.trim() || '';
+    if (customSearch) {
+        filteredMatches = filteredMatches.filter(matchData => 
+            applyCustomTeamFilterToMatch(matchData, customSearch)
         );
     }
     
     return filteredMatches;
 }
-
-function applySearchToMatch(match, searchTerm) {
-    const search = searchTerm.toLowerCase();
-    const team1Name = (match.whiteTeam || '').toLowerCase();
-    const team2Name = (match.darkTeam || '').toLowerCase();
-    const venueName = (match.venue || '').toLowerCase();
-    
-    return team1Name.includes(search) || 
-           team2Name.includes(search) || 
-           venueName.includes(search);
-}
-
-function createMatchCardFromDatabase(match, cardNumber) {
-    const matchDiv = document.createElement('div');
-    matchDiv.className = `match-card ${match.isShoresMatch ? 'shores-highlight' : ''}`;
-    matchDiv.style.animationDelay = `${cardNumber * 0.1}s`;
-    
-    // Get search term for highlighting
-    const customSearch = document.getElementById('customTeamSearch')?.value?.trim() || '';
-    const team1Html = highlightSearchText(match.whiteTeam || 'TBD', customSearch);
-    const team2Html = highlightSearchText(match.darkTeam || 'TBD', customSearch);
-    const venueHtml = highlightSearchText(match.venue || '', customSearch);
-    
-    // Determine winner
-    let team1Winner = false;
-    let team2Winner = false;
-    if (match.score.white !== null && match.score.dark !== null) {
-        if (match.score.white > match.score.dark) team1Winner = true;
-        else if (match.score.dark > match.score.white) team2Winner = true;
-    }
-    
-    // Generate status badge
-    let statusBadge = '';
-    if (match.status === 'COMPLETED') {
-        statusBadge = '<span class="match-status status-completed">COMPLETED</span>';
-    } else if (match.status === 'SCHEDULED') {
-        statusBadge = '<span class="match-status status-scheduled">SCHEDULED</span>';
-    }
-    
-    matchDiv.innerHTML = `
-        <div class="match-header match-header-prominent">
-            <div class="match-info-left">
-                ${match.id ? `<span class="match-number-circle">#${match.id}</span>` : ''}
-                ${match.venue ? `<span class="venue-info-large" onclick="selectVenue('${escapeHtml(match.venue).replace(/'/g, "\\'")}')">${venueHtml}</span>` : ''}
-            </div>
-            <div class="match-info-right">
-                ${match.time ? `<span class="datetime-combined">⏰ ${match.time}${match.date ? ` • ${match.date}` : ''}</span>` : ''}
-                ${statusBadge}
-            </div>
-        </div>
-        
-        <div class="match-teams">
-            <div class="teams-row">
-                <div class="team-info team-left">
-                    <div class="team-name ${detectShoresTeam(match.whiteTeam || '') ? 'shores-team' : ''} ${team1Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(match.whiteTeam || '').replace(/'/g, "\\'")}')">${team1Html}</div>
-                </div>
-                <div class="team-info team-right">
-                    <div class="team-name ${detectShoresTeam(match.darkTeam || '') ? 'shores-team' : ''} ${team2Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(match.darkTeam || '').replace(/'/g, "\\'")}')">${team2Html}</div>
-                </div>
-            </div>
-            <div class="score-row">
-                <div class="score-center">
-                    ${match.score.white !== null && match.score.dark !== null ?
-                        `<span class="center-score-display">${match.score.white} - ${match.score.dark}</span>` :
-                        `<span class="vs-text-center">VS</span>`
-                    }
-                </div>
-            </div>
-        </div>
-        
-        <div class="match-actions">
-            <span class="show-details" onclick="toggleMatchDetails(this)">📋 Details</span>
-            <span class="show-raw" onclick="toggleRawData(this)">📄 Raw</span>
-        </div>
-        
-        <div class="match-details">
-            <div class="match-meta">
-                ${match.time ? `<span class="meta-item">⏰ ${match.time}</span>` : ''}
-                ${match.venue ? `<span class="meta-item venue">📍 ${match.venue}</span>` : ''}
-                ${match.date ? `<span class="meta-item">📅 ${match.date}</span>` : ''}
-                ${match.category ? `<span class="meta-item championship">🏆 ${match.category}</span>` : ''}
-                <span class="meta-item">🆔 Match ID: ${match.id}</span>
-                <span class="meta-item">📊 Status: ${match.status}</span>
-            </div>
-        </div>
-        
-        <div class="raw-data">
-            <strong>Source Lines:</strong><br>
-            ${match.sourceLines.map(line => escapeHtml(line)).join('<br>')}
-        </div>
-    `;
-    
-    return matchDiv;
-}
-
-
 
 function applyFilters() {
     // Re-run the display with current data to apply new filters
@@ -515,6 +222,28 @@ function applyFilters() {
     }
 }
 
+function applyCustomTeamFilter(line, searchTerm) {
+    // Parse team names and venue from the JO line
+    const matchData = parseJOMatchLine(line);
+    const team1Name = matchData.team1.name.toLowerCase();
+    const team2Name = matchData.team2.name.toLowerCase();
+    const venueName = matchData.venue ? matchData.venue.toLowerCase() : '';
+    const search = searchTerm.toLowerCase();
+    
+    // Return true if team names OR venue name contains the search term
+    return team1Name.includes(search) || team2Name.includes(search) || venueName.includes(search);
+}
+
+// **NEW FUNCTION**: Apply custom team filter to structured match objects
+function applyCustomTeamFilterToMatch(matchData, searchTerm) {
+    const team1Name = matchData.team1.name.toLowerCase();
+    const team2Name = matchData.team2.name.toLowerCase();
+    const venueName = matchData.venueDisplayName ? matchData.venueDisplayName.toLowerCase() : '';
+    const search = searchTerm.toLowerCase();
+    
+    // Return true if team names OR venue name contains the search term
+    return team1Name.includes(search) || team2Name.includes(search) || venueName.includes(search);
+}
 
 function debounce(func, delay) {
     let timeoutId;
@@ -586,72 +315,6 @@ function parseArchivedDataTimestamp(data) {
         }
     }
     return null;
-}
-
-// Parse URL parameters and get current configuration
-function getCurrentConfig() {
-    const params = new URLSearchParams(window.location.search);
-    const age = params.get('age') || '16';
-    const classType = params.get('class') || 'championship';
-    const configKey = `${age}-${classType}`;
-    return JO_CONFIGS[configKey] || JO_CONFIGS['16-championship'];
-}
-
-// Switch age group function
-function switchAgeGroup() {
-    const dropdown = document.getElementById('ageGroupDropdown');
-    const selectedValue = dropdown.value;
-    const [age, classType] = selectedValue.split('-');
-    
-    // Navigate to same page with new parameters
-    const newUrl = `${window.location.pathname}?age=${age}&class=${classType}`;
-    window.location.href = newUrl;
-}
-
-// Initialize page with current configuration
-function initializePage() {
-    // Set current configuration from URL parameters
-    currentConfig = getCurrentConfig();
-    
-    // Update JO_URL for data fetching
-    JO_URL = currentConfig.feedUrl;
-    
-    // Update page elements
-    updatePageElements();
-    
-    console.log(`🏊‍♂️ Initialized page for ${currentConfig.title}`);
-    console.log(`📡 Data source: ${currentConfig.feedUrl}`);
-}
-
-// Update page elements based on current configuration
-function updatePageElements() {
-    // Update subtitle
-    const subtitle = document.querySelector('.subtitle');
-    if (subtitle) {
-        subtitle.textContent = currentConfig.title;
-    }
-    
-    // Update dropdown selection
-    const dropdown = document.getElementById('ageGroupDropdown');
-    if (dropdown) {
-        const params = new URLSearchParams(window.location.search);
-        const age = params.get('age') || '16';
-        const classType = params.get('class') || 'championship';
-        const configKey = `${age}-${classType}`;
-        dropdown.value = configKey;
-    }
-    
-    // Update footer text
-    const footerElement = document.querySelector('.footer div:first-child');
-    if (footerElement) {
-        footerElement.innerHTML = `Data source: <strong>Junior Olympics ${currentConfig.title} official feed</strong>`;
-    }
-    
-    // Update empty state text
-    const emptyState = document.querySelector('.empty-state small');
-    if (emptyState) {
-        emptyState.textContent = `Showing ${currentConfig.title} • Max 50 matches • SD Shores teams highlighted`;
-    }
 }
 
 function setupCustomSearchListeners() {
@@ -769,53 +432,521 @@ async function fetchViaProxy() {
 }
 
 function displayJOMatchResults(data) {
-    console.log('🔄 NEW: Using match database system for display...');
+    // First, parse the data format - handle both archived format and live email format
+    let lines = data.split('\n').filter(line => line.trim() && !line.startsWith('#'));
     
-    // Build structured match database from raw data
-    const matchDatabase = buildMatchesDatabase(data);
+    // If data contains email-style headers, extract both completed and future match lines
+    if (data.includes('Subject:') || data.includes('HOT!')) {
+        lines = data.split('\n').filter(line => {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith('#') || trimmed.includes('Subject:') || trimmed.includes('HOT!') || 
+                trimmed.includes('ADVANCEMENT UPDATE') || trimmed.includes('RESULT UPDATE')) {
+                return false;
+            }
+            
+            // Include completed matches (date at start) AND future matches (team advancement format)
+            return /^\d{1,2}-[A-Za-z]{3}\s/.test(trimmed) || isFutureMatchLine(trimmed);
+        });
+    }
     
-    // Apply filters to structured match objects
-    const filteredMatches = applyFiltersToMatchDatabase(matchDatabase);
+    // Separate completed and future match lines
+    const completedLines = lines.filter(line => isValidJOMatchLine(line));
+    const futureLines = lines.filter(line => isFutureMatchLine(line));
+    const validLines = [...completedLines, ...futureLines];
+    const invalidCount = lines.length - validLines.length;
     
-    // Limit to 50 matches for display
-    const displayMatches = filteredMatches.slice(0, 50);
+    // Log filtering results for debugging
+    if (invalidCount > 0) {
+        console.log(`🧹 Filtered out ${invalidCount} invalid/malformed rows from JO data`);
+        console.log(`✅ Processing ${validLines.length} valid match rows`);
+    }
     
-    // Update global counters
-    matchCount = displayMatches.length;
-    shoresCount = displayMatches.filter(match => match.isShoresMatch).length;
+    // Remove duplicate entries from completed matches only
+    const uniqueCompletedLines = deduplicateMatches(completedLines);
     
-    // Count unique venues
-    const venuesInUse = new Set();
-    displayMatches.forEach(match => {
-        if (match.venue) venuesInUse.add(match.venue);
+    // **NEW**: Build future matches data from ALL lines (before filtering)
+    buildFutureMatchesData(lines);
+    
+    // **NEW**: Group future matches by game ID to create proper match objects
+    const groupedFutureMatches = groupFutureMatchesByGameId(lines);
+    
+    // **NEW APPROACH**: Parse completed matches and combine with grouped future matches
+    const completedMatchObjects = uniqueCompletedLines.map(line => {
+        const matchData = parseJOMatchLine(line);
+        // Attach original line for backward compatibility
+        matchData.originalLine = line;
+        return matchData;
     });
-    venueCount = venuesInUse.size;
     
-    // Generate display
+    // Combine completed and future match objects
+    const allMatchObjects = [...completedMatchObjects, ...groupedFutureMatches];
+    
+    // Apply filters using structured match objects
+    const allFilteredMatches = applyActiveFiltersToMatches(allMatchObjects);
+    
+    // FINALLY limit to 50 matches for display (after all filtering)
+    const filteredMatches = allFilteredMatches.slice(0, 50);
+    
+    matchCount = filteredMatches.length;
+    shoresCount = 0;
+    venueCount = 0;
+    
+    // **FIXED**: Count venues using parsed venueDisplayName instead of match numbers
+    const venuesInUse = new Set();
+    
     const matchGrid = document.getElementById('matchGrid');
     if (!matchGrid) return; // Null check for test environments
     
     matchGrid.innerHTML = '';
-    if (displayMatches.length === 0) {
+    if (filteredMatches.length === 0) {
         matchGrid.innerHTML = '<div class="empty-state">📭 No JO tournament results match the current filters</div>';
         return;
     }
 
-    displayMatches.forEach((match, index) => {
-        const matchCard = createMatchCardFromDatabase(match, index);
+    filteredMatches.forEach((matchData, index) => {
+        // Count Shores matches using parsed data
+        const isShoresMatch = matchData.team1.isShores || matchData.team2.isShores;
+        if (isShoresMatch) shoresCount++;
+        
+        // **FIXED**: Count venues using venueDisplayName (not match numbers)
+        if (matchData.venueDisplayName) {
+            venuesInUse.add(matchData.venueDisplayName);
+        }
+        
+        // Create match card using structured data
+        const matchCard = createJOMatchCardFromData(matchData, index, isShoresMatch);
         matchGrid.appendChild(matchCard);
     });
     
-    // Update stats display
-    updateStats();
+    venueCount = venuesInUse.size;
     
-    console.log(`✅ Displayed ${displayMatches.length} matches from database`);
+    // Update stats
+    updateStats();
 }
 
+function createJOMatchCard(line, cardNumber, isShoresMatch) {
+    const matchDiv = document.createElement('div');
+    matchDiv.className = `match-card ${isShoresMatch ? 'shores-highlight' : ''}`;
+    matchDiv.style.animationDelay = `${cardNumber * 0.1}s`;
+    
+    // Parse match data
+    const matchData = parseJOMatchLine(line);
+    const matchStatus = detectJOMatchStatus(line);
+    
+    return createJOMatchCardFromData(matchData, cardNumber, isShoresMatch, matchStatus, line);
+}
 
+// **NEW FUNCTION**: Create match card from pre-parsed structured data
+function createJOMatchCardFromData(matchData, cardNumber, isShoresMatch, matchStatus = null, originalLine = null) {
+    const matchDiv = document.createElement('div');
+    const futureClass = matchData.type === 'future' ? 'future-match' : '';
+    matchDiv.className = `match-card ${futureClass} ${isShoresMatch ? 'shores-highlight' : ''}`.trim();
+    matchDiv.style.animationDelay = `${cardNumber * 0.1}s`;
+    
+    // Use provided status or detect from match data and original line
+    if (!matchStatus) {
+        if (matchData.type === 'future') {
+            matchStatus = detectFutureMatchStatus(matchData);
+        } else if (originalLine) {
+            matchStatus = detectJOMatchStatus(originalLine);
+        } else if (matchData.originalLine) {
+            matchStatus = detectJOMatchStatus(matchData.originalLine);
+        }
+    }
+    
+    // Determine winner
+    let team1Winner = false;
+    let team2Winner = false;
+    if (matchData.team1.score !== null && matchData.team2.score !== null) {
+        const score1 = parseInt(matchData.team1.score);
+        const score2 = parseInt(matchData.team2.score);
+        if (score1 > score2) team1Winner = true;
+        else if (score2 > score1) team2Winner = true;
+    }
+    
+    // Get search term for highlighting
+    const customSearch = document.getElementById('customTeamSearch')?.value?.trim() || '';
+    const team1Html = highlightSearchText(matchData.team1.name, customSearch);
+    const team2Html = highlightSearchText(matchData.team2.name, customSearch);
+    
+    // Use original line for raw data display
+    const lineForRawData = originalLine || matchData.originalLine || 'No raw data available';
+    
+    matchDiv.innerHTML = `
+        <div class="match-header match-header-prominent">
+            <div class="match-info-left">
+                ${matchData.matchNumber ? `<span class="match-number-circle">#${matchData.matchNumber}</span>` : ''}
+                ${matchData.gameId ? `<span class="game-id-circle">${matchData.gameId}</span>` : ''}
+                ${matchData.venueDisplayName ? `<span class="venue-info-large" onclick="selectVenue('${escapeHtml(matchData.venueDisplayName).replace(/'/g, "\\'")}')">${highlightSearchText(matchData.venueDisplayName, customSearch)}</span>` : ''}
+            </div>
+            <div class="match-info-right">
+                ${matchData.time ? `<span class="datetime-combined">⏰ ${matchData.time}</span>` : ''}
+                ${matchStatus ? `<span class="match-status status-${matchStatus.type}">${matchStatus.label}</span>` : ''}
+            </div>
+        </div>
+        
+        <div class="match-teams">
+            <div class="teams-row">
+                <div class="team-info team-left">
+                    <div class="team-name ${matchData.team1.isShores ? 'shores-team' : ''} ${team1Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team1.name).replace(/'/g, "\\'")}')">${matchData.team1.prefix ? `<span class="team-prefix">${matchData.team1.prefix}-</span>` : ''}${team1Html}${getFutureMatchIcon(matchData.team1.name)}</div>
+                </div>
+                <div class="team-info team-right">
+                    <div class="team-name ${matchData.team2.isShores ? 'shores-team' : ''} ${team2Winner ? 'winner' : ''}" onclick="selectTeam('${escapeHtml(matchData.team2.name).replace(/'/g, "\\'")}')">${matchData.team2.prefix ? `<span class="team-prefix">${matchData.team2.prefix}-</span>` : ''}${team2Html}${getFutureMatchIcon(matchData.team2.name)}</div>
+                </div>
+            </div>
+            <div class="score-row">
+                <div class="score-center">
+                    ${matchData.team1.score !== null && matchData.team2.score !== null ?
+                        `<span class="center-score-display">${matchData.team1.score} - ${matchData.team2.score}</span>` :
+                        (matchData.team1.score !== null || matchData.team2.score !== null ?
+                            `<span class="center-score-display">${matchData.team1.score !== null ? matchData.team1.score : '-'} - ${matchData.team2.score !== null ? matchData.team2.score : '-'}</span>` :
+                            `<span class="vs-text-center">VS</span>`)
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="match-actions">
+            <span class="show-details" onclick="toggleMatchDetails(this)">📋 Details</span>
+            <span class="show-raw" onclick="toggleRawData(this)">📄 Raw</span>
+        </div>
+        
+        <div class="match-details">
+            <div class="match-meta">
+                ${matchData.time ? `<span class="meta-item">⏰ ${matchData.time}</span>` : ''}
+                ${matchData.venue ? `<span class="meta-item venue">📍 ${matchData.venue}</span>` : ''}
+                ${matchData.date ? `<span class="meta-item">📅 ${matchData.date}</span>` : ''}
+                ${matchData.category ? `<span class="meta-item championship">🏆 ${matchData.category}</span>` : ''}
+                ${matchData.team1.prefix ? `<span class="meta-item">Team 1 ID: ${matchData.team1.prefix}</span>` : ''}
+                ${matchData.team2.prefix ? `<span class="meta-item">Team 2 ID: ${matchData.team2.prefix}</span>` : ''}
+                
+                ${getFutureMatchesForDetails(matchData.team1.name, matchData.team2.name)}
+            </div>
+        </div>
+        
+        <div class="raw-data">${escapeHtml(lineForRawData)}</div>
+    `;
+    
+    return matchDiv;
+}
 
+function parseJOMatchLine(line) {
+    // Parse both completed and future match formats
+    // Completed: "19-Jul  #5 SAN JUAN HILLS HS  7:50 AM  22-LONGHORN=10  27-CT PREMIER=14  16U_BOYS_CHAMPIONSHIP"
+    // Future: "SHORES is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at WOOLLETT NEAR RIGHT"
+    
+    // Check if this is a future match format
+    if (isFutureMatchLine(line)) {
+        return parseFutureMatchAsJOFormat(line);
+    }
+    
+    // Continue with standard completed match parsing
+    const result = {
+        type: 'completed',
+        team1: { name: 'Team A', score: null, isShores: false, prefix: null },
+        team2: { name: 'Team B', score: null, isShores: false, prefix: null },
+        time: null,
+        venue: null,
+        venueDisplayName: null,
+        matchNumber: null,
+        date: null,
+        category: null,
+        status: 'COMPLETED'
+    };
 
+    // Split by double spaces (field separator in JO format)
+    const fields = line.split(/\s{2,}/);
+    
+    if (fields.length >= 6) {
+        // Field structure: [0]DATE [1]VENUE [2]TIME [3]TEAM1-PREFIX=SCORE [4]TEAM2-PREFIX=SCORE [5]CATEGORY
+        
+        // Parse date (field 0)
+        result.date = fields[0]?.trim();
+        
+        // Parse venue (field 1) and extract match number
+        const venueField = fields[1]?.trim();
+        result.venue = venueField;
+        
+        // Extract match number from venue (e.g., "#23 PORTOLA HS 1" → "23", "PORTOLA HS 1")
+        const venueMatch = venueField?.match(/^#(\d+)\s+(.+)$/);
+        if (venueMatch) {
+            result.matchNumber = venueMatch[1];
+            result.venueDisplayName = venueMatch[2];
+        } else {
+            result.venueDisplayName = venueField;
+        }
+        
+        // Parse time (field 2)
+        result.time = fields[2]?.trim();
+        
+        // Parse team 1 and score (field 3) - handle both formats:
+        // Format 1: "22-LONGHORN=10" (with ID prefix)
+        // Format 2: "OAHU=4" (team name only)
+        const team1WithPrefix = fields[3]?.match(/^(\d+)-(.+?)=(.+)$/);
+        const team1WithoutPrefix = fields[3]?.match(/^([^=]+)=(.+)$/);
+        
+        if (team1WithPrefix) {
+            result.team1.prefix = team1WithPrefix[1];
+            result.team1.name = team1WithPrefix[2].trim();
+            result.team1.score = team1WithPrefix[3];
+        } else if (team1WithoutPrefix) {
+            result.team1.prefix = null;
+            result.team1.name = team1WithoutPrefix[1].trim();
+            result.team1.score = team1WithoutPrefix[2];
+        }
+        
+        // Parse team 2 and score (field 4) - handle both formats:
+        const team2WithPrefix = fields[4]?.match(/^(\d+)-(.+?)=(.+)$/);
+        const team2WithoutPrefix = fields[4]?.match(/^([^=]+)=(.+)$/);
+        
+        if (team2WithPrefix) {
+            result.team2.prefix = team2WithPrefix[1];
+            result.team2.name = team2WithPrefix[2].trim();
+            result.team2.score = team2WithPrefix[3];
+        } else if (team2WithoutPrefix) {
+            result.team2.prefix = null;
+            result.team2.name = team2WithoutPrefix[1].trim();
+            result.team2.score = team2WithoutPrefix[2];
+        }
+        
+        // Parse category (field 5)
+        result.category = fields[5]?.trim();
+        
+        // Try to extract game ID from match number and venue
+        if (result.matchNumber && result.venueDisplayName) {
+            // For completed matches, construct a game ID based on available data
+            // This might not be exactly the same format as future matches, but provides consistency
+            result.gameId = `JO-${result.matchNumber}`;
+        }
+        
+        // Check if teams are Shores
+        result.team1.isShores = detectShoresTeam(result.team1.name) || detectShoresTeam(fields[3] || '');
+        result.team2.isShores = detectShoresTeam(result.team2.name) || detectShoresTeam(fields[4] || '');
+    }
 
+    return result;
+}
+
+function parseFutureMatchLine(line) {
+    // Parse future match format: can handle single or multiple matches per line
+    // Single: "LOWPO is 2 in bracket 47 is DARK in game 16B-064 on 20-Jul at 7:00 AM at SADDLEBACK COLLEGE 1"
+    // Multiple: "TEAM is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at VENUE; and WHITE in game 16B-097 on 20-Jul at 2:30 PM in VENUE"
+    
+    const results = [];
+
+    try {
+        // Split on "; and" to handle multiple matches per line
+        const matchSegments = line.split(/;\s*and\s+/i);
+        
+        for (let i = 0; i < matchSegments.length; i++) {
+            const segment = matchSegments[i].trim();
+            const result = {
+                team: null,
+                bracket: null,
+                position: null,
+                color: null,
+                gameId: null,
+                date: null,
+                time: null,
+                venue: null
+            };
+
+            if (i === 0) {
+                // First segment has full format: "TEAM is POSITION in bracket BRACKET is COLOR in game GAME on DATE at TIME at/in VENUE"
+                const fullPattern = /^(.+?)\s+is\s+(\d+)\s+in\s+bracket\s+(\d+)\s+is\s+(DARK|WHITE)\s+in\s+game\s+([\w-]+)\s+on\s+([\d-A-Za-z]+)\s+at\s+([\d:]+\s*(?:AM|PM))\s+(?:at|in)\s+(.+)$/i;
+                const match = segment.match(fullPattern);
+                
+                if (match) {
+                    result.team = match[1].trim();
+                    result.position = match[2];
+                    result.bracket = match[3];
+                    result.color = match[4].toUpperCase();
+                    result.gameId = match[5];
+                    result.date = match[6];
+                    result.time = match[7];
+                    result.venue = match[8].trim();
+                }
+            } else {
+                // Subsequent segments have shortened format: "COLOR in game GAME on DATE at TIME at/in VENUE"
+                const shortPattern = /^(DARK|WHITE)\s+in\s+game\s+([\w-]+)\s+on\s+([\d-A-Za-z]+)\s+at\s+([\d:]+\s*(?:AM|PM))(?:\s+(?:at|in)\s+(.+))?$/i;
+                const match = segment.match(shortPattern);
+                
+                if (match && results.length > 0) {
+                    // Copy team info from first match
+                    const firstMatch = results[0];
+                    result.team = firstMatch.team;
+                    result.bracket = firstMatch.bracket;
+                    result.position = firstMatch.position;
+                    
+                    // Parse new match info
+                    result.color = match[1].toUpperCase();
+                    result.gameId = match[2];
+                    result.date = match[3];
+                    result.time = match[4];
+                    result.venue = match[5] ? match[5].trim() : firstMatch.venue; // Use first venue if not specified
+                }
+            }
+
+            // Only add if we successfully parsed the match
+            if (result.team && result.gameId) {
+                results.push(result);
+            }
+        }
+        
+    } catch (error) {
+        console.warn('Error parsing future match line:', error);
+    }
+
+    // Return array of matches (maintain backward compatibility by returning single object if only one match)
+    return results.length === 1 ? results[0] : results;
+}
+
+function parseFutureMatchAsJOFormat(line) {
+    // Convert future match format to JO match object format
+    // Input: "SHORES is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at WOOLLETT NEAR RIGHT"
+    const result = {
+        type: 'future',
+        team1: { name: 'TBD', score: null, isShores: false, prefix: null, color: null },
+        team2: { name: 'TBD', score: null, isShores: false, prefix: null, color: null },
+        time: null,
+        venue: null,
+        venueDisplayName: null,
+        matchNumber: null,
+        date: null,
+        category: '16U_BOYS_CHAMPIONSHIP',
+        gameId: null,
+        status: 'SCHEDULED'
+    };
+
+    try {
+        // Parse the future match format
+        const futureData = parseFutureMatchLine(line);
+        
+        // Handle both single match and array results
+        const match = Array.isArray(futureData) ? futureData[0] : futureData;
+        
+        if (match && match.team) {
+            // Extract data from the future match
+            result.date = match.date;
+            result.time = match.time;
+            result.venue = match.venue;
+            result.venueDisplayName = match.venue;
+            result.gameId = match.gameId;
+            
+            // Set the known team
+            result.team1.name = match.team;
+            result.team1.color = match.color;
+            result.team1.isShores = detectShoresTeam(match.team);
+            
+            // Second team is TBD until advancement is resolved
+            result.team2.name = "TBD";
+            result.team2.isShores = false;
+        }
+    } catch (error) {
+        console.warn('Error converting future match to JO format:', error);
+    }
+
+    return result;
+}
+
+function resolveTeamAdvancement(futureMatch, completedMatches) {
+    // Resolve team advancement placeholders like "Winner of 16B-047"
+    const resolved = { ...futureMatch };
+    
+    try {
+        // Check if team1 needs resolution
+        if (futureMatch.team1.name.startsWith('Winner of ')) {
+            const sourceGameId = futureMatch.team1.name.replace('Winner of ', '');
+            const sourceMatch = completedMatches.find(m => m.gameId === sourceGameId);
+            
+            if (sourceMatch && sourceMatch.team1.score !== null && sourceMatch.team2.score !== null) {
+                const score1 = parseInt(sourceMatch.team1.score);
+                const score2 = parseInt(sourceMatch.team2.score);
+                
+                if (score1 > score2) {
+                    resolved.team1.name = sourceMatch.team1.name;
+                    resolved.team1.isShores = sourceMatch.team1.isShores;
+                } else if (score2 > score1) {
+                    resolved.team1.name = sourceMatch.team2.name;
+                    resolved.team1.isShores = sourceMatch.team2.isShores;
+                }
+            }
+        }
+        
+        // Check if team2 needs resolution
+        if (futureMatch.team2.name.startsWith('Winner of ')) {
+            const sourceGameId = futureMatch.team2.name.replace('Winner of ', '');
+            const sourceMatch = completedMatches.find(m => m.gameId === sourceGameId);
+            
+            if (sourceMatch && sourceMatch.team1.score !== null && sourceMatch.team2.score !== null) {
+                const score1 = parseInt(sourceMatch.team1.score);
+                const score2 = parseInt(sourceMatch.team2.score);
+                
+                if (score1 > score2) {
+                    resolved.team2.name = sourceMatch.team1.name;
+                    resolved.team2.isShores = sourceMatch.team1.isShores;
+                } else if (score2 > score1) {
+                    resolved.team2.name = sourceMatch.team2.name;
+                    resolved.team2.isShores = sourceMatch.team2.isShores;
+                }
+            }
+        }
+        
+        // Update status if teams are resolved
+        if (resolved.team1.name !== 'TBD' && resolved.team1.name !== futureMatch.team1.name &&
+            resolved.team2.name !== 'TBD' && resolved.team2.name !== futureMatch.team2.name) {
+            resolved.status = 'READY';
+        }
+        
+    } catch (error) {
+        console.warn('Error resolving team advancement:', error);
+    }
+    
+    return resolved;
+}
+
+function sortMatchesByDateTime(matches) {
+    // Sort matches chronologically regardless of type
+    return matches.sort((a, b) => {
+        try {
+            // Parse dates and times for comparison
+            const dateTimeA = parseJODateTime(a.date, a.time, new Date().getFullYear());
+            const dateTimeB = parseJODateTime(b.date, b.time, new Date().getFullYear());
+            
+            if (!dateTimeA) return 1;  // Put invalid dates at end
+            if (!dateTimeB) return -1;
+            
+            return dateTimeA - dateTimeB;
+        } catch (error) {
+            console.warn('Error sorting matches by date/time:', error);
+            return 0;
+        }
+    });
+}
+
+function updateMatchStatus(match, currentTime = new Date()) {
+    // Update match status based on current time and match time
+    if (match.status === 'COMPLETED') return 'COMPLETED';
+    
+    try {
+        const matchDateTime = parseJODateTime(match.date, match.time, currentTime.getFullYear());
+        if (!matchDateTime) return match.status;
+        
+        const timeDiff = matchDateTime - currentTime;
+        const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+        
+        if (timeDiff <= oneHour && timeDiff > 0) {
+            return 'NEXT_UP';
+        } else if (timeDiff <= 0 && Math.abs(timeDiff) <= oneHour) {
+            return 'LIVE';
+        }
+        
+        return match.status;
+    } catch (error) {
+        console.warn('Error updating match status:', error);
+        return match.status;
+    }
+}
 
 function isFutureMatchLine(line) {
     // Check if line matches future match format pattern
@@ -827,13 +958,418 @@ function isFutureMatchLine(line) {
            (line.includes(' is DARK ') || line.includes(' is WHITE '));
 }
 
+function buildFutureMatchesData(lines) {
+    // Reset the global future matches data
+    futureMatchesData = {};
+    
+    console.log('🔮 Processing future match data...');
+    
+    // Filter and parse future match lines
+    const futureLines = lines.filter(line => isFutureMatchLine(line));
+    console.log(`📅 Found ${futureLines.length} future match lines`);
+    
+    futureLines.forEach(line => {
+        const parseResult = parseFutureMatchLine(line);
+        
+        // Handle both single match objects and arrays of matches
+        const matches = Array.isArray(parseResult) ? parseResult : [parseResult];
+        
+        matches.forEach(futureMatch => {
+            if (futureMatch && futureMatch.team) {
+                // Initialize team array if it doesn't exist
+                if (!futureMatchesData[futureMatch.team]) {
+                    futureMatchesData[futureMatch.team] = [];
+                }
+                
+                // Add the future match to the team's array
+                futureMatchesData[futureMatch.team].push(futureMatch);
+            }
+        });
+    });
+    
+    // Log results for debugging
+    const teamsWithFutureMatches = Object.keys(futureMatchesData).length;
+    const totalFutureMatches = Object.values(futureMatchesData).reduce((total, matches) => total + matches.length, 0);
+    
+    console.log(`📊 Future matches processed: ${teamsWithFutureMatches} teams, ${totalFutureMatches} total matches`);
+    console.log(`🔄 Multi-match lines now supported - teams can have multiple future games`);
+    
+    return futureMatchesData;
+}
 
+function groupFutureMatchesByGameId(lines) {
+    // Group future matches by game ID to create proper match objects
+    // Water polo convention: WHITE team always on left (team1), DARK team on right (team2)
+    
+    console.log('🏆 Grouping future matches by game ID...');
+    
+    // Filter and parse all future match lines
+    const futureLines = lines.filter(line => isFutureMatchLine(line));
+    const allFutureMatches = [];
+    
+    // Parse all future matches first
+    futureLines.forEach(line => {
+        const parseResult = parseFutureMatchLine(line);
+        const matches = Array.isArray(parseResult) ? parseResult : [parseResult];
+        
+        matches.forEach(futureMatch => {
+            if (futureMatch && futureMatch.team && futureMatch.gameId) {
+                allFutureMatches.push(futureMatch);
+            }
+        });
+    });
+    
+    // Group by game ID
+    const gameGroups = {};
+    allFutureMatches.forEach(match => {
+        if (!gameGroups[match.gameId]) {
+            gameGroups[match.gameId] = [];
+        }
+        gameGroups[match.gameId].push(match);
+    });
+    
+    // Create grouped match objects
+    const groupedMatches = [];
+    
+    Object.entries(gameGroups).forEach(([gameId, matches]) => {
+        if (matches.length === 0) return;
+        
+        // Find WHITE and DARK teams (water polo positioning convention)
+        const whiteTeam = matches.find(m => m.color === 'WHITE');
+        const darkTeam = matches.find(m => m.color === 'DARK');
+        
+        // Use first match as template for shared data
+        const templateMatch = matches[0];
+        
+        // Create grouped match object following water polo convention
+        const groupedMatch = {
+            type: 'future',
+            team1: { // LEFT side - WHITE team in water polo
+                name: whiteTeam ? whiteTeam.team : 'TBD',
+                score: null,
+                isShores: whiteTeam ? detectShoresTeam(whiteTeam.team) : false,
+                prefix: null,
+                color: 'WHITE'
+            },
+            team2: { // RIGHT side - DARK team in water polo
+                name: darkTeam ? darkTeam.team : 'TBD',
+                score: null,
+                isShores: darkTeam ? detectShoresTeam(darkTeam.team) : false,
+                prefix: null,
+                color: 'DARK'
+            },
+            time: templateMatch.time,
+            venue: templateMatch.venue,
+            venueDisplayName: templateMatch.venue,
+            matchNumber: null,
+            date: templateMatch.date,
+            category: '16U_BOYS_CHAMPIONSHIP',
+            gameId: gameId,
+            status: 'SCHEDULED',
+            originalLine: `Future match: ${gameId}` // Composite original line
+        };
+        
+        groupedMatches.push(groupedMatch);
+    });
+    
+    console.log(`🏊‍♂️ Grouped ${allFutureMatches.length} individual future matches into ${groupedMatches.length} game objects`);
+    console.log(`⚪ WHITE teams positioned left (team1), ⚫ DARK teams positioned right (team2)`);
+    
+    return groupedMatches;
+}
 
+function teamHasFutureMatches(teamName) {
+    return futureMatchesData[teamName] && futureMatchesData[teamName].length > 0;
+}
 
+function getFutureMatchIcon(teamName) {
+    const hasFuture = teamHasFutureMatches(teamName);
+    
+    // Debug logging
+    if (teamName && teamName.includes('SHORES') || teamName.includes('LOWPO') || teamName.includes('SAN FRANCISCO')) {
+        console.log(`🔍 getFutureMatchIcon for "${teamName}": ${hasFuture ? 'HAS future matches' : 'NO future matches'}`);
+        console.log(`📊 futureMatchesData keys:`, Object.keys(futureMatchesData));
+    }
+    
+    if (hasFuture) {
+        return `<span class="future-match-icon" onclick="showFutureMatches('${escapeHtml(teamName).replace(/'/g, "\\'")}'); event.stopPropagation();" title="View upcoming matches">📅</span>`;
+    }
+    return '';
+}
 
+function showFutureMatches(teamName) {
+    const matches = futureMatchesData[teamName];
+    if (!matches || matches.length === 0) {
+        console.warn('No future matches found for team:', teamName);
+        return;
+    }
 
+    // Remove any existing popup
+    closeFutureMatchesPopup();
 
+    // Create popup HTML
+    const popupHtml = `
+        <div id="futureMatchesPopup" class="future-matches-popup">
+            <div class="future-matches-content">
+                <div class="future-matches-header">
+                    <h3>Upcoming Matches - ${escapeHtml(teamName)}</h3>
+                    <button onclick="closeFutureMatchesPopup()" class="close-popup">×</button>
+                </div>
+                <div class="future-matches-list">
+                    ${matches.map(match => `
+                        <div class="future-match-item">
+                            <div class="future-match-header">
+                                <span class="game-id">${escapeHtml(match.gameId || 'TBD')}</span>
+                                <span class="match-color ${match.color ? match.color.toLowerCase() : ''}">${escapeHtml(match.color || 'TBD')}</span>
+                            </div>
+                            <div class="future-match-details">
+                                <div class="match-time">
+                                    <span class="date">📅 ${escapeHtml(match.date || 'TBD')}</span>
+                                    <span class="time">⏰ ${escapeHtml(match.time || 'TBD')}</span>
+                                </div>
+                                <div class="match-venue">
+                                    <span class="venue">📍 ${escapeHtml(match.venue || 'TBD')}</span>
+                                </div>
+                                <div class="match-bracket">
+                                    <span class="bracket">🏆 Bracket ${escapeHtml(match.bracket || 'TBD')} - Position ${escapeHtml(match.position || 'TBD')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="popup-overlay" onclick="closeFutureMatchesPopup()"></div>
+        </div>
+    `;
 
+    // Add popup to DOM
+    document.body.insertAdjacentHTML('beforeend', popupHtml);
+}
+
+function closeFutureMatchesPopup() {
+    const popup = document.getElementById('futureMatchesPopup');
+    if (popup) {
+        popup.remove();
+    }
+}
+
+function getFutureMatchesForDetails(team1Name, team2Name) {
+    const team1Matches = futureMatchesData[team1Name] || [];
+    const team2Matches = futureMatchesData[team2Name] || [];
+    
+    if (team1Matches.length === 0 && team2Matches.length === 0) {
+        return ''; // No future matches for either team
+    }
+    
+    let html = '<div class="future-matches-details">';
+    html += '<div class="future-matches-header">🔮 Upcoming Matches:</div>';
+    
+    // Team 1 future matches
+    if (team1Matches.length > 0) {
+        html += `<div class="team-future-matches">`;
+        html += `<div class="team-future-name">${escapeHtml(team1Name)}:</div>`;
+        team1Matches.forEach(match => {
+            html += `<div class="future-match-item-details">`;
+            html += `<span class="future-game-info">${match.color} in game ${match.gameId}</span>`;
+            html += `<span class="future-schedule">${match.date} at ${match.time}</span>`;
+            html += `<span class="future-venue">${match.venue}</span>`;
+            html += `</div>`;
+        });
+        html += `</div>`;
+    }
+    
+    // Team 2 future matches
+    if (team2Matches.length > 0) {
+        html += `<div class="team-future-matches">`;
+        html += `<div class="team-future-name">${escapeHtml(team2Name)}:</div>`;
+        team2Matches.forEach(match => {
+            html += `<div class="future-match-item-details">`;
+            html += `<span class="future-game-info">${match.color} in game ${match.gameId}</span>`;
+            html += `<span class="future-schedule">${match.date} at ${match.time}</span>`;
+            html += `<span class="future-venue">${match.venue}</span>`;
+            html += `</div>`;
+        });
+        html += `</div>`;
+    }
+    
+    html += '</div>';
+    return html;
+}
+
+function detectJOMatchStatus(line) {
+    const upperLine = line.toUpperCase();
+    
+    // Check if this is today's match for live label
+    const today = new Date();
+    const todayString = today.toLocaleDateString('en-US', { 
+        day: 'numeric', 
+        month: 'short' 
+    }).replace(' ', '-'); // Format: "19-Jul"
+    
+    const isToday = line.includes(todayString);
+    
+    // Enhanced live detection: matches from last 2 hours
+    const isRecentMatch = isJOMatchFromLastHour(line);
+    
+    if (isRecentMatch && isToday) {
+        return { type: 'live', label: 'LIVE 🔥' };
+    }
+    if (isRecentMatch) {
+        return { type: 'recent', label: 'RECENT' };
+    }
+    if (upperLine.includes('CHAMPIONSHIP')) {
+        return { type: 'championship', label: 'CHAMPIONSHIP' };
+    }
+    
+    // Return null for no status badge
+    return null;
+}
+
+function detectFutureMatchStatus(matchData) {
+    // Detect status for future matches based on match data
+    if (!matchData || matchData.type !== 'future') {
+        return null;
+    }
+    
+    try {
+        const currentTime = new Date();
+        const status = updateMatchStatus(matchData, currentTime);
+        
+        switch (status) {
+            case 'NEXT_UP':
+                return { type: 'next_up', label: 'NEXT UP ⏰' };
+            case 'LIVE':
+                return { type: 'live', label: 'LIVE 🔥' };
+            case 'READY':
+                return { type: 'ready', label: 'READY ✅' };
+            case 'SCHEDULED':
+            default:
+                if (matchData.team2.name === 'TBD') {
+                    return { type: 'waiting', label: 'WAITING 📝' };
+                } else {
+                    return { type: 'scheduled', label: 'SCHEDULED 📅' };
+                }
+        }
+    } catch (error) {
+        console.warn('Error detecting future match status:', error);
+        return { type: 'scheduled', label: 'SCHEDULED 📅' };
+    }
+}
+
+function isJOMatchFromLastHour(line) {
+    try {
+        // Parse JO format: "19-Jul  #5 SAN JUAN HILLS HS  7:50 AM  ..."
+        const fields = line.split(/\s{2,}/);
+        
+        if (fields.length < 3) return false;
+        
+        const dateStr = fields[0]?.trim(); // "19-Jul"
+        const timeStr = fields[2]?.trim(); // "7:50 AM"
+        
+        if (!dateStr || !timeStr) return false;
+        
+        // Parse the match date and time
+        const currentYear = new Date().getFullYear();
+        const matchDateTime = parseJODateTime(dateStr, timeStr, currentYear);
+        
+        if (!matchDateTime) return false;
+        
+        // Check if match was within the last 2 hours
+        const now = new Date();
+        const twoHoursAgo = new Date(now.getTime() - (2 * 60 * 60 * 1000));
+        
+        return matchDateTime >= twoHoursAgo && matchDateTime <= now;
+        
+    } catch (error) {
+        console.warn('Error parsing JO match time:', error);
+        return false;
+    }
+}
+
+function parseJODateTime(dateStr, timeStr, year) {
+    try {
+        // Parse date like "19-Jul"
+        const [day, monthName] = dateStr.split('-');
+        const monthMap = {
+            'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+            'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+        };
+        
+        const month = monthMap[monthName];
+        if (month === undefined) return null;
+        
+        // Parse time like "7:50 AM"
+        const timeMatch = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (!timeMatch) return null;
+        
+        let hours = parseInt(timeMatch[1]);
+        const minutes = parseInt(timeMatch[2]);
+        const ampm = timeMatch[3].toUpperCase();
+        
+        if (ampm === 'PM' && hours !== 12) hours += 12;
+        if (ampm === 'AM' && hours === 12) hours = 0;
+        
+        return new Date(year, month, parseInt(day), hours, minutes);
+        
+    } catch (error) {
+        return null;
+    }
+}
+
+function isValidJOMatchLine(line) {
+    // Validate that the line has proper JO tournament format
+    if (!line || typeof line !== 'string' || line.trim().length === 0) {
+        return false;
+    }
+    
+    // Split by double spaces (field separator in JO format)
+    const fields = line.split(/\s{2,}/);
+    
+    // Must have at least 6 fields: DATE, VENUE, TIME, TEAM1-ID=SCORE, TEAM2-ID=SCORE, CATEGORY
+    if (fields.length < 6) {
+        return false;
+    }
+    
+    // Validate date format (should be like "19-Jul")
+    const dateField = fields[0]?.trim();
+    if (!dateField || !/^\d{1,2}-[A-Za-z]{3}$/.test(dateField)) {
+        return false;
+    }
+    
+    // Validate venue format (should be like "#5 SAN JUAN HILLS HS")
+    const venueField = fields[1]?.trim();
+    if (!venueField || !venueField.startsWith('#')) {
+        return false;
+    }
+    
+    // Validate time format (should be like "7:50 AM" or "7:50 PM")
+    const timeField = fields[2]?.trim();
+    if (!timeField || !/^\d{1,2}:\d{2}\s*(AM|PM)$/i.test(timeField)) {
+        return false;
+    }
+    
+    // Validate team 1 format - accept both formats:
+    // Format 1: "22-LONGHORN=10" (with ID prefix)
+    // Format 2: "OAHU=4" (team name only)
+    const team1Field = fields[3]?.trim();
+    if (!team1Field || !/^(\d+-[^=]+=.+|[^=]+=.+)$/.test(team1Field)) {
+        return false;
+    }
+    
+    // Validate team 2 format - accept both formats:
+    const team2Field = fields[4]?.trim();
+    if (!team2Field || !/^(\d+-[^=]+=.+|[^=]+=.+)$/.test(team2Field)) {
+        return false;
+    }
+    
+    // Category field should exist and not be empty
+    const categoryField = fields[5]?.trim();
+    if (!categoryField) {
+        return false;
+    }
+    
+    return true;
+}
 
 function detectShoresTeam(line) {
     return SHORES_PATTERNS.some(pattern => pattern.test(line));
@@ -967,10 +1503,6 @@ window.addEventListener('load', () => {
     
     if (isJOLiveResultsPage) {
         console.log('🚀 Junior Olympics Live Results page loaded');
-        
-        // Initialize page configuration first
-        initializePage();
-        
         setupCustomSearchListeners();
         loadLiveResults().then(() => {
             // Only start refresh cycle if we're in live mode (not archived)
