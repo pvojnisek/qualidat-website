@@ -464,11 +464,23 @@ function displayJOMatchResults(data) {
     // Remove duplicate entries from completed matches only
     const uniqueCompletedLines = deduplicateMatches(completedLines);
     
-    // **NEW**: Build future matches data from ALL lines (before filtering)
-    buildFutureMatchesData(lines);
+    // **NEW**: Build completed match index for efficient filtering
+    const completedIndex = buildCompletedMatchIndex(uniqueCompletedLines);
+    
+    // **NEW**: Filter future match lines early (before expensive parsing)
+    const allFutureLines = lines.filter(line => isFutureMatchLine(line));
+    const filteredFutureLines = filterFutureMatchLines(allFutureLines, completedIndex);
+    
+    // Log filtering results
+    if (allFutureLines.length > filteredFutureLines.length) {
+        console.log(`🧹 Filtered out ${allFutureLines.length - filteredFutureLines.length} completed future matches (${filteredFutureLines.length} remaining)`);
+    }
+    
+    // **NEW**: Build future matches data from filtered lines only
+    buildFutureMatchesData(filteredFutureLines);
     
     // **NEW**: Group future matches by game ID to create proper match objects
-    const groupedFutureMatches = groupFutureMatchesByGameId(lines);
+    const groupedFutureMatches = groupFutureMatchesByGameId(filteredFutureLines);
     
     // **NEW APPROACH**: Parse completed matches and combine with grouped future matches
     const completedMatchObjects = uniqueCompletedLines.map(line => {
@@ -580,7 +592,7 @@ function createJOMatchCardFromData(matchData, cardNumber, isShoresMatch, matchSt
                 ${matchData.venueDisplayName ? `<span class="venue-info-large" onclick="selectVenue('${escapeHtml(matchData.venueDisplayName).replace(/'/g, "\\'")}')">${highlightSearchText(matchData.venueDisplayName, customSearch)}</span>` : ''}
             </div>
             <div class="match-info-right">
-                ${matchData.time ? `<span class="datetime-combined">⏰ ${matchData.time}</span>` : ''}
+                ${matchData.time ? `<span class="datetime-combined">⏰ ${matchData.time}${matchData.date ? ` • 📅 ${matchData.date}` : ''}</span>` : ''}
                 ${matchStatus ? `<span class="match-status status-${matchStatus.type}">${matchStatus.label}</span>` : ''}
             </div>
         </div>
@@ -933,11 +945,12 @@ function updateMatchStatus(match, currentTime = new Date()) {
         if (!matchDateTime) return match.status;
         
         const timeDiff = matchDateTime - currentTime;
-        const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+        const threeHours = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+        const ninetyMinutes = 90 * 60 * 1000; // 90 minutes for match duration
         
-        if (timeDiff <= oneHour && timeDiff > 0) {
-            return 'NEXT_UP';
-        } else if (timeDiff <= 0 && Math.abs(timeDiff) <= oneHour) {
+        if (timeDiff <= threeHours && timeDiff > 0) {
+            return 'COMING_UP';
+        } else if (timeDiff <= 0 && Math.abs(timeDiff) <= ninetyMinutes) {
             return 'LIVE';
         }
         
@@ -995,6 +1008,62 @@ function buildFutureMatchesData(lines) {
     console.log(`🔄 Multi-match lines now supported - teams can have multiple future games`);
     
     return futureMatchesData;
+}
+
+function buildCompletedMatchIndex(completedLines) {
+    // Build fast lookup index: "date|time|venue" → Set<teamNames>
+    const index = new Map();
+    
+    completedLines.forEach(line => {
+        const fields = line.split(/\s{2,}/);
+        if (fields.length >= 6) {
+            const date = fields[0]?.trim();
+            const venue = fields[1]?.trim().replace(/^#\d+\s+/, ''); // Remove "#41 " prefix
+            const time = fields[2]?.trim();
+            
+            // Extract team names from "TEAM=SCORE" format
+            const team1 = fields[3]?.split('=')[0]?.replace(/^\d+-/, '')?.trim();
+            const team2 = fields[4]?.split('=')[0]?.replace(/^\d+-/, '')?.trim();
+            
+            if (date && venue && time && team1 && team2) {
+                const key = `${date}|${time}|${venue}`;
+                if (!index.has(key)) {
+                    index.set(key, new Set());
+                }
+                index.get(key).add(team1);
+                index.get(key).add(team2);
+            }
+        }
+    });
+    
+    return index;
+}
+
+function filterFutureMatchLines(futureLines, completedIndex) {
+    // Filter future match lines before parsing - exact match on date+time+venue+team
+    return futureLines.filter(line => {
+        // Extract: "TEAM is ... on DATE at TIME at/in VENUE"
+        const teamMatch = line.match(/^([^\s]+(?:\s+[^\s]+)*?)\s+is\s+/);
+        const dateMatch = line.match(/\bon\s+(\d{1,2}-[A-Za-z]{3})\s+/);
+        const timeMatch = line.match(/\bat\s+(\d{1,2}:\d{2}\s*(?:AM|PM))\s+/);
+        const venueMatch = line.match(/.*\s(?:at|in)\s+(.+)$/);
+        
+        if (teamMatch && dateMatch && timeMatch && venueMatch) {
+            const team = teamMatch[1].trim();
+            const date = dateMatch[1];
+            const time = timeMatch[1];
+            const venue = venueMatch[1].trim();
+            
+            const key = `${date}|${time}|${venue}`;
+            const completedTeams = completedIndex.get(key);
+            
+            if (completedTeams && completedTeams.has(team)) {
+                return false; // Don't process this future match - already completed
+            }
+        }
+        
+        return true; // Process this future match
+    });
 }
 
 function groupFutureMatchesByGameId(lines) {
@@ -1208,12 +1277,9 @@ function detectJOMatchStatus(line) {
     
     const isToday = line.includes(todayString);
     
-    // Enhanced live detection: matches from last 2 hours
+    // Enhanced recent match detection: matches from last 2 hours (completed matches only)
     const isRecentMatch = isJOMatchFromLastHour(line);
     
-    if (isRecentMatch && isToday) {
-        return { type: 'live', label: 'LIVE 🔥' };
-    }
     if (isRecentMatch) {
         return { type: 'recent', label: 'RECENT' };
     }
@@ -1236,8 +1302,8 @@ function detectFutureMatchStatus(matchData) {
         const status = updateMatchStatus(matchData, currentTime);
         
         switch (status) {
-            case 'NEXT_UP':
-                return { type: 'next_up', label: 'NEXT UP ⏰' };
+            case 'COMING_UP':
+                return { type: 'coming_up', label: 'COMING UP ⏰' };
             case 'LIVE':
                 return { type: 'live', label: 'LIVE 🔥' };
             case 'READY':
