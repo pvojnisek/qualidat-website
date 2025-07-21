@@ -17,6 +17,7 @@ This is a static website (microsite under /waterpolo/) for water polo tournament
 - **TOURNAMENT_FUTURES_SUPER_FINALS.md** - Kahuna Events live data tournament
 - **TOURNAMENT_US_CLUB_CHAMPIONSHIP.md** - Google Sheets CSV tournament
 - **TOURNAMENT_JO_QUALIFICATION.md** - Google Sheets bracket tournament
+- **TOURNAMENT_JUNIOR_OLYMPICS_LIVE.md** -  Junior Olympics tournament
 
 ### Usage Guidelines
 - **Individual tournament work**: Refer to specific TOURNAMENT_*.md files

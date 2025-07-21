@@ -129,6 +129,53 @@ body {
 }
 
 /* Filter Controls - Optimized for JO venues */
+/* Age Group Selector */
+.age-group-selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.age-group-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.age-group-dropdown {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+    min-width: 180px;
+}
+
+.age-group-dropdown:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.age-group-dropdown:focus {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+}
+
+.age-group-dropdown option {
+    background: #0077be;
+    color: white;
+    padding: 8px;
+}
+
 .filter-controls {
     margin-top: 8px;
     padding-top: 8px;
@@ -1036,6 +1083,18 @@ body {
 
 /* Responsive filter controls for mobile */
 @media (max-width: 768px) {
+    .age-group-selector {
+        flex-direction: column;
+        gap: 6px;
+        padding: 6px 0;
+    }
+    
+    .age-group-dropdown {
+        min-width: 160px;
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+    
     .filter-section {
         gap: 8px;
     }

@@ -21,6 +21,19 @@
             <span>Live Results • <span class="countdown" id="countdown">Loading...</span></span>
         </div>
         
+        <!-- Age Group Selector -->
+        <div class="age-group-selector">
+            <label for="ageGroupSelect" class="age-group-label">📅 Age Group:</label>
+            <select id="ageGroupSelect" class="age-group-dropdown" onchange="changeAgeGroup(this.value)">
+                <option value="14-championship">14U Boys Championship</option>
+                <option value="14-classic">14U Boys Classic</option>
+                <option value="16-championship" selected>16U Boys Championship</option>
+                <option value="16-classic">16U Boys Classic</option>
+                <option value="18-championship">18U Boys Championship</option>
+                <option value="18-classic">18U Boys Classic</option>
+            </select>
+        </div>
+        
         <!-- Filter Controls -->
         <!-- Simplified filter interface: Shores filter + Team search only -->
         <!-- Note: Venue filters and Recent filter removed from GUI but backend functions preserved -->

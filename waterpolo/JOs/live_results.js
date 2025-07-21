@@ -11,8 +11,44 @@ let isArchivedMode = false; // Flag to track archived vs live data mode
 let archivedDataTimestamp = null; // Store timestamp from archived data
 let futureMatchesData = {}; // Store future matches by team name
 
+// Age group configuration for Junior Olympics
+const AGE_GROUP_CONFIG = {
+    '14-championship': {
+        title: '14U Boys Championship',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys14u',
+        category: '14U_BOYS_CHAMPIONSHIP'
+    },
+    '14-classic': {
+        title: '14U Boys Classic',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys14ux',
+        category: '14U_BOYS_CLASSIC'
+    },
+    '16-championship': {
+        title: '16U Boys Championship',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys16u',
+        category: '16U_BOYS_CHAMPIONSHIP'
+    },
+    '16-classic': {
+        title: '16U Boys Classic',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys16ux',
+        category: '16U_BOYS_CLASSIC'
+    },
+    '18-championship': {
+        title: '18U Boys Championship',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys18u',
+        category: '18U_BOYS_CHAMPIONSHIP'
+    },
+    '18-classic': {
+        title: '18U Boys Classic',
+        feedUrl: 'https://feeds.kahunaevents.org/joboys18ux',
+        category: '18U_BOYS_CLASSIC'
+    }
+};
+
+// Current age group (default to 16U Boys Championship)
+let currentAgeGroup = AGE_GROUP_CONFIG['16-championship'];
+
 // CORS proxy configuration - ordered by speed (fastest first)
-const JO_URL = 'https://feeds.kahunaevents.org/joboys16u';
 const PROXIES = [
     { name: 'CodeTabs', url: 'https://api.codetabs.com/v1/proxy/?quest=' },
     { name: 'ThingProxy', url: 'https://thingproxy.freeboard.io/fetch/' },
@@ -376,8 +412,8 @@ async function fetchViaProxy() {
             updateStatus('loading', `Connecting via ${proxy.name}...`);
 
             const proxyUrl = proxy.name === 'ThingProxy' 
-                ? proxy.url + JO_URL
-                : proxy.url + encodeURIComponent(JO_URL);
+                ? proxy.url + currentAgeGroup.feedUrl
+                : proxy.url + encodeURIComponent(currentAgeGroup.feedUrl);
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -952,7 +988,7 @@ function parseFutureMatchAsJOFormat(line) {
         venueDisplayName: null,
         matchNumber: null,
         date: null,
-        category: '16U_BOYS_CHAMPIONSHIP',
+        category: currentAgeGroup.category,
         gameId: null,
         status: 'SCHEDULED'
     };
@@ -1202,7 +1238,7 @@ function groupFutureMatchesByGameId(lines) {
             venueDisplayName: templateMatch.venue,
             matchNumber: null,
             date: templateMatch.date,
-            category: '16U_BOYS_CHAMPIONSHIP',
+            category: currentAgeGroup.category,
             gameId: gameId,
             status: 'SCHEDULED',
             originalLine: `Future match: ${gameId}` // Composite original line
@@ -1356,11 +1392,8 @@ function detectJOMatchStatus(line) {
     if (isRecentMatch) {
         return { type: 'recent', label: 'RECENT' };
     }
-    if (upperLine.includes('CHAMPIONSHIP')) {
-        return { type: 'championship', label: 'CHAMPIONSHIP' };
-    }
     
-    // Return null for no status badge
+    // Return null for no status badge (removed championship-specific detection)
     return null;
 }
 
@@ -1631,6 +1664,48 @@ function updateCountdown() {
         countdown.textContent = 'Refreshing...';
         nextRefreshTime = Date.now() + (3 * 60 * 1000);
     }
+}
+
+function changeAgeGroup(ageGroupKey) {
+    // Validate the age group key
+    if (!AGE_GROUP_CONFIG[ageGroupKey]) {
+        console.error('Invalid age group key:', ageGroupKey);
+        return;
+    }
+    
+    // Update current age group
+    currentAgeGroup = AGE_GROUP_CONFIG[ageGroupKey];
+    console.log(`🔄 Switching to age group: ${currentAgeGroup.title}`);
+    
+    // Update page title and subtitle
+    const subtitle = document.querySelector('.subtitle');
+    if (subtitle) {
+        subtitle.textContent = currentAgeGroup.title;
+    }
+    
+    // Update footer data source text
+    const footerElements = document.querySelectorAll('.footer div');
+    footerElements.forEach(element => {
+        if (element.textContent.includes('Data source:')) {
+            element.innerHTML = `Data source: <strong>${currentAgeGroup.title} official feed</strong>`;
+        }
+        if (element.textContent.includes('Showing')) {
+            element.innerHTML = `<small>Showing ${currentAgeGroup.title} • Max 50 matches • SD Shores teams highlighted</small>`;
+        }
+    });
+    
+    // Update empty state text if currently visible
+    const matchGrid = document.getElementById('matchGrid');
+    if (matchGrid && matchGrid.querySelector('.empty-state')) {
+        const emptyState = matchGrid.querySelector('.empty-state');
+        if (emptyState.textContent.includes('Loading')) {
+            emptyState.innerHTML = `🔄 Loading latest ${currentAgeGroup.title} results...<br><small style="margin-top: 10px; display: block;">Showing ${currentAgeGroup.title} • Max 50 matches • SD Shores teams highlighted</small>`;
+        }
+    }
+    
+    // Clear current data and reload with new age group
+    updateStatus('loading', `Loading ${currentAgeGroup.title} results...`);
+    loadLiveResults();
 }
 
 // Initialize the page only if we're in the live results environment
