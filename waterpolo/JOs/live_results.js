@@ -431,6 +431,135 @@ async function fetchViaProxy() {
     }
 }
 
+function isDuplicateMatch(futureMatchData, completedMatches) {
+    // Check if a future match already has a corresponding completed match
+    // Match criteria: date, time, venue (with tolerance for formatting differences)
+    
+    if (!futureMatchData || !futureMatchData.date || !futureMatchData.time || !futureMatchData.venue) {
+        return false; // Can't compare incomplete data
+    }
+    
+    const futureDate = futureMatchData.date;
+    const futureTime = futureMatchData.time;
+    const futureVenue = futureMatchData.venue.toLowerCase().trim();
+    
+    return completedMatches.some(completedMatch => {
+        // Compare dates (exact match required)
+        if (completedMatch.date !== futureDate) {
+            return false;
+        }
+        
+        // Compare times (allow ±30 minute tolerance)
+        if (!isTimeMatch(futureTime, completedMatch.time)) {
+            return false;
+        }
+        
+        // Compare venues (handle format variations)
+        if (!isVenueMatch(futureVenue, completedMatch.venue || '')) {
+            return false;
+        }
+        
+        return true; // All criteria match - this is a duplicate
+    });
+}
+
+function isTimeMatch(futureTime, completedTime) {
+    // Parse times and allow ±30 minute tolerance
+    try {
+        const futureMinutes = parseTimeToMinutes(futureTime);
+        const completedMinutes = parseTimeToMinutes(completedTime);
+        
+        if (futureMinutes === null || completedMinutes === null) {
+            return false;
+        }
+        
+        const timeDiff = Math.abs(futureMinutes - completedMinutes);
+        return timeDiff <= 30; // 30 minute tolerance
+    } catch (error) {
+        return false;
+    }
+}
+
+function parseTimeToMinutes(timeStr) {
+    // Parse time like "7:50 AM" to total minutes since midnight
+    if (!timeStr) return null;
+    
+    const timeMatch = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!timeMatch) return null;
+    
+    let hours = parseInt(timeMatch[1]);
+    const minutes = parseInt(timeMatch[2]);
+    const ampm = timeMatch[3].toUpperCase();
+    
+    if (ampm === 'PM' && hours !== 12) hours += 12;
+    if (ampm === 'AM' && hours === 12) hours = 0;
+    
+    return hours * 60 + minutes;
+}
+
+function isVenueMatch(futureVenue, completedVenue) {
+    // Handle venue format variations: "#5 VENUE" vs "VENUE"
+    const futureVenueLower = futureVenue.toLowerCase().trim();
+    const completedVenueLower = completedVenue.toLowerCase().trim();
+    
+    // Extract venue name from completed venue format (remove #number prefix)
+    const completedVenueName = completedVenueLower.replace(/^#\d+\s*/, '');
+    
+    // Check if future venue contains the completed venue name or vice versa
+    return futureVenueLower.includes(completedVenueName) || 
+           completedVenueName.includes(futureVenueLower) ||
+           futureVenueLower === completedVenueLower;
+}
+
+function isTeamPairingDuplicate(futureMatch, completedMatches) {
+    // Check if a grouped future match (with team1/team2) already has a corresponding completed match
+    // This is for already-grouped future matches after groupFutureMatchesByGameId()
+    
+    if (!futureMatch || futureMatch.type !== 'future' || 
+        !futureMatch.team1 || !futureMatch.team2 ||
+        !futureMatch.date || !futureMatch.time || !futureMatch.venue) {
+        return false; // Can't compare incomplete data
+    }
+    
+    const futureTeam1 = futureMatch.team1.name.toLowerCase().trim();
+    const futureTeam2 = futureMatch.team2.name.toLowerCase().trim();
+    const futureDate = futureMatch.date;
+    const futureTime = futureMatch.time;
+    const futureVenue = futureMatch.venue.toLowerCase().trim();
+    
+    // Skip if either team is TBD - these are legitimate future matches
+    if (futureTeam1 === 'tbd' || futureTeam2 === 'tbd') {
+        return false;
+    }
+    
+    return completedMatches.some(completedMatch => {
+        // Compare dates (exact match required)
+        if (completedMatch.date !== futureDate) {
+            return false;
+        }
+        
+        // Compare times (allow ±30 minute tolerance)
+        if (!isTimeMatch(futureTime, completedMatch.time)) {
+            return false;
+        }
+        
+        // Compare venues (handle format variations)
+        if (!isVenueMatch(futureVenue, completedMatch.venue || '')) {
+            return false;
+        }
+        
+        // Compare team pairings (check both possible orderings)
+        const completedTeam1 = completedMatch.team1.name.toLowerCase().trim();
+        const completedTeam2 = completedMatch.team2.name.toLowerCase().trim();
+        
+        // Check if teams match in either order
+        const pairing1Match = (futureTeam1 === completedTeam1 && futureTeam2 === completedTeam2);
+        const pairing2Match = (futureTeam1 === completedTeam2 && futureTeam2 === completedTeam1);
+        
+        return pairing1Match || pairing2Match;
+    });
+}
+
 function displayJOMatchResults(data) {
     // First, parse the data format - handle both archived format and live email format
     let lines = data.split('\n').filter(line => line.trim() && !line.startsWith('#'));
@@ -458,7 +587,7 @@ function displayJOMatchResults(data) {
     // Log filtering results for debugging
     if (invalidCount > 0) {
         console.log(`🧹 Filtered out ${invalidCount} invalid/malformed rows from JO data`);
-        console.log(`✅ Processing ${validLines.length} valid match rows`);
+        console.log(`✅ Processing ${validLines.length} valid match rows (${completedLines.length} completed, ${futureLines.length} future)`);
     }
     
     // Remove duplicate entries from completed matches only
@@ -468,9 +597,9 @@ function displayJOMatchResults(data) {
     buildFutureMatchesData(lines);
     
     // **NEW**: Group future matches by game ID to create proper match objects
-    const groupedFutureMatches = groupFutureMatchesByGameId(lines);
+    const allGroupedFutureMatches = groupFutureMatchesByGameId(lines);
     
-    // **NEW APPROACH**: Parse completed matches and combine with grouped future matches
+    // **NEW APPROACH**: Parse completed matches first for comparison
     const completedMatchObjects = uniqueCompletedLines.map(line => {
         const matchData = parseJOMatchLine(line);
         // Attach original line for backward compatibility
@@ -478,8 +607,18 @@ function displayJOMatchResults(data) {
         return matchData;
     });
     
-    // Combine completed and future match objects
-    const allMatchObjects = [...completedMatchObjects, ...groupedFutureMatches];
+    // **NEW**: Filter out grouped future matches that already have corresponding completed matches
+    const filteredFutureMatches = allGroupedFutureMatches.filter(futureMatch => {
+        return !isTeamPairingDuplicate(futureMatch, completedMatchObjects);
+    });
+    
+    const duplicateCount = allGroupedFutureMatches.length - filteredFutureMatches.length;
+    if (duplicateCount > 0) {
+        console.log(`🔄 Filtered out ${duplicateCount} future matches that already completed (team pairing duplicates)`);
+    }
+    
+    // Combine completed and filtered future match objects
+    const allMatchObjects = [...completedMatchObjects, ...filteredFutureMatches];
     
     // Apply filters using structured match objects
     const allFilteredMatches = applyActiveFiltersToMatches(allMatchObjects);
@@ -753,7 +892,7 @@ function parseFutureMatchLine(line) {
 
             if (i === 0) {
                 // First segment has full format: "TEAM is POSITION in bracket BRACKET is COLOR in game GAME on DATE at TIME at/in VENUE"
-                const fullPattern = /^(.+?)\s+is\s+(\d+)\s+in\s+bracket\s+(\d+)\s+is\s+(DARK|WHITE)\s+in\s+game\s+([\w-]+)\s+on\s+([\d-A-Za-z]+)\s+at\s+([\d:]+\s*(?:AM|PM))\s+(?:at|in)\s+(.+)$/i;
+                const fullPattern = /^(.+?)\s+is\s+(\d+)\s+in\s+bracket\s+([^\s]+)\s+is\s+(DARK|WHITE)\s+in\s+game\s+([\w-]+)\s+on\s+([\d-A-Za-z]+)\s+at\s+([\d:]+\s*(?:AM|PM))\s+(?:at|in)\s+(.+)$/i;
                 const match = segment.match(fullPattern);
                 
                 if (match) {

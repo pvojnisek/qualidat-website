@@ -1413,6 +1413,196 @@ testSuite.addTest('Water Polo Convention', 'Handle reversed line order correctly
     testSuite.assertEquals(match.team2.name, "COMMERCE", "DARK team should be team2 even when line appears first");
 });
 
+// =============================================
+// NEW TESTS: Bracket Format & Duplicate Detection
+// =============================================
+
+testSuite.addTest('Bracket Format Parsing', 'Parse non-numeric bracket formats', () => {
+    const testCases = [
+        {
+            line: "SAN DIEGO SHORES BLACK is 1 in bracket pt_N is WHITE in game 16B-133 on 21-Jul at 12:00 PM at SAN JUAN HILLS HS",
+            expectedBracket: "pt_N",
+            expectedTeam: "SAN DIEGO SHORES BLACK"
+        },
+        {
+            line: "TEAM is 2 in bracket A_GROUP is DARK in game 16B-999 on 22-Jul at 1:00 PM at VENUE",
+            expectedBracket: "A_GROUP",
+            expectedTeam: "TEAM"
+        },
+        {
+            line: "LONG TEAM NAME is 3 in bracket bracket_42 is WHITE in game 16B-001 on 20-Jul at 9:00 AM at VENUE NAME",
+            expectedBracket: "bracket_42",
+            expectedTeam: "LONG TEAM NAME"
+        }
+    ];
+    
+    testCases.forEach(testCase => {
+        const result = parseFutureMatchLine(testCase.line);
+        testSuite.assertEquals(result.bracket, testCase.expectedBracket, `Should parse bracket: ${testCase.expectedBracket}`);
+        testSuite.assertEquals(result.team, testCase.expectedTeam, `Should parse team: ${testCase.expectedTeam}`);
+        testSuite.assertNotNull(result.gameId, "Should parse game ID");
+    });
+});
+
+testSuite.addTest('Bracket Format Parsing', 'Handle mixed numeric and non-numeric brackets', () => {
+    const lines = [
+        "TEAM A is 1 in bracket 41 is WHITE in game 16B-081 on 20-Jul at 11:10 AM at VENUE 1",
+        "TEAM B is 2 in bracket pt_N is DARK in game 16B-133 on 21-Jul at 12:00 PM at VENUE 2",
+        "TEAM C is 3 in bracket group_A is WHITE in game 16B-999 on 22-Jul at 1:00 PM at VENUE 3"
+    ];
+    
+    lines.forEach(line => {
+        const result = parseFutureMatchLine(line);
+        testSuite.assertNotNull(result.bracket, `Should parse bracket from line: ${line.substring(0, 50)}...`);
+        testSuite.assertNotNull(result.team, "Should parse team name");
+        testSuite.assertNotNull(result.gameId, "Should parse game ID");
+    });
+});
+
+testSuite.addTest('Team Pairing Duplicate Detection', 'Detect exact team pairing duplicates', () => {
+    const futureMatch = {
+        type: "future",
+        team1: { name: "SAN DIEGO SHORES BLACK" },
+        team2: { name: "COMMERCE" },
+        date: "20-Jul",
+        time: "11:10 AM",
+        venue: "WOOLLETT NEAR RIGHT"
+    };
+    
+    const completedMatches = [
+        {
+            date: "20-Jul",
+            time: "11:10 AM",
+            venue: "#81 WOOLLETT NEAR RIGHT",
+            team1: { name: "SAN DIEGO SHORES BLACK" },
+            team2: { name: "COMMERCE" }
+        }
+    ];
+    
+    const isDuplicate = isTeamPairingDuplicate(futureMatch, completedMatches);
+    testSuite.assertTrue(isDuplicate, "Should detect exact team pairing duplicate");
+});
+
+testSuite.addTest('Team Pairing Duplicate Detection', 'Detect reversed team pairing duplicates', () => {
+    const futureMatch = {
+        type: "future",
+        team1: { name: "SAN DIEGO SHORES BLACK" },
+        team2: { name: "PRAETORIAN" },
+        date: "20-Jul",
+        time: "3:20 PM",
+        venue: "SAN JUAN HILLS HS"
+    };
+    
+    const completedMatches = [
+        {
+            date: "20-Jul",
+            time: "3:20 PM",
+            venue: "#41 SAN JUAN HILLS HS",
+            team1: { name: "PRAETORIAN" },
+            team2: { name: "SAN DIEGO SHORES BLACK" } // Reversed order
+        }
+    ];
+    
+    const isDuplicate = isTeamPairingDuplicate(futureMatch, completedMatches);
+    testSuite.assertTrue(isDuplicate, "Should detect team pairing duplicate even with reversed team order");
+});
+
+testSuite.addTest('Team Pairing Duplicate Detection', 'Allow TBD team matches', () => {
+    const futureMatch = {
+        type: "future",
+        team1: { name: "SAN DIEGO SHORES BLACK" },
+        team2: { name: "TBD" },
+        date: "20-Jul",
+        time: "11:10 AM",
+        venue: "WOOLLETT NEAR RIGHT"
+    };
+    
+    const completedMatches = [
+        {
+            date: "20-Jul",
+            time: "11:10 AM",
+            venue: "#81 WOOLLETT NEAR RIGHT",
+            team1: { name: "SAN DIEGO SHORES BLACK" },
+            team2: { name: "COMMERCE" }
+        }
+    ];
+    
+    const isDuplicate = isTeamPairingDuplicate(futureMatch, completedMatches);
+    testSuite.assertFalse(isDuplicate, "Should NOT filter future matches with TBD teams");
+});
+
+testSuite.addTest('Team Pairing Duplicate Detection', 'Handle time tolerance correctly', () => {
+    const futureMatch = {
+        type: "future",
+        team1: { name: "TEAM A" },
+        team2: { name: "TEAM B" },
+        date: "20-Jul",
+        time: "11:10 AM",
+        venue: "VENUE"
+    };
+    
+    const completedMatches = [
+        {
+            date: "20-Jul",
+            time: "11:30 AM", // 20 minutes later - within tolerance
+            venue: "VENUE",
+            team1: { name: "TEAM A" },
+            team2: { name: "TEAM B" }
+        }
+    ];
+    
+    const isDuplicate = isTeamPairingDuplicate(futureMatch, completedMatches);
+    testSuite.assertTrue(isDuplicate, "Should detect duplicate within 30-minute time tolerance");
+});
+
+testSuite.addTest('Team Pairing Duplicate Detection', 'Reject matches outside time tolerance', () => {
+    const futureMatch = {
+        type: "future",
+        team1: { name: "TEAM A" },
+        team2: { name: "TEAM B" },
+        date: "20-Jul",
+        time: "11:10 AM",
+        venue: "VENUE"
+    };
+    
+    const completedMatches = [
+        {
+            date: "20-Jul",
+            time: "12:00 PM", // 50 minutes later - outside tolerance
+            venue: "VENUE",
+            team1: { name: "TEAM A" },
+            team2: { name: "TEAM B" }
+        }
+    ];
+    
+    const isDuplicate = isTeamPairingDuplicate(futureMatch, completedMatches);
+    testSuite.assertFalse(isDuplicate, "Should NOT detect duplicate outside 30-minute time tolerance");
+});
+
+testSuite.addTest('Team Pairing Duplicate Detection', 'Handle venue format variations', () => {
+    const futureMatch = {
+        type: "future",
+        team1: { name: "TEAM A" },
+        team2: { name: "TEAM B" },
+        date: "20-Jul",
+        time: "11:10 AM",
+        venue: "WOOLLETT NEAR RIGHT"
+    };
+    
+    const completedMatches = [
+        {
+            date: "20-Jul",
+            time: "11:10 AM",
+            venue: "#81 WOOLLETT NEAR RIGHT", // With venue number prefix
+            team1: { name: "TEAM A" },
+            team2: { name: "TEAM B" }
+        }
+    ];
+    
+    const isDuplicate = isTeamPairingDuplicate(futureMatch, completedMatches);
+    testSuite.assertTrue(isDuplicate, "Should handle venue format variations (#number prefix)");
+});
+
 // Initialize and display test count on page load
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🧪 JO Test Suite initialized');
