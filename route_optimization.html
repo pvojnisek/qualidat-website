@@ -341,6 +341,23 @@
             text-align: center;
         }
 
+        .footer-links {
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
         .contact-details {
             margin-top: 2rem; 
             display: flex;
@@ -481,6 +498,13 @@
     </main>
 
     <footer class="footer" role="contentinfo">
+        <div class="footer-links">
+            <a href="imprint.html" data-i18n="footer.imprint">Impresszum</a>
+            <span>|</span>
+            <a href="privacy.html" data-i18n="footer.privacy">Adatvédelmi Tájékoztató</a>
+            <span>|</span>
+            <a href="cookies.html" data-i18n="footer.cookies">Süti Tájékoztató</a>
+        </div>
         <p data-i18n="footer.copyright">&copy; 2026 QualiDat. All rights reserved.</p>
     </footer>
 
@@ -703,6 +727,18 @@
                 }
             },
             footer: {
+                imprint: {
+                    en: "Imprint",
+                    hu: "Impresszum"
+                },
+                privacy: {
+                    en: "Privacy Policy",
+                    hu: "Adatvédelmi Tájékoztató"
+                },
+                cookies: {
+                    en: "Cookie Policy",
+                    hu: "Süti Tájékoztató"
+                },
                 copyright: {
                     en: "© 2026 QualiDat. All rights reserved.",
                     hu: "© 2026 QualiDat. Minden jog fenntartva."

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suti Tajekoztato - QualiDat</title>
+    <meta name="description" content="A QualiDat.hu weboldal suti (cookie) szabalyzata es tajekoztato. Tudjon meg tobbet arrol, hogyan hasznaljuk a sutiket.">
+    <meta name="keywords" content="suti, cookie, adatvedelem, QualiDat, tajekoztato, GDPR">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1d47b8;
+            --primary-dark: #163990;
+            --text-color: #333;
+            --light-bg: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Dropdown specific styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+        }
+
+        .dropdown-toggle .arrow {
+            font-size: 0.8em;
+            margin-left: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            min-width: 250px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            z-index: 1001;
+            border-radius: 4px;
+            padding: 0.5rem 0;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .dropdown:hover .dropdown-menu,
+        .dropdown-toggle:focus + .dropdown-menu,
+        .dropdown-menu:hover {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .dropdown:hover .dropdown-toggle .arrow,
+        .dropdown-toggle:focus .arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu a {
+            color: var(--text-color);
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            display: block;
+            font-weight: 400;
+            white-space: nowrap;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+        }
+
+        /* Language Selector Styles */
+        .language-selector {
+            margin-left: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: color 0.3s;
+        }
+
+        .language-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .language-btn.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .language-btn > span {
+            margin-right: 5px;
+            font-size: 1.2rem;
+        }
+
+        .section {
+            padding: 5rem 2rem;
+        }
+
+        #main-content {
+            padding-top: 80px;
+        }
+
+        #main-content h1, #main-content h2, #main-content h3, #main-content h4 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+        }
+        #main-content h1 {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        #main-content h2 {
+            font-size: 2.2rem;
+            margin-top: 2.5rem;
+        }
+        #main-content h3 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        #main-content h4 {
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        #main-content p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        #main-content ul {
+            list-style-position: outside;
+            padding-left: 20px;
+            margin-bottom: 1.5rem;
+        }
+        #main-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-section {
+            max-width: 900px;
+            margin: 0 auto 3rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .content-section h1, .content-section h2, .content-section h3, .content-section h4 {
+             color: var(--primary-dark);
+        }
+
+        /* Cookie table styles */
+        .cookie-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .cookie-table th,
+        .cookie-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .cookie-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .cookie-table tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+
+        .cookie-table tr:hover {
+            background-color: #e9ecef;
+        }
+
+        /* Browser links */
+        .browser-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .browser-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .browser-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Contact section */
+        .contact-info {
+            background-color: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+
+        .contact-info p {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer {
+            background: var(--light-bg);
+            padding: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="logo">
+            <a href="index.html" aria-label="QualiDat Fooldal">
+                <img src="qualidat_logo.jpg" alt="QualiDat Dynamic Route Planner Logo" loading="lazy">
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#features" data-i18n="nav.features">Features</a>
+            <a href="index.html#benefits" data-i18n="nav.benefits">Benefits</a>
+            <a href="index.html#stats" data-i18n="nav.stats">Impact</a>
+            <a href="index.html#contact" data-i18n="nav.contact">Contact</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-i18n="nav.services">Services <span class="arrow">&#9662;</span></a>
+                <div class="dropdown-menu">
+                    <a href="route_optimization.html" data-i18n="nav.service1">Intelligens Utvonal Optimalizalas</a>
+                    <a href="fleet_management.html" data-i18n="nav.service2">Flotta Management</a>
+                    <a href="workforce_optimization.html" data-i18n="nav.service3">Munkaero Optimalizalas</a>
+                    <a href="integration.html" data-i18n="nav.service4">Integracio</a>
+                    <a href="custom_workflows.html" data-i18n="nav.service5">Egyedi Munkafolyamatok</a>
+                    <a href="mobile_access.html" data-i18n="nav.service6">Mobil Hozzaferes</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="language-selector">
+            <button id="en-btn" class="language-btn active" data-lang="en">
+                <span>&#127468;&#127463;</span> EN
+            </button>
+            <span style="margin: 0 0.5rem;">|</span>
+            <button id="hu-btn" class="language-btn" data-lang="hu">
+                <span>&#127469;&#127482;</span> HU
+            </button>
+        </div>
+    </nav>
+
+    <main id="main-content" class="section">
+        <div class="content-section">
+            <h1 data-i18n="cookies.title">Suti Tajekoztato</h1>
+
+            <p data-i18n="cookies.lastUpdated"><em>Utolso frissites: 2026. januar 15.</em></p>
+
+            <h2 data-i18n="cookies.whatAreCookies.title">Mi az a suti (cookie)?</h2>
+            <p data-i18n="cookies.whatAreCookies.text1">A sutik kis szoveges fajlok, amelyeket a webhelyek a latogato bongeszojeben tarolnak. A sutik segitik a webhelyek mukodeset es javitjak a felhasznaloi elmenyt.</p>
+            <p data-i18n="cookies.whatAreCookies.text2">A weboldalunk a leheto legkevesebb adatgyujtest alkalmazza. Nem hasznalunk marketing sutiket, es nem kovetedjuk a latogatoinkat harmadik felek szamara.</p>
+
+            <h2 data-i18n="cookies.categories.title">Suti kategoriak</h2>
+
+            <h3 data-i18n="cookies.categories.necessary.title">1. Szukseges sutik</h3>
+            <p data-i18n="cookies.categories.necessary.text">Ezek a sutik elengedhetetlenek a webhely alapveto mukodesehez. Nelkuluk a webhely nem tudna megfeleloen mukodni.</p>
+
+            <h3 data-i18n="cookies.categories.functional.title">2. Funkcionalis sutik</h3>
+            <p data-i18n="cookies.categories.functional.text">Ezek a sutik lehetove teszik, hogy a webhely emlekezzen az On valasztasaira (pl. nyelvi preferencia), es jobb, szemelyre szabottabb funkcionalitast biztositsanak.</p>
+
+            <h3 data-i18n="cookies.categories.analytics.title">3. Analitikai sutik</h3>
+            <p data-i18n="cookies.categories.analytics.text">Ezek a sutik segitenek megerteni, hogyan hasznaljak a latogatok a webhelyet. Az oldalunk jelenleg NEM hasznal analitikai sutiket (pl. Google Analytics).</p>
+
+            <h3 data-i18n="cookies.categories.marketing.title">4. Marketing sutik</h3>
+            <p data-i18n="cookies.categories.marketing.text">Ezek a sutik a hirdetesek celzasara szolgalnak. Az oldalunk NEM hasznal marketing sutiket.</p>
+
+            <h2 data-i18n="cookies.usedOnSite.title">A weboldalunkon hasznalt sutik es tarolok</h2>
+            <p data-i18n="cookies.usedOnSite.intro">A qualidat.hu weboldal minimalis adatgyujtest alkalmaz. Az alabbi tablazat osszefoglalja a hasznalt technologiakat:</p>
+
+            <table class="cookie-table">
+                <thead>
+                    <tr>
+                        <th data-i18n="cookies.table.name">Nev</th>
+                        <th data-i18n="cookies.table.type">Tipus</th>
+                        <th data-i18n="cookies.table.purpose">Cel</th>
+                        <th data-i18n="cookies.table.duration">Idotartam</th>
+                        <th data-i18n="cookies.table.provider">Szolgaltato</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>preferredLanguage</td>
+                        <td data-i18n="cookies.table.localStorage">Helyi tarolo (localStorage)</td>
+                        <td data-i18n="cookies.table.languagePurpose">A valasztott nyelv (HU/EN) megjegyzese</td>
+                        <td data-i18n="cookies.table.persistent">Allandoo (amig nem torli)</td>
+                        <td>qualidat.hu</td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="cookies.table.technicalCookies">Technikai sutik</td>
+                        <td data-i18n="cookies.table.sessionCookie">Munkamenet suti</td>
+                        <td data-i18n="cookies.table.hostingPurpose">A GitHub Pages tarhelyszolgaltato altal hasznalt minimalis technikai sutik</td>
+                        <td data-i18n="cookies.table.sessionDuration">Munkamenet</td>
+                        <td>GitHub Pages</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p data-i18n="cookies.usedOnSite.note"><strong>Megjegyzes:</strong> A weboldalunk hasznalja az AOS (Animate On Scroll) konyvtarat animaciokhoz, amely a cdnjs.cloudflare.com szerverrol toltodik be. Ez a konyvtar NEM tarol sutiket es NEM gyujt szemelyes adatokat.</p>
+
+            <h2 data-i18n="cookies.manage.title">Hogyan kezelheti a sutiket?</h2>
+            <p data-i18n="cookies.manage.text">A legtobb bongeszo lehetove teszi a sutik kezeleset a beallitasokon keresztul. Az alabbi linkeken talalhato utmutatot az egyes bongeszokhoz:</p>
+
+            <div class="browser-links">
+                <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" class="browser-link" data-i18n="cookies.browsers.chrome">Google Chrome</a>
+                <a href="https://support.mozilla.org/hu/kb/sutik-informacio-amelyet-weboldalak-tarolnak-szami" target="_blank" rel="noopener noreferrer" class="browser-link" data-i18n="cookies.browsers.firefox">Mozilla Firefox</a>
+                <a href="https://support.apple.com/hu-hu/guide/safari/sfri11471/mac" target="_blank" rel="noopener noreferrer" class="browser-link" data-i18n="cookies.browsers.safari">Apple Safari</a>
+                <a href="https://support.microsoft.com/hu-hu/microsoft-edge/cookie-k-torlese-a-microsoft-edge-ben-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" class="browser-link" data-i18n="cookies.browsers.edge">Microsoft Edge</a>
+            </div>
+
+            <h2 data-i18n="cookies.legalBasis.title">Jogalap</h2>
+            <p data-i18n="cookies.legalBasis.text1">A szukseges es funkcionalis sutik hasznalata a webhely mukodesehez szukseges jogos erdeken alapul (GDPR 6. cikk (1) bekezdes f) pont).</p>
+            <p data-i18n="cookies.legalBasis.text2">Mivel weboldalunk nem hasznal analitikai vagy marketing sutiket, nem kerunk hozzajarulast ezekhez.</p>
+
+            <h2 data-i18n="cookies.changes.title">Valtozasok a suti szabalyzatban</h2>
+            <p data-i18n="cookies.changes.text">Fenntartjuk a jogot, hogy barmikor modositsuk ezt a suti tajekoztato. A valtozasokat ezen az oldalon tesszuk kozze.</p>
+
+            <h2 data-i18n="cookies.contact.title">Kapcsolat</h2>
+            <p data-i18n="cookies.contact.text">Ha barmilyen kerdese van a sutik hasznalataval kapcsolatban, forduljon hozzank:</p>
+
+            <div class="contact-info">
+                <p><strong data-i18n="cookies.contact.company">Cegnev:</strong> QualiDat Kft.</p>
+                <p><strong data-i18n="cookies.contact.email">E-mail:</strong>
+                    <a href="#" id="email-link"
+                       data-email-user="aW5mbw=="
+                       data-email-domain="cXVhbGlkYXQ="
+                       data-email-tld="aHU="
+                       onclick="openMail(this); return false;"
+                       data-i18n="cookies.contact.emailAddress">info@qualidat.hu</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <p data-i18n="footer.copyright">&copy; 2026 QualiDat. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        const translations = {
+            nav: {
+                features: { en: "Features", hu: "Funkciok" },
+                benefits: { en: "Benefits", hu: "Elonyok" },
+                stats: { en: "Impact", hu: "Eredmenyek" },
+                contact: { en: "Contact", hu: "Kapcsolat" },
+                services: { en: "Services", hu: "Szolgaltatasok" },
+                service1: { en: "Smart Route Optimization", hu: "Intelligens Utvonal Optimalizalas" },
+                service2: { en: "Fleet Management", hu: "Flotta Management" },
+                service3: { en: "Workforce Optimization", hu: "Munkaero Optimalizalas" },
+                service4: { en: "Seamless Integration", hu: "Integracio" },
+                service5: { en: "Custom Workflows", hu: "Egyedi Munkafolyamatok" },
+                service6: { en: "Mobile Access", hu: "Mobil Hozzaferes" }
+            },
+            cookies: {
+                title: { en: "Cookie Policy", hu: "Suti Tajekoztato" },
+                lastUpdated: { en: "<em>Last updated: January 15, 2026</em>", hu: "<em>Utolso frissites: 2026. januar 15.</em>" },
+                whatAreCookies: {
+                    title: { en: "What are cookies?", hu: "Mi az a suti (cookie)?" },
+                    text1: {
+                        en: "Cookies are small text files that websites store in a visitor's browser. Cookies help websites function and improve the user experience.",
+                        hu: "A sutik kis szoveges fajlok, amelyeket a webhelyek a latogato bongeszojeben tarolnak. A sutik segitik a webhelyek mukodeset es javitjak a felhasznaloi elmenyt."
+                    },
+                    text2: {
+                        en: "Our website uses minimal data collection. We do not use marketing cookies and do not track our visitors for third parties.",
+                        hu: "A weboldalunk a leheto legkevesebb adatgyujtest alkalmazza. Nem hasznalunk marketing sutiket, es nem kovetedjuk a latogatoinkat harmadik felek szamara."
+                    }
+                },
+                categories: {
+                    title: { en: "Cookie Categories", hu: "Suti kategoriak" },
+                    necessary: {
+                        title: { en: "1. Necessary Cookies", hu: "1. Szukseges sutik" },
+                        text: {
+                            en: "These cookies are essential for the basic functioning of the website. Without them, the website would not be able to function properly.",
+                            hu: "Ezek a sutik elengedhetetlenek a webhely alapveto mukodesehez. Nelkuluk a webhely nem tudna megfeleloen mukodni."
+                        }
+                    },
+                    functional: {
+                        title: { en: "2. Functional Cookies", hu: "2. Funkcionalis sutik" },
+                        text: {
+                            en: "These cookies allow the website to remember your choices (e.g., language preference) and provide better, more personalized functionality.",
+                            hu: "Ezek a sutik lehetove teszik, hogy a webhely emlekezzen az On valasztasaira (pl. nyelvi preferencia), es jobb, szemelyre szabottabb funkcionalitast biztositsanak."
+                        }
+                    },
+                    analytics: {
+                        title: { en: "3. Analytics Cookies", hu: "3. Analitikai sutik" },
+                        text: {
+                            en: "These cookies help understand how visitors use the website. Our site currently does NOT use analytics cookies (e.g., Google Analytics).",
+                            hu: "Ezek a sutik segitenek megerteni, hogyan hasznaljak a latogatok a webhelyet. Az oldalunk jelenleg NEM hasznal analitikai sutiket (pl. Google Analytics)."
+                        }
+                    },
+                    marketing: {
+                        title: { en: "4. Marketing Cookies", hu: "4. Marketing sutik" },
+                        text: {
+                            en: "These cookies are used for advertising targeting. Our site does NOT use marketing cookies.",
+                            hu: "Ezek a sutik a hirdetesek celzasara szolgalnak. Az oldalunk NEM hasznal marketing sutiket."
+                        }
+                    }
+                },
+                usedOnSite: {
+                    title: { en: "Cookies and Storage Used on Our Website", hu: "A weboldalunkon hasznalt sutik es tarolok" },
+                    intro: {
+                        en: "The qualidat.hu website uses minimal data collection. The following table summarizes the technologies used:",
+                        hu: "A qualidat.hu weboldal minimalis adatgyujtest alkalmaz. Az alabbi tablazat osszefoglalja a hasznalt technologiakat:"
+                    },
+                    note: {
+                        en: "<strong>Note:</strong> Our website uses the AOS (Animate On Scroll) library for animations, which is loaded from cdnjs.cloudflare.com servers. This library does NOT store cookies and does NOT collect personal data.",
+                        hu: "<strong>Megjegyzes:</strong> A weboldalunk hasznalja az AOS (Animate On Scroll) konyvtarat animaciokhoz, amely a cdnjs.cloudflare.com szerverrol toltodik be. Ez a konyvtar NEM tarol sutiket es NEM gyujt szemelyes adatokat."
+                    }
+                },
+                table: {
+                    name: { en: "Name", hu: "Nev" },
+                    type: { en: "Type", hu: "Tipus" },
+                    purpose: { en: "Purpose", hu: "Cel" },
+                    duration: { en: "Duration", hu: "Idotartam" },
+                    provider: { en: "Provider", hu: "Szolgaltato" },
+                    localStorage: { en: "Local storage (localStorage)", hu: "Helyi tarolo (localStorage)" },
+                    languagePurpose: { en: "Remember chosen language (HU/EN)", hu: "A valasztott nyelv (HU/EN) megjegyzese" },
+                    persistent: { en: "Persistent (until deleted)", hu: "Allandoo (amig nem torli)" },
+                    technicalCookies: { en: "Technical cookies", hu: "Technikai sutik" },
+                    sessionCookie: { en: "Session cookie", hu: "Munkamenet suti" },
+                    hostingPurpose: { en: "Minimal technical cookies used by GitHub Pages hosting provider", hu: "A GitHub Pages tarhelyszolgaltato altal hasznalt minimalis technikai sutik" },
+                    sessionDuration: { en: "Session", hu: "Munkamenet" }
+                },
+                manage: {
+                    title: { en: "How to Manage Cookies?", hu: "Hogyan kezelheti a sutiket?" },
+                    text: {
+                        en: "Most browsers allow you to manage cookies through their settings. The following links provide guidance for each browser:",
+                        hu: "A legtobb bongeszo lehetove teszi a sutik kezeleset a beallitasokon keresztul. Az alabbi linkeken talalhato utmutatot az egyes bongeszokhoz:"
+                    }
+                },
+                browsers: {
+                    chrome: { en: "Google Chrome", hu: "Google Chrome" },
+                    firefox: { en: "Mozilla Firefox", hu: "Mozilla Firefox" },
+                    safari: { en: "Apple Safari", hu: "Apple Safari" },
+                    edge: { en: "Microsoft Edge", hu: "Microsoft Edge" }
+                },
+                legalBasis: {
+                    title: { en: "Legal Basis", hu: "Jogalap" },
+                    text1: {
+                        en: "The use of necessary and functional cookies is based on the legitimate interest necessary for the operation of the website (GDPR Article 6(1)(f)).",
+                        hu: "A szukseges es funkcionalis sutik hasznalata a webhely mukodesehez szukseges jogos erdeken alapul (GDPR 6. cikk (1) bekezdes f) pont)."
+                    },
+                    text2: {
+                        en: "Since our website does not use analytics or marketing cookies, we do not request consent for these.",
+                        hu: "Mivel weboldalunk nem hasznal analitikai vagy marketing sutiket, nem kerunk hozzajarulast ezekhez."
+                    }
+                },
+                changes: {
+                    title: { en: "Changes to Cookie Policy", hu: "Valtozasok a suti szabalyzatban" },
+                    text: {
+                        en: "We reserve the right to modify this cookie policy at any time. Changes will be published on this page.",
+                        hu: "Fenntartjuk a jogot, hogy barmikor modositsuk ezt a suti tajekoztato. A valtozasokat ezen az oldalon tesszuk kozze."
+                    }
+                },
+                contact: {
+                    title: { en: "Contact", hu: "Kapcsolat" },
+                    text: {
+                        en: "If you have any questions about the use of cookies, please contact us:",
+                        hu: "Ha barmilyen kerdese van a sutik hasznalataval kapcsolatban, forduljon hozzank:"
+                    },
+                    company: { en: "Company:", hu: "Cegnev:" },
+                    email: { en: "Email:", hu: "E-mail:" },
+                    emailAddress: { en: "info@qualidat.hu", hu: "info@qualidat.hu" }
+                }
+            },
+            footer: {
+                copyright: {
+                    en: "© 2026 QualiDat. All rights reserved.",
+                    hu: "© 2026 QualiDat. Minden jog fenntartva."
+                }
+            }
+        };
+
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Set default language from localStorage or to 'hu'
+        let currentLanguage = localStorage.getItem('preferredLanguage') || 'hu';
+        document.documentElement.lang = currentLanguage;
+
+        // Apply translations based on selected language
+        function applyTranslations(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const keys = element.getAttribute('data-i18n').split('.');
+                let value = translations;
+
+                for (let i = 0; i < keys.length; i++) {
+                    const key = keys[i];
+                    if (value && typeof value === 'object' && value[key] !== undefined) {
+                        value = value[key];
+                        if (i === keys.length - 1 && typeof value === 'object' && value[lang] !== undefined) {
+                            // Check if the translation contains HTML
+                            if (value[lang].includes('<') && value[lang].includes('>')) {
+                                element.innerHTML = value[lang];
+                            } else {
+                                element.textContent = value[lang];
+                            }
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+            });
+
+            // Update active class on language buttons
+            languageButtons.forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        const languageButtons = document.querySelectorAll('.language-btn');
+        languageButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const language = this.getAttribute('data-lang');
+                applyTranslations(language);
+                localStorage.setItem('preferredLanguage', language);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            applyTranslations(currentLanguage);
+
+            // Navbar scroll behavior
+            const navbar = document.querySelector('.navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Dropdown menu functionality
+            const dropdownToggle = document.querySelector('.dropdown-toggle');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+
+            if (dropdownToggle && dropdownMenu) {
+                dropdownToggle.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    if (dropdownMenu.style.display === 'block') {
+                        dropdownMenu.style.display = '';
+                    } else {
+                        dropdownMenu.style.display = 'block';
+                    }
+                });
+            }
+        });
+
+        // Bot-safe email function
+        function openMail(element) {
+            const user = atob(element.getAttribute('data-email-user'));
+            const domain = atob(element.getAttribute('data-email-domain'));
+            const tld = atob(element.getAttribute('data-email-tld'));
+            const emailAddress = `${user}@${domain}.${tld}`;
+            window.location.href = 'mailto:' + emailAddress;
+        }
+    </script>
+</body>
+</html>

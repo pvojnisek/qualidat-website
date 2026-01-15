@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impresszum - QualiDat</title>
+    <meta name="description" content="QualiDat Kft. impresszum, cegadatok, kapcsolat. Legal imprint and company information.">
+    <meta name="keywords" content="QualiDat, impresszum, imprint, cegadatok, kapcsolat">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1d47b8;
+            --primary-dark: #163990;
+            --text-color: #333;
+            --light-bg: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .language-selector {
+            margin-left: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: color 0.3s;
+        }
+
+        .language-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .language-btn.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .language-btn > span {
+            margin-right: 5px;
+            font-size: 1.2rem;
+        }
+
+        .section {
+            padding: 5rem 2rem;
+        }
+
+        #main-content {
+            padding-top: 80px;
+        }
+
+        #main-content h1, #main-content h2, #main-content h3, #main-content h4 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+        }
+        #main-content h1 {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        #main-content h2 {
+            font-size: 1.8rem;
+            margin-top: 2.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        #main-content h3 {
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+        }
+        #main-content p {
+            margin-bottom: 0.8rem;
+            line-height: 1.7;
+        }
+
+        .content-section {
+            max-width: 900px;
+            margin: 0 auto 3rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .content-section h1, .content-section h2, .content-section h3, .content-section h4 {
+             color: var(--primary-dark);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 0.5rem 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .info-value {
+            word-break: break-word;
+        }
+
+        .bank-accounts {
+            margin-top: 1rem;
+        }
+
+        .bank-account {
+            background: var(--light-bg);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+        }
+
+        .bank-account-name {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .iban {
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .email-link {
+            cursor: pointer;
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .email-link:hover {
+            color: var(--primary-dark);
+        }
+
+        .footer {
+            background: var(--light-bg);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .info-label {
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="logo">
+            <a href="index.html" aria-label="QualiDat Fooldal">
+                <img src="qualidat_logo.jpg" alt="QualiDat Dynamic Route Planner Logo" loading="lazy">
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#features" data-i18n="nav.features">Features</a>
+            <a href="index.html#benefits" data-i18n="nav.benefits">Benefits</a>
+            <a href="index.html#stats" data-i18n="nav.stats">Impact</a>
+            <a href="index.html#contact" data-i18n="nav.contact">Contact</a>
+        </div>
+
+        <div class="language-selector">
+            <button id="en-btn" class="language-btn" data-lang="en">
+                <span>GB</span> EN
+            </button>
+            <span style="margin: 0 0.5rem;">|</span>
+            <button id="hu-btn" class="language-btn active" data-lang="hu">
+                <span>HU</span> HU
+            </button>
+        </div>
+    </nav>
+
+    <main id="main-content" class="section">
+        <div class="content-section">
+            <h1 data-i18n="imprint.title">Impresszum</h1>
+
+            <h2 data-i18n="imprint.companyData">Cegadatok</h2>
+
+            <div class="info-grid">
+                <span class="info-label" data-i18n="imprint.name">Nev:</span>
+                <span class="info-value">QualiDat Kft.</span>
+
+                <span class="info-label" data-i18n="imprint.fullName">Teljes nev:</span>
+                <span class="info-value">QualiDat Adatkereskedelmi es Szolgaltato Korlatolt Felelossegu Tarsasag</span>
+
+                <span class="info-label" data-i18n="imprint.registeredOffice">Szekhely:</span>
+                <span class="info-value">1037 Budapest, Nyereg ut 23.</span>
+
+                <span class="info-label" data-i18n="imprint.taxNumber">Adoszam:</span>
+                <span class="info-value">14106099-2-41</span>
+
+                <span class="info-label" data-i18n="imprint.registrationNumber">Cegjegyzekszam:</span>
+                <span class="info-value">01-09-436673</span>
+
+                <span class="info-label" data-i18n="imprint.registrationDate">Bejegyzes kelte:</span>
+                <span class="info-value">2024/10/22</span>
+
+                <span class="info-label" data-i18n="imprint.euVatNumber">Kozossegi adoszam:</span>
+                <span class="info-value">HU 14106099</span>
+            </div>
+
+            <h2 data-i18n="imprint.contact">Kapcsolat</h2>
+
+            <div class="info-grid">
+                <span class="info-label">E-mail:</span>
+                <span class="info-value">
+                    <span class="email-link"
+                          onclick="openMail(this)"
+                          data-email-user="aW5mbw=="
+                          data-email-domain="cXVhbGlkYXQ="
+                          data-email-tld="aHU="
+                          role="button"
+                          tabindex="0"
+                          onkeypress="if(event.key==='Enter')openMail(this)">info@qualidat.hu</span>
+                </span>
+
+                <span class="info-label" data-i18n="imprint.phone">Telefon:</span>
+                <span class="info-value"><a href="tel:+36302017554" style="color: var(--primary-color);">+36 30 201 7554</a></span>
+            </div>
+
+            <h2 data-i18n="imprint.bankAccounts">Bankszamlak</h2>
+
+            <div class="bank-accounts">
+                <div class="bank-account">
+                    <div class="bank-account-name">Raiffeisen Bank</div>
+                    <div class="info-grid">
+                        <span class="info-label">IBAN:</span>
+                        <span class="info-value iban">HU24 12010350 02016114 00100004</span>
+                        <span class="info-label">SWIFT/BIC:</span>
+                        <span class="info-value">UBRTHUHB</span>
+                    </div>
+                </div>
+
+                <div class="bank-account">
+                    <div class="bank-account-name">BinX</div>
+                    <div class="info-grid">
+                        <span class="info-label">IBAN:</span>
+                        <span class="info-value iban">HU25 30400001 00000000 32097007</span>
+                    </div>
+                </div>
+            </div>
+
+            <h2 data-i18n="imprint.hosting">Tarhelyszolgaltatas</h2>
+
+            <div class="info-grid">
+                <span class="info-label" data-i18n="imprint.hostingProvider">Szolgaltato:</span>
+                <span class="info-value">GitHub Pages</span>
+
+                <span class="info-label" data-i18n="imprint.hostingWebsite">Weboldal:</span>
+                <span class="info-value"><a href="https://github.com" target="_blank" rel="noopener noreferrer" style="color: var(--primary-color);">github.com</a></span>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <p data-i18n="footer.copyright">&copy; 2026 QualiDat. Minden jog fenntartva.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        const translations = {
+            nav: {
+                features: { en: "Features", hu: "Funkciok" },
+                benefits: { en: "Benefits", hu: "Elonyok" },
+                stats: { en: "Impact", hu: "Eredmenyek" },
+                contact: { en: "Contact", hu: "Kapcsolat" }
+            },
+            imprint: {
+                title: { en: "Legal Imprint", hu: "Impresszum" },
+                companyData: { en: "Company Information", hu: "Cegadatok" },
+                name: { en: "Name:", hu: "Nev:" },
+                fullName: { en: "Full legal name:", hu: "Teljes nev:" },
+                registeredOffice: { en: "Registered office:", hu: "Szekhely:" },
+                taxNumber: { en: "Tax number:", hu: "Adoszam:" },
+                registrationNumber: { en: "Registration number:", hu: "Cegjegyzekszam:" },
+                registrationDate: { en: "Registration date:", hu: "Bejegyzes kelte:" },
+                euVatNumber: { en: "EU VAT number:", hu: "Kozossegi adoszam:" },
+                contact: { en: "Contact", hu: "Kapcsolat" },
+                phone: { en: "Phone:", hu: "Telefon:" },
+                bankAccounts: { en: "Bank Accounts", hu: "Bankszamlak" },
+                hosting: { en: "Web Hosting", hu: "Tarhelyszolgaltatas" },
+                hostingProvider: { en: "Provider:", hu: "Szolgaltato:" },
+                hostingWebsite: { en: "Website:", hu: "Weboldal:" }
+            },
+            footer: {
+                copyright: { en: "(C) 2026 QualiDat. All rights reserved.", hu: "(C) 2026 QualiDat. Minden jog fenntartva." }
+            }
+        };
+
+        AOS.init({ duration: 800, once: true });
+
+        let currentLanguage = localStorage.getItem('preferredLanguage') || 'hu';
+        document.documentElement.lang = currentLanguage;
+
+        function applyTranslations(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const keys = element.getAttribute('data-i18n').split('.');
+                let value = translations;
+
+                for (let i = 0; i < keys.length; i++) {
+                    const key = keys[i];
+                    if (value && typeof value === 'object' && value[key] !== undefined) {
+                        value = value[key];
+                        if (i === keys.length - 1 && typeof value === 'object' && value[lang] !== undefined) {
+                            element.textContent = value[lang];
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+            });
+
+            languageButtons.forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        const languageButtons = document.querySelectorAll('.language-btn');
+        languageButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const language = this.getAttribute('data-lang');
+                applyTranslations(language);
+                localStorage.setItem('preferredLanguage', language);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            applyTranslations(currentLanguage);
+
+            const navbar = document.querySelector('.navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        });
+
+        function openMail(element) {
+            const user = atob(element.getAttribute('data-email-user'));
+            const domain = atob(element.getAttribute('data-email-domain'));
+            const tld = atob(element.getAttribute('data-email-tld'));
+            const emailAddress = `${user}@${domain}.${tld}`;
+            window.location.href = 'mailto:' + emailAddress;
+        }
+    </script>
+</body>
+</html>

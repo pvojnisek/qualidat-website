@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adatvedelmi Tajekoztato - QualiDat</title>
+    <meta name="description" content="QualiDat Kft. adatvedelmi tajekoztato. GDPR megfeleloseggel kapcsolatos informaciok, adatkezelesi jogalapok es erintetti jogok.">
+    <meta name="keywords" content="adatvedelem, GDPR, adatvedelmi tajekoztato, QualiDat, privacy policy">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1d47b8;
+            --primary-dark: #163990;
+            --text-color: #333;
+            --light-bg: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Dropdown styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+        }
+
+        .dropdown-toggle .arrow {
+            font-size: 0.8em;
+            margin-left: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            min-width: 250px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            z-index: 1001;
+            border-radius: 4px;
+            padding: 0.5rem 0;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .dropdown:hover .dropdown-menu,
+        .dropdown-toggle:focus + .dropdown-menu,
+        .dropdown-menu:hover {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .dropdown:hover .dropdown-toggle .arrow,
+        .dropdown-toggle:focus .arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu a {
+            color: var(--text-color);
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            display: block;
+            font-weight: 400;
+            white-space: nowrap;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+        }
+
+        /* Language Selector Styles */
+        .language-selector {
+            margin-left: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: color 0.3s;
+        }
+
+        .language-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .language-btn.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .language-btn > span {
+            margin-right: 5px;
+            font-size: 1.2rem;
+        }
+
+        .section {
+            padding: 5rem 2rem;
+        }
+
+        /* Main content styling */
+        #main-content {
+            padding-top: 80px;
+        }
+
+        #main-content h1, #main-content h2, #main-content h3, #main-content h4 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+        }
+        #main-content h1 {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        #main-content h2 {
+            font-size: 1.8rem;
+            margin-top: 2.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        #main-content h3 {
+            font-size: 1.4rem;
+            margin-top: 2rem;
+        }
+        #main-content h4 {
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        #main-content p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        #main-content ul {
+            list-style-position: outside;
+            padding-left: 20px;
+            margin-bottom: 1.5rem;
+        }
+        #main-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-section {
+            max-width: 900px;
+            margin: 0 auto 3rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .content-section h1, .content-section h2, .content-section h3, .content-section h4 {
+             color: var(--primary-dark);
+        }
+
+        /* Table styling for GDPR data */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .data-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+
+        .data-table tr:hover {
+            background-color: #e9ecef;
+        }
+
+        /* Info box styling */
+        .info-box {
+            background-color: var(--light-bg);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box h4 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Contact info in data controller section */
+        .controller-info {
+            background-color: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .controller-info p {
+            margin-bottom: 0.5rem;
+        }
+
+        .controller-info strong {
+            color: var(--primary-dark);
+        }
+
+        /* Rights list styling */
+        .rights-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .rights-list li {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background-color: var(--light-bg);
+            border-radius: 4px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .rights-list li strong {
+            color: var(--primary-dark);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        /* Last updated styling */
+        .last-updated {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer {
+            background: var(--light-bg);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive table */
+        @media (max-width: 768px) {
+            .data-table {
+                font-size: 0.85rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px;
+            }
+
+            #main-content h1 {
+                font-size: 2rem;
+            }
+
+            #main-content h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="logo">
+            <a href="index.html" aria-label="QualiDat Fooldal">
+                <img src="qualidat_logo.jpg" alt="QualiDat Dynamic Route Planner Logo" loading="lazy">
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#features" data-i18n="nav.features">Features</a>
+            <a href="index.html#benefits" data-i18n="nav.benefits">Benefits</a>
+            <a href="index.html#stats" data-i18n="nav.stats">Impact</a>
+            <a href="index.html#contact" data-i18n="nav.contact">Contact</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-i18n="nav.services">Services <span class="arrow">&#9662;</span></a>
+                <div class="dropdown-menu">
+                    <a href="route_optimization.html" data-i18n="nav.service1">Intelligens Utvonal Optimalizalas</a>
+                    <a href="fleet_management.html" data-i18n="nav.service2">Flotta Management</a>
+                    <a href="workforce_optimization.html" data-i18n="nav.service3">Munkaero Optimalizalas</a>
+                    <a href="integration.html" data-i18n="nav.service4">Integracio</a>
+                    <a href="custom_workflows.html" data-i18n="nav.service5">Egyedi Munkafolyamatok</a>
+                    <a href="mobile_access.html" data-i18n="nav.service6">Mobil Hozzaferes</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="language-selector">
+            <button id="en-btn" class="language-btn" data-lang="en">
+                <span>&#127468;&#127463;</span> EN
+            </button>
+            <span style="margin: 0 0.5rem;">|</span>
+            <button id="hu-btn" class="language-btn active" data-lang="hu">
+                <span>&#127469;&#127482;</span> HU
+            </button>
+        </div>
+    </nav>
+
+    <main id="main-content" class="section">
+        <div class="content-section">
+            <h1 data-i18n="privacy.title">Adatvedelmi Tajekoztato</h1>
+
+            <p data-i18n="privacy.intro">Ez az adatvedelmi tajekoztato ismerteti, hogy a QualiDat Kft. hogyan kezeli az On szemelyes adatait a qualidat.hu weboldal latogatasakor, az Europai Parlament es a Tanacs (EU) 2016/679 rendeletevel (GDPR) osszhangban.</p>
+
+            <!-- 1. Data Controller -->
+            <h2 data-i18n="privacy.controller.title">1. Az adatkezelo adatai</h2>
+            <div class="controller-info">
+                <p><strong data-i18n="privacy.controller.name">Nev:</strong> QualiDat Kft.</p>
+                <p><strong data-i18n="privacy.controller.fullName">Teljes nev:</strong> QualiDat Adatkereskedelmi es Szolgaltato Korlatolt Felelossegu Tarsasag</p>
+                <p><strong data-i18n="privacy.controller.address">Szekhely:</strong> 1037 Budapest, Nyereg ut 23.</p>
+                <p><strong data-i18n="privacy.controller.taxId">Adoszam:</strong> 14106099-2-41</p>
+                <p><strong data-i18n="privacy.controller.email">E-mail:</strong> <a href="#" id="controller-email" onclick="openMail(this); return false;" data-email-user="aW5mbw==" data-email-domain="cXVhbGlkYXQ=" data-email-tld="aHU=">info[kukac]qualidat.hu</a></p>
+                <p><strong data-i18n="privacy.controller.phone">Telefon:</strong> <span id="controller-phone">+36 30 201 7554</span></p>
+            </div>
+
+            <!-- 2. Scope -->
+            <h2 data-i18n="privacy.scope.title">2. A tajekoztato hatalya</h2>
+            <p data-i18n="privacy.scope.text">Jelen adatvedelmi tajekoztato hatalya kiterjed a qualidat.hu domain alatt elerheto weboldalra es az ott vegzett minden adatkezelesre.</p>
+
+            <!-- 3. Data Processing Activities -->
+            <h2 data-i18n="privacy.processing.title">3. Adatkezelesi tevekenysegek</h2>
+
+            <h3 data-i18n="privacy.processing.serverLogs.title">3.1 Szerver naplozas (Server Logs)</h3>
+            <table class="data-table">
+                <tr>
+                    <th data-i18n="privacy.table.dataType">Kezelt adatok</th>
+                    <td data-i18n="privacy.processing.serverLogs.data">IP-cim, bongeszotypus, operacios rendszer, latogatas idopontja, megtekintett oldalak</td>
+                </tr>
+                <tr>
+                    <th data-i18n="privacy.table.purpose">Cel</th>
+                    <td data-i18n="privacy.processing.serverLogs.purpose">A weboldal mukodesenek biztositasa, biztonsagi incidensek megelozese es kivizsgalasa, statisztikai elemzesek</td>
+                </tr>
+                <tr>
+                    <th data-i18n="privacy.table.legalBasis">Jogalap</th>
+                    <td data-i18n="privacy.processing.serverLogs.legalBasis">GDPR 6. cikk (1) bekezdes f) pont - jogos erdek (weboldal biztonsagos uzemeltetese)</td>
+                </tr>
+                <tr>
+                    <th data-i18n="privacy.table.retention">Megorzesi ido</th>
+                    <td data-i18n="privacy.processing.serverLogs.retention">90 nap</td>
+                </tr>
+            </table>
+
+            <h3 data-i18n="privacy.processing.contact.title">3.2 Kapcsolatfelveteli urlap</h3>
+            <table class="data-table">
+                <tr>
+                    <th data-i18n="privacy.table.dataType">Kezelt adatok</th>
+                    <td data-i18n="privacy.processing.contact.data">Nev, e-mail cim, telefonszam (opcionalis), uzenet tartalma</td>
+                </tr>
+                <tr>
+                    <th data-i18n="privacy.table.purpose">Cel</th>
+                    <td data-i18n="privacy.processing.contact.purpose">Az erdeklodok megkereseseinek megvalaszolasa, uzleti ajanlatok kuldese</td>
+                </tr>
+                <tr>
+                    <th data-i18n="privacy.table.legalBasis">Jogalap</th>
+                    <td data-i18n="privacy.processing.contact.legalBasis">GDPR 6. cikk (1) bekezdes a) pont - hozzajarulas, illetve b) pont - szerzodeskotesre iranyulo lepes</td>
+                </tr>
+                <tr>
+                    <th data-i18n="privacy.table.retention">Megorzesi ido</th>
+                    <td data-i18n="privacy.processing.contact.retention">A megkereses lezarasatol szamitott 2 ev, vagy a hozzajarulas visszavonasaig</td>
+                </tr>
+            </table>
+
+            <h3 data-i18n="privacy.processing.cookies.title">3.3 Cookie-k (sutik)</h3>
+            <p data-i18n="privacy.processing.cookies.text">A weboldalon hasznalt cookie-krol reszletes tajekoztatast a <a href="cookies.html">Cookie szabalyzat</a> oldalon talal.</p>
+
+            <!-- 4. Data Subject Rights -->
+            <h2 data-i18n="privacy.rights.title">4. Az erintettek jogai</h2>
+            <p data-i18n="privacy.rights.intro">A GDPR alapjan On az alabbi jogokkal rendelkezik:</p>
+
+            <ul class="rights-list">
+                <li>
+                    <strong data-i18n="privacy.rights.access.title">Hozzaferesi jog (GDPR 15. cikk)</strong>
+                    <span data-i18n="privacy.rights.access.text">On jogosult arra, hogy tajekoztatast kapjon arrol, hogy szemelyes adatainak kezelese folyamatban van-e, es ha igen, hozzaferhessen ezekhez az adatokhoz.</span>
+                </li>
+                <li>
+                    <strong data-i18n="privacy.rights.rectification.title">Helyesbites joga (GDPR 16. cikk)</strong>
+                    <span data-i18n="privacy.rights.rectification.text">On jogosult arra, hogy keresse az Ont erinto pontatlan szemelyes adatok helyesbiteset.</span>
+                </li>
+                <li>
+                    <strong data-i18n="privacy.rights.erasure.title">Torleshez valo jog (GDPR 17. cikk)</strong>
+                    <span data-i18n="privacy.rights.erasure.text">On jogosult arra, hogy keresse szemelyes adatainak torleseset, amennyiben azok kezelesere mar nincs szukseg vagy jogszeru alap.</span>
+                </li>
+                <li>
+                    <strong data-i18n="privacy.rights.restriction.title">Az adatkezeles korlatozasahoz valo jog (GDPR 18. cikk)</strong>
+                    <span data-i18n="privacy.rights.restriction.text">On jogosult arra, hogy keresse az adatkezeles korlatozasat, peldaul az adatok pontossaganak vitatasa eseten.</span>
+                </li>
+                <li>
+                    <strong data-i18n="privacy.rights.portability.title">Adathordozhatosaghoz valo jog (GDPR 20. cikk)</strong>
+                    <span data-i18n="privacy.rights.portability.text">On jogosult arra, hogy az Ont erinto szemelyes adatokat tagolt, szeles korben hasznalt, geppoleg olvasato formatumban megkapja.</span>
+                </li>
+                <li>
+                    <strong data-i18n="privacy.rights.objection.title">Tiltakozashoz valo jog (GDPR 21. cikk)</strong>
+                    <span data-i18n="privacy.rights.objection.text">On jogosult arra, hogy tiltakozzon szemelyes adatainak jogos erdekunkon alapulo kezelese ellen.</span>
+                </li>
+            </ul>
+
+            <div class="info-box">
+                <h4 data-i18n="privacy.rights.exercise.title">Hogyan gyakorolhatja jogait?</h4>
+                <p data-i18n="privacy.rights.exercise.text">Jogait barmikor gyakorolhatja az alabbi elerhetosegeken:</p>
+                <p><strong data-i18n="privacy.controller.email">E-mail:</strong> <a href="#" id="rights-email" onclick="openMail(this); return false;" data-email-user="aW5mbw==" data-email-domain="cXVhbGlkYXQ=" data-email-tld="aHU=">info[kukac]qualidat.hu</a></p>
+                <p><strong data-i18n="privacy.controller.address">Levelcim:</strong> 1037 Budapest, Nyereg ut 23.</p>
+                <p data-i18n="privacy.rights.exercise.response">A megkeresekre 30 napon belul valaszolunk.</p>
+            </div>
+
+            <!-- 5. Data Security -->
+            <h2 data-i18n="privacy.security.title">5. Adatbiztonsag</h2>
+            <p data-i18n="privacy.security.text">Az adatkezelo megfelo technikai es szervezesi intezkedeseket alkalmaz az On szemelyes adatainak vedelme erdekeben, beleertve a jogosulatlan hozzaferes, elvesztes, megsemmisules vagy megvaltozas ellenei vedelmet. A weboldal HTTPS protokollt hasznal a kommunikacio titkositasara.</p>
+
+            <!-- 6. Data Transfers -->
+            <h2 data-i18n="privacy.transfers.title">6. Adattovabbitas</h2>
+            <p data-i18n="privacy.transfers.text">Szemelyes adatait harmadik orszagba nem tovabbitjuk. A weboldal tarhelyezesehez a GitHub Pages szolgaltatast hasznaljuk, amely az Europai Gazdasagi Tersegen belul biztosit szolgaltatast.</p>
+
+            <!-- 7. NAIH Complaint -->
+            <h2 data-i18n="privacy.complaint.title">7. Jogorvoslati lehetosegek</h2>
+            <p data-i18n="privacy.complaint.intro">Amennyiben ugy iteli meg, hogy az adatkezeles soran jogait megsertettek, panaszt nyujthat be a Nemzeti Adatvedelmi es Informacioszabadsag Hatosaghoz:</p>
+
+            <div class="controller-info">
+                <p><strong data-i18n="privacy.complaint.authority">Hatosag:</strong> Nemzeti Adatvedelmi es Informacioszabadsag Hatosag (NAIH)</p>
+                <p><strong data-i18n="privacy.controller.address">Cim:</strong> 1055 Budapest, Falk Miksa utca 9-11.</p>
+                <p><strong data-i18n="privacy.controller.phone">Telefon:</strong> +36 1 391-1400</p>
+                <p><strong data-i18n="privacy.controller.email">E-mail:</strong> <a href="#" id="naih-email" onclick="openMailNaih(this); return false;" data-email-user="dWd5ZmVsc3pvbGdhbGF0" data-email-domain="bmFpaA==" data-email-tld="aHU=">ugyfelszolgalat[kukac]naih.hu</a></p>
+                <p><strong data-i18n="privacy.complaint.website">Weboldal:</strong> <a href="https://naih.hu" target="_blank" rel="noopener noreferrer">https://naih.hu</a></p>
+            </div>
+
+            <p data-i18n="privacy.complaint.court">Jogainak megsertese eseten birosaghoz is fordulhat. A per elbiralasara az erintett lakohelye vagy tartokodasi helye szerinti torvenyoszek az illetetes.</p>
+
+            <!-- 8. Changes -->
+            <h2 data-i18n="privacy.changes.title">8. A tajekoztato modositasa</h2>
+            <p data-i18n="privacy.changes.text">Az adatkezelo fenntartja a jogot jelen tajekoztato modositasara. A modositasokrol a weboldalon tajekoztatjuk latogatoinkat. A tajekoztato hataly leptetesenek idopontja alabb talalhato.</p>
+
+            <p class="last-updated" data-i18n="privacy.lastUpdated">Utolso frissites: 2026. januar 15.</p>
+        </div>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <p data-i18n="footer.copyright">&copy; 2026 QualiDat. Minden jog fenntartva.</p>
+        <div class="footer-links">
+            <a href="privacy.html" data-i18n="footer.privacy">Adatvedelmi Tajekoztato</a>
+            <a href="cookies.html" data-i18n="footer.cookies">Cookie Szabalyzat</a>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // All website content in a centralized JSON structure with translations
+        const translations = {
+            nav: {
+                features: { en: "Features", hu: "Funkciok" },
+                benefits: { en: "Benefits", hu: "Elonyok" },
+                stats: { en: "Impact", hu: "Eredmenyek" },
+                contact: { en: "Contact", hu: "Kapcsolat" },
+                services: { en: "Services", hu: "Szolgaltatasok" },
+                service1: { en: "Smart Route Optimization", hu: "Intelligens Utvonal Optimalizalas" },
+                service2: { en: "Fleet Management", hu: "Flotta Management" },
+                service3: { en: "Workforce Optimization", hu: "Munkaero Optimalizalas" },
+                service4: { en: "Seamless Integration", hu: "Integracio" },
+                service5: { en: "Custom Workflows", hu: "Egyedi Munkafolyamatok" },
+                service6: { en: "Mobile Access", hu: "Mobil Hozzaferes" }
+            },
+            footer: {
+                copyright: { en: "© 2026 QualiDat. All rights reserved.", hu: "© 2026 QualiDat. Minden jog fenntartva." },
+                privacy: { en: "Privacy Policy", hu: "Adatvedelmi Tajekoztato" },
+                cookies: { en: "Cookie Policy", hu: "Cookie Szabalyzat" }
+            },
+            privacy: {
+                title: { en: "Privacy Policy", hu: "Adatvedelmi Tajekoztato" },
+                intro: {
+                    en: "This privacy policy describes how QualiDat Kft. processes your personal data when visiting the qualidat.hu website, in accordance with Regulation (EU) 2016/679 of the European Parliament and of the Council (GDPR).",
+                    hu: "Ez az adatvedelmi tajekoztato ismerteti, hogy a QualiDat Kft. hogyan kezeli az On szemelyes adatait a qualidat.hu weboldal latogatasakor, az Europai Parlament es a Tanacs (EU) 2016/679 rendeletevel (GDPR) osszhangban."
+                },
+                controller: {
+                    title: { en: "1. Data Controller", hu: "1. Az adatkezelo adatai" },
+                    name: { en: "Name:", hu: "Nev:" },
+                    fullName: { en: "Full name:", hu: "Teljes nev:" },
+                    address: { en: "Registered address:", hu: "Szekhely:" },
+                    taxId: { en: "Tax ID:", hu: "Adoszam:" },
+                    email: { en: "Email:", hu: "E-mail:" },
+                    phone: { en: "Phone:", hu: "Telefon:" }
+                },
+                scope: {
+                    title: { en: "2. Scope of this Policy", hu: "2. A tajekoztato hatalya" },
+                    text: {
+                        en: "This privacy policy applies to the website accessible at the qualidat.hu domain and all data processing activities conducted there.",
+                        hu: "Jelen adatvedelmi tajekoztato hatalya kiterjed a qualidat.hu domain alatt elerheto weboldalra es az ott vegzett minden adatkezelesre."
+                    }
+                },
+                processing: {
+                    title: { en: "3. Data Processing Activities", hu: "3. Adatkezelesi tevekenysegek" },
+                    serverLogs: {
+                        title: { en: "3.1 Server Logs", hu: "3.1 Szerver naplozas (Server Logs)" },
+                        data: {
+                            en: "IP address, browser type, operating system, time of visit, pages viewed",
+                            hu: "IP-cim, bongeszotypus, operacios rendszer, latogatas idopontja, megtekintett oldalak"
+                        },
+                        purpose: {
+                            en: "Ensuring website operation, preventing and investigating security incidents, statistical analysis",
+                            hu: "A weboldal mukodesenek biztositasa, biztonsagi incidensek megelozese es kivizsgalasa, statisztikai elemzesek"
+                        },
+                        legalBasis: {
+                            en: "GDPR Article 6(1)(f) - legitimate interest (secure website operation)",
+                            hu: "GDPR 6. cikk (1) bekezdes f) pont - jogos erdek (weboldal biztonsagos uzemeltetese)"
+                        },
+                        retention: { en: "90 days", hu: "90 nap" }
+                    },
+                    contact: {
+                        title: { en: "3.2 Contact Form", hu: "3.2 Kapcsolatfelveteli urlap" },
+                        data: {
+                            en: "Name, email address, phone number (optional), message content",
+                            hu: "Nev, e-mail cim, telefonszam (opcionalis), uzenet tartalma"
+                        },
+                        purpose: {
+                            en: "Responding to inquiries, sending business proposals",
+                            hu: "Az erdeklodok megkereseseinek megvalaszolasa, uzleti ajanlatok kuldese"
+                        },
+                        legalBasis: {
+                            en: "GDPR Article 6(1)(a) - consent, or (b) - steps prior to entering into a contract",
+                            hu: "GDPR 6. cikk (1) bekezdes a) pont - hozzajarulas, illetve b) pont - szerzodeskotesre iranyulo lepes"
+                        },
+                        retention: {
+                            en: "2 years from inquiry closure, or until consent is withdrawn",
+                            hu: "A megkereses lezarasatol szamitott 2 ev, vagy a hozzajarulas visszavonasaig"
+                        }
+                    },
+                    cookies: {
+                        title: { en: "3.3 Cookies", hu: "3.3 Cookie-k (sutik)" },
+                        text: {
+                            en: "Detailed information about cookies used on the website can be found on the <a href=\"cookies.html\">Cookie Policy</a> page.",
+                            hu: "A weboldalon hasznalt cookie-krol reszletes tajekoztatast a <a href=\"cookies.html\">Cookie szabalyzat</a> oldalon talal."
+                        }
+                    }
+                },
+                table: {
+                    dataType: { en: "Data processed", hu: "Kezelt adatok" },
+                    purpose: { en: "Purpose", hu: "Cel" },
+                    legalBasis: { en: "Legal basis", hu: "Jogalap" },
+                    retention: { en: "Retention period", hu: "Megorzesi ido" }
+                },
+                rights: {
+                    title: { en: "4. Data Subject Rights", hu: "4. Az erintettek jogai" },
+                    intro: {
+                        en: "Under the GDPR, you have the following rights:",
+                        hu: "A GDPR alapjan On az alabbi jogokkal rendelkezik:"
+                    },
+                    access: {
+                        title: { en: "Right of access (GDPR Art. 15)", hu: "Hozzaferesi jog (GDPR 15. cikk)" },
+                        text: {
+                            en: "You have the right to obtain confirmation as to whether your personal data is being processed, and if so, to access such data.",
+                            hu: "On jogosult arra, hogy tajekoztatast kapjon arrol, hogy szemelyes adatainak kezelese folyamatban van-e, es ha igen, hozzaferhessen ezekhez az adatokhoz."
+                        }
+                    },
+                    rectification: {
+                        title: { en: "Right to rectification (GDPR Art. 16)", hu: "Helyesbites joga (GDPR 16. cikk)" },
+                        text: {
+                            en: "You have the right to request the rectification of inaccurate personal data concerning you.",
+                            hu: "On jogosult arra, hogy keresse az Ont erinto pontatlan szemelyes adatok helyesbiteset."
+                        }
+                    },
+                    erasure: {
+                        title: { en: "Right to erasure (GDPR Art. 17)", hu: "Torleshez valo jog (GDPR 17. cikk)" },
+                        text: {
+                            en: "You have the right to request the erasure of your personal data when they are no longer necessary or there is no lawful basis for processing.",
+                            hu: "On jogosult arra, hogy keresse szemelyes adatainak torleseset, amennyiben azok kezelesere mar nincs szukseg vagy jogszeru alap."
+                        }
+                    },
+                    restriction: {
+                        title: { en: "Right to restriction of processing (GDPR Art. 18)", hu: "Az adatkezeles korlatozasahoz valo jog (GDPR 18. cikk)" },
+                        text: {
+                            en: "You have the right to request the restriction of processing, for example, when you contest the accuracy of the data.",
+                            hu: "On jogosult arra, hogy keresse az adatkezeles korlatozasat, peldaul az adatok pontossaganak vitatasa eseten."
+                        }
+                    },
+                    portability: {
+                        title: { en: "Right to data portability (GDPR Art. 20)", hu: "Adathordozhatosaghoz valo jog (GDPR 20. cikk)" },
+                        text: {
+                            en: "You have the right to receive your personal data in a structured, commonly used, machine-readable format.",
+                            hu: "On jogosult arra, hogy az Ont erinto szemelyes adatokat tagolt, szeles korben hasznalt, geppoleg olvasato formatumban megkapja."
+                        }
+                    },
+                    objection: {
+                        title: { en: "Right to object (GDPR Art. 21)", hu: "Tiltakozashoz valo jog (GDPR 21. cikk)" },
+                        text: {
+                            en: "You have the right to object to the processing of your personal data based on our legitimate interests.",
+                            hu: "On jogosult arra, hogy tiltakozzon szemelyes adatainak jogos erdekunkon alapulo kezelese ellen."
+                        }
+                    },
+                    exercise: {
+                        title: { en: "How to exercise your rights?", hu: "Hogyan gyakorolhatja jogait?" },
+                        text: {
+                            en: "You can exercise your rights at any time using the following contact details:",
+                            hu: "Jogait barmikor gyakorolhatja az alabbi elerhetosegeken:"
+                        },
+                        response: {
+                            en: "We will respond to requests within 30 days.",
+                            hu: "A megkeresekre 30 napon belul valaszolunk."
+                        }
+                    }
+                },
+                security: {
+                    title: { en: "5. Data Security", hu: "5. Adatbiztonsag" },
+                    text: {
+                        en: "The data controller implements appropriate technical and organizational measures to protect your personal data, including protection against unauthorized access, loss, destruction, or alteration. The website uses HTTPS protocol to encrypt communications.",
+                        hu: "Az adatkezelo megfelo technikai es szervezesi intezkedeseket alkalmaz az On szemelyes adatainak vedelme erdekeben, beleertve a jogosulatlan hozzaferes, elvesztes, megsemmisules vagy megvaltozas ellenei vedelmet. A weboldal HTTPS protokollt hasznal a kommunikacio titkositasara."
+                    }
+                },
+                transfers: {
+                    title: { en: "6. Data Transfers", hu: "6. Adattovabbitas" },
+                    text: {
+                        en: "We do not transfer your personal data to third countries. We use GitHub Pages for website hosting, which provides services within the European Economic Area.",
+                        hu: "Szemelyes adatait harmadik orszagba nem tovabbitjuk. A weboldal tarhelyezesehez a GitHub Pages szolgaltatast hasznaljuk, amely az Europai Gazdasagi Tersegen belul biztosit szolgaltatast."
+                    }
+                },
+                complaint: {
+                    title: { en: "7. Legal Remedies", hu: "7. Jogorvoslati lehetosegek" },
+                    intro: {
+                        en: "If you believe that your rights have been violated during data processing, you may lodge a complaint with the National Authority for Data Protection and Freedom of Information:",
+                        hu: "Amennyiben ugy iteli meg, hogy az adatkezeles soran jogait megsertettek, panaszt nyujthat be a Nemzeti Adatvedelmi es Informacioszabadsag Hatosaghoz:"
+                    },
+                    authority: { en: "Authority:", hu: "Hatosag:" },
+                    website: { en: "Website:", hu: "Weboldal:" },
+                    court: {
+                        en: "In case of violation of your rights, you may also apply to a court. The court with jurisdiction is the tribunal at your place of residence or domicile.",
+                        hu: "Jogainak megsertese eseten birosaghoz is fordulhat. A per elbiralasara az erintett lakohelye vagy tartokodasi helye szerinti torvenyoszek az illetetes."
+                    }
+                },
+                changes: {
+                    title: { en: "8. Changes to this Policy", hu: "8. A tajekoztato modositasa" },
+                    text: {
+                        en: "The data controller reserves the right to modify this policy. Visitors will be informed of changes on the website. The effective date of this policy is shown below.",
+                        hu: "Az adatkezelo fenntartja a jogot jelen tajekoztato modositasara. A modositasokrol a weboldalon tajekoztatjuk latogatoinkat. A tajekoztato hataly leptetesenek idopontja alabb talalhato."
+                    }
+                },
+                lastUpdated: { en: "Last updated: January 15, 2026", hu: "Utolso frissites: 2026. januar 15." }
+            }
+        };
+
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Set default language from localStorage or to 'hu' for this page
+        let currentLanguage = localStorage.getItem('preferredLanguage') || 'hu';
+        document.documentElement.lang = currentLanguage;
+
+        // Apply translations based on selected language
+        function applyTranslations(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const keys = element.getAttribute('data-i18n').split('.');
+                let value = translations;
+
+                for (let i = 0; i < keys.length; i++) {
+                    const key = keys[i];
+                    if (value && typeof value === 'object' && value[key] !== undefined) {
+                        value = value[key];
+                        if (i === keys.length - 1 && typeof value === 'object' && value[lang] !== undefined) {
+                            // Handle elements that might contain HTML (like cookie link)
+                            if (element.getAttribute('data-i18n').includes('cookies.text')) {
+                                element.innerHTML = value[lang];
+                            } else {
+                                element.textContent = value[lang];
+                            }
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+            });
+
+            // Update active class on language buttons
+            languageButtons.forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        const languageButtons = document.querySelectorAll('.language-btn');
+        languageButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const language = this.getAttribute('data-lang');
+                applyTranslations(language);
+                localStorage.setItem('preferredLanguage', language);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            applyTranslations(currentLanguage);
+
+            // Navbar scroll behavior
+            const navbar = document.querySelector('.navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Phone number construction (bot-safe)
+            const phoneElements = document.querySelectorAll('#controller-phone');
+            phoneElements.forEach(el => {
+                const phoneParts = ['+36', '30', '201', '7554'];
+                el.textContent = phoneParts.join(' ');
+            });
+        });
+
+        // Email function for QualiDat (bot-safe base64)
+        function openMail(element) {
+            const user = atob(element.getAttribute('data-email-user'));
+            const domain = atob(element.getAttribute('data-email-domain'));
+            const tld = atob(element.getAttribute('data-email-tld'));
+            const emailAddress = `${user}@${domain}.${tld}`;
+            window.location.href = 'mailto:' + emailAddress;
+        }
+
+        // Email function for NAIH (bot-safe base64)
+        function openMailNaih(element) {
+            const user = atob(element.getAttribute('data-email-user'));
+            const domain = atob(element.getAttribute('data-email-domain'));
+            const tld = atob(element.getAttribute('data-email-tld'));
+            const emailAddress = `${user}@${domain}.${tld}`;
+            window.location.href = 'mailto:' + emailAddress;
+        }
+    </script>
+</body>
+</html>
