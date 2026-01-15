@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suti Tajekoztato - QualiDat</title>
-    <meta name="description" content="A QualiDat.hu weboldal suti (cookie) szabalyzata es tajekoztato. Tudjon meg tobbet arrol, hogyan hasznaljuk a sutiket.">
-    <meta name="keywords" content="suti, cookie, adatvedelem, QualiDat, tajekoztato, GDPR">
+    <title>Süti Tájékoztató - QualiDat</title>
+    <meta name="description" content="A QualiDat.hu weboldal süti (cookie) szabályzata és tájékoztató. Tudjon meg többet arról, hogyan használjuk a sütiket.">
+    <meta name="keywords" content="süti, cookie, adatvédelem, QualiDat, tájékoztató, GDPR">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
     <style>
@@ -290,12 +290,29 @@
             padding: 2rem;
             text-align: center;
         }
+
+        .footer-links {
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar" role="navigation" aria-label="Main navigation">
         <div class="logo">
-            <a href="index.html" aria-label="QualiDat Fooldal">
+            <a href="index.html" aria-label="QualiDat Főoldal">
                 <img src="qualidat_logo.jpg" alt="QualiDat Dynamic Route Planner Logo" loading="lazy">
             </a>
         </div>
@@ -307,106 +324,106 @@
             <div class="dropdown">
                 <a href="#" class="dropdown-toggle" data-i18n="nav.services">Services <span class="arrow">&#9662;</span></a>
                 <div class="dropdown-menu">
-                    <a href="route_optimization.html" data-i18n="nav.service1">Intelligens Utvonal Optimalizalas</a>
+                    <a href="route_optimization.html" data-i18n="nav.service1">Intelligens Útvonal Optimalizálás</a>
                     <a href="fleet_management.html" data-i18n="nav.service2">Flotta Management</a>
-                    <a href="workforce_optimization.html" data-i18n="nav.service3">Munkaero Optimalizalas</a>
-                    <a href="integration.html" data-i18n="nav.service4">Integracio</a>
+                    <a href="workforce_optimization.html" data-i18n="nav.service3">Munkaerő Optimalizálás</a>
+                    <a href="integration.html" data-i18n="nav.service4">Integráció</a>
                     <a href="custom_workflows.html" data-i18n="nav.service5">Egyedi Munkafolyamatok</a>
-                    <a href="mobile_access.html" data-i18n="nav.service6">Mobil Hozzaferes</a>
+                    <a href="mobile_access.html" data-i18n="nav.service6">Mobil Hozzáférés</a>
                 </div>
             </div>
         </div>
 
         <div class="language-selector">
-            <button id="en-btn" class="language-btn active" data-lang="en">
-                <span>&#127468;&#127463;</span> EN
+            <button id="en-btn" class="language-btn" data-lang="en">
+                <span>🇬🇧</span> EN
             </button>
             <span style="margin: 0 0.5rem;">|</span>
-            <button id="hu-btn" class="language-btn" data-lang="hu">
-                <span>&#127469;&#127482;</span> HU
+            <button id="hu-btn" class="language-btn active" data-lang="hu">
+                <span>🇭🇺</span> HU
             </button>
         </div>
     </nav>
 
     <main id="main-content" class="section">
         <div class="content-section">
-            <h1 data-i18n="cookies.title">Suti Tajekoztato</h1>
+            <h1 data-i18n="cookies.title">Süti Tájékoztató</h1>
 
-            <p data-i18n="cookies.lastUpdated"><em>Utolso frissites: 2026. januar 15.</em></p>
+            <p data-i18n="cookies.lastUpdated"><em>Utolsó frissítés: 2026. január 15.</em></p>
 
-            <h2 data-i18n="cookies.whatAreCookies.title">Mi az a suti (cookie)?</h2>
-            <p data-i18n="cookies.whatAreCookies.text1">A sutik kis szoveges fajlok, amelyeket a webhelyek a latogato bongeszojeben tarolnak. A sutik segitik a webhelyek mukodeset es javitjak a felhasznaloi elmenyt.</p>
-            <p data-i18n="cookies.whatAreCookies.text2">A weboldalunk a leheto legkevesebb adatgyujtest alkalmazza. Nem hasznalunk marketing sutiket, es nem kovetedjuk a latogatoinkat harmadik felek szamara.</p>
+            <h2 data-i18n="cookies.whatAreCookies.title">Mi az a süti (cookie)?</h2>
+            <p data-i18n="cookies.whatAreCookies.text1">A sütik kis szöveges fájlok, amelyeket a webhelyek a látogató böngészőjében tárolnak. A sütik segítik a webhelyek működését és javítják a felhasználói élményt.</p>
+            <p data-i18n="cookies.whatAreCookies.text2">A weboldalunk a lehető legkevesebb adatgyűjtést alkalmazza. Nem használunk marketing sütiket, és nem követjük a látogatóinkat harmadik felek számára.</p>
 
-            <h2 data-i18n="cookies.categories.title">Suti kategoriak</h2>
+            <h2 data-i18n="cookies.categories.title">Süti kategóriák</h2>
 
-            <h3 data-i18n="cookies.categories.necessary.title">1. Szukseges sutik</h3>
-            <p data-i18n="cookies.categories.necessary.text">Ezek a sutik elengedhetetlenek a webhely alapveto mukodesehez. Nelkuluk a webhely nem tudna megfeleloen mukodni.</p>
+            <h3 data-i18n="cookies.categories.necessary.title">1. Szükséges sütik</h3>
+            <p data-i18n="cookies.categories.necessary.text">Ezek a sütik elengedhetetlenek a webhely alapvető működéséhez. Nélkülük a webhely nem tudna megfelelően működni.</p>
 
-            <h3 data-i18n="cookies.categories.functional.title">2. Funkcionalis sutik</h3>
-            <p data-i18n="cookies.categories.functional.text">Ezek a sutik lehetove teszik, hogy a webhely emlekezzen az On valasztasaira (pl. nyelvi preferencia), es jobb, szemelyre szabottabb funkcionalitast biztositsanak.</p>
+            <h3 data-i18n="cookies.categories.functional.title">2. Funkcionális sütik</h3>
+            <p data-i18n="cookies.categories.functional.text">Ezek a sütik lehetővé teszik, hogy a webhely emlékezzen az Ön választásaira (pl. nyelvi preferencia), és jobb, személyre szabottabb funkcionalitást biztosítsanak.</p>
 
-            <h3 data-i18n="cookies.categories.analytics.title">3. Analitikai sutik</h3>
-            <p data-i18n="cookies.categories.analytics.text">Ezek a sutik segitenek megerteni, hogyan hasznaljak a latogatok a webhelyet. Az oldalunk jelenleg NEM hasznal analitikai sutiket (pl. Google Analytics).</p>
+            <h3 data-i18n="cookies.categories.analytics.title">3. Analitikai sütik</h3>
+            <p data-i18n="cookies.categories.analytics.text">Ezek a sütik segítenek megérteni, hogyan használják a látogatók a webhelyet. Az oldalunk jelenleg NEM használ analitikai sütiket (pl. Google Analytics).</p>
 
-            <h3 data-i18n="cookies.categories.marketing.title">4. Marketing sutik</h3>
-            <p data-i18n="cookies.categories.marketing.text">Ezek a sutik a hirdetesek celzasara szolgalnak. Az oldalunk NEM hasznal marketing sutiket.</p>
+            <h3 data-i18n="cookies.categories.marketing.title">4. Marketing sütik</h3>
+            <p data-i18n="cookies.categories.marketing.text">Ezek a sütik a hirdetések célzására szolgálnak. Az oldalunk NEM használ marketing sütiket.</p>
 
-            <h2 data-i18n="cookies.usedOnSite.title">A weboldalunkon hasznalt sutik es tarolok</h2>
-            <p data-i18n="cookies.usedOnSite.intro">A qualidat.hu weboldal minimalis adatgyujtest alkalmaz. Az alabbi tablazat osszefoglalja a hasznalt technologiakat:</p>
+            <h2 data-i18n="cookies.usedOnSite.title">A weboldalunkon használt sütik és tárolók</h2>
+            <p data-i18n="cookies.usedOnSite.intro">A qualidat.hu weboldal minimális adatgyűjtést alkalmaz. Az alábbi táblázat összefoglalja a használt technológiákat:</p>
 
             <table class="cookie-table">
                 <thead>
                     <tr>
-                        <th data-i18n="cookies.table.name">Nev</th>
-                        <th data-i18n="cookies.table.type">Tipus</th>
-                        <th data-i18n="cookies.table.purpose">Cel</th>
-                        <th data-i18n="cookies.table.duration">Idotartam</th>
-                        <th data-i18n="cookies.table.provider">Szolgaltato</th>
+                        <th data-i18n="cookies.table.name">Név</th>
+                        <th data-i18n="cookies.table.type">Típus</th>
+                        <th data-i18n="cookies.table.purpose">Cél</th>
+                        <th data-i18n="cookies.table.duration">Időtartam</th>
+                        <th data-i18n="cookies.table.provider">Szolgáltató</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>preferredLanguage</td>
-                        <td data-i18n="cookies.table.localStorage">Helyi tarolo (localStorage)</td>
-                        <td data-i18n="cookies.table.languagePurpose">A valasztott nyelv (HU/EN) megjegyzese</td>
-                        <td data-i18n="cookies.table.persistent">Allandoo (amig nem torli)</td>
+                        <td data-i18n="cookies.table.localStorage">Helyi tároló (localStorage)</td>
+                        <td data-i18n="cookies.table.languagePurpose">A választott nyelv (HU/EN) megjegyzése</td>
+                        <td data-i18n="cookies.table.persistent">Állandó (amíg nem törli)</td>
                         <td>qualidat.hu</td>
                     </tr>
                     <tr>
-                        <td data-i18n="cookies.table.technicalCookies">Technikai sutik</td>
-                        <td data-i18n="cookies.table.sessionCookie">Munkamenet suti</td>
-                        <td data-i18n="cookies.table.hostingPurpose">A GitHub Pages tarhelyszolgaltato altal hasznalt minimalis technikai sutik</td>
+                        <td data-i18n="cookies.table.technicalCookies">Technikai sütik</td>
+                        <td data-i18n="cookies.table.sessionCookie">Munkamenet süti</td>
+                        <td data-i18n="cookies.table.hostingPurpose">A GitHub Pages tárhelyszolgáltató által használt minimális technikai sütik</td>
                         <td data-i18n="cookies.table.sessionDuration">Munkamenet</td>
                         <td>GitHub Pages</td>
                     </tr>
                 </tbody>
             </table>
 
-            <p data-i18n="cookies.usedOnSite.note"><strong>Megjegyzes:</strong> A weboldalunk hasznalja az AOS (Animate On Scroll) konyvtarat animaciokhoz, amely a cdnjs.cloudflare.com szerverrol toltodik be. Ez a konyvtar NEM tarol sutiket es NEM gyujt szemelyes adatokat.</p>
+            <p data-i18n="cookies.usedOnSite.note"><strong>Megjegyzés:</strong> A weboldalunk használja az AOS (Animate On Scroll) könyvtárat animációkhoz, amely a cdnjs.cloudflare.com szerverről töltődik be. Ez a könyvtár NEM tárol sütiket és NEM gyűjt személyes adatokat.</p>
 
-            <h2 data-i18n="cookies.manage.title">Hogyan kezelheti a sutiket?</h2>
-            <p data-i18n="cookies.manage.text">A legtobb bongeszo lehetove teszi a sutik kezeleset a beallitasokon keresztul. Az alabbi linkeken talalhato utmutatot az egyes bongeszokhoz:</p>
+            <h2 data-i18n="cookies.manage.title">Hogyan kezelheti a sütiket?</h2>
+            <p data-i18n="cookies.manage.text">A legtöbb böngésző lehetővé teszi a sütik kezelését a beállításokon keresztül. Az alábbi linkeken található útmutatót az egyes böngészőkhoz:</p>
 
             <div class="browser-links">
                 <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" class="browser-link" data-i18n="cookies.browsers.chrome">Google Chrome</a>
-                <a href="https://support.mozilla.org/hu/kb/sutik-informacio-amelyet-weboldalak-tarolnak-szami" target="_blank" rel="noopener noreferrer" class="browser-link" data-i18n="cookies.browsers.firefox">Mozilla Firefox</a>
+                <a href="https://support.mozilla.org/hu/kb/sütik-informacio-amelyet-weboldalak-tárolnak-szami" target="_blank" rel="noopener noreferrer" class="browser-link" data-i18n="cookies.browsers.firefox">Mozilla Firefox</a>
                 <a href="https://support.apple.com/hu-hu/guide/safari/sfri11471/mac" target="_blank" rel="noopener noreferrer" class="browser-link" data-i18n="cookies.browsers.safari">Apple Safari</a>
                 <a href="https://support.microsoft.com/hu-hu/microsoft-edge/cookie-k-torlese-a-microsoft-edge-ben-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" class="browser-link" data-i18n="cookies.browsers.edge">Microsoft Edge</a>
             </div>
 
             <h2 data-i18n="cookies.legalBasis.title">Jogalap</h2>
-            <p data-i18n="cookies.legalBasis.text1">A szukseges es funkcionalis sutik hasznalata a webhely mukodesehez szukseges jogos erdeken alapul (GDPR 6. cikk (1) bekezdes f) pont).</p>
-            <p data-i18n="cookies.legalBasis.text2">Mivel weboldalunk nem hasznal analitikai vagy marketing sutiket, nem kerunk hozzajarulast ezekhez.</p>
+            <p data-i18n="cookies.legalBasis.text1">A szükséges és funkcionális sütik használata a webhely működéséhez szükséges jogos érdekén alapul (GDPR 6. cikk (1) bekezdés f) pont).</p>
+            <p data-i18n="cookies.legalBasis.text2">Mivel weboldalunk nem használ analitikai vagy marketing sütiket, nem kérünk hozzájárulást ezekhez.</p>
 
-            <h2 data-i18n="cookies.changes.title">Valtozasok a suti szabalyzatban</h2>
-            <p data-i18n="cookies.changes.text">Fenntartjuk a jogot, hogy barmikor modositsuk ezt a suti tajekoztato. A valtozasokat ezen az oldalon tesszuk kozze.</p>
+            <h2 data-i18n="cookies.changes.title">Változások a süti szabályzatban</h2>
+            <p data-i18n="cookies.changes.text">Fenntartjuk a jogot, hogy bármikor módosítsuk ezt a süti tájékoztató. A változásokat ezen az oldalon tesszük közzé.</p>
 
             <h2 data-i18n="cookies.contact.title">Kapcsolat</h2>
-            <p data-i18n="cookies.contact.text">Ha barmilyen kerdese van a sutik hasznalataval kapcsolatban, forduljon hozzank:</p>
+            <p data-i18n="cookies.contact.text">Ha bármilyen kérdése van a sütik használatával kapcsolatban, forduljon hozzánk:</p>
 
             <div class="contact-info">
-                <p><strong data-i18n="cookies.contact.company">Cegnev:</strong> QualiDat Kft.</p>
+                <p><strong data-i18n="cookies.contact.company">Cégnév:</strong> QualiDat Kft.</p>
                 <p><strong data-i18n="cookies.contact.email">E-mail:</strong>
                     <a href="#" id="email-link"
                        data-email-user="aW5mbw=="
@@ -420,6 +437,11 @@
     </main>
 
     <footer class="footer" role="contentinfo">
+        <div class="footer-links">
+            <a href="imprint.html" data-i18n="footer.imprint">Impresszum</a> |
+            <a href="privacy.html" data-i18n="footer.privacy">Adatvédelmi Tájékoztató</a> |
+            <a href="cookies.html" data-i18n="footer.cookies">Süti Tájékoztató</a>
+        </div>
         <p data-i18n="footer.copyright">&copy; 2026 QualiDat. All rights reserved.</p>
     </footer>
 
@@ -427,93 +449,93 @@
     <script>
         const translations = {
             nav: {
-                features: { en: "Features", hu: "Funkciok" },
-                benefits: { en: "Benefits", hu: "Elonyok" },
-                stats: { en: "Impact", hu: "Eredmenyek" },
+                features: { en: "Features", hu: "Funkciók" },
+                benefits: { en: "Benefits", hu: "Előnyök" },
+                stats: { en: "Impact", hu: "Eredmények" },
                 contact: { en: "Contact", hu: "Kapcsolat" },
-                services: { en: "Services", hu: "Szolgaltatasok" },
-                service1: { en: "Smart Route Optimization", hu: "Intelligens Utvonal Optimalizalas" },
+                services: { en: "Services", hu: "Szolgáltatások" },
+                service1: { en: "Smart Route Optimization", hu: "Intelligens Útvonal Optimalizálás" },
                 service2: { en: "Fleet Management", hu: "Flotta Management" },
-                service3: { en: "Workforce Optimization", hu: "Munkaero Optimalizalas" },
-                service4: { en: "Seamless Integration", hu: "Integracio" },
+                service3: { en: "Workforce Optimization", hu: "Munkaerő Optimalizálás" },
+                service4: { en: "Seamless Integration", hu: "Integráció" },
                 service5: { en: "Custom Workflows", hu: "Egyedi Munkafolyamatok" },
-                service6: { en: "Mobile Access", hu: "Mobil Hozzaferes" }
+                service6: { en: "Mobile Access", hu: "Mobil Hozzáférés" }
             },
             cookies: {
-                title: { en: "Cookie Policy", hu: "Suti Tajekoztato" },
-                lastUpdated: { en: "<em>Last updated: January 15, 2026</em>", hu: "<em>Utolso frissites: 2026. januar 15.</em>" },
+                title: { en: "Cookie Policy", hu: "Süti Tájékoztató" },
+                lastUpdated: { en: "<em>Last updated: January 15, 2026</em>", hu: "<em>Utolsó frissítés: 2026. január 15.</em>" },
                 whatAreCookies: {
-                    title: { en: "What are cookies?", hu: "Mi az a suti (cookie)?" },
+                    title: { en: "What are cookies?", hu: "Mi az a süti (cookie)?" },
                     text1: {
                         en: "Cookies are small text files that websites store in a visitor's browser. Cookies help websites function and improve the user experience.",
-                        hu: "A sutik kis szoveges fajlok, amelyeket a webhelyek a latogato bongeszojeben tarolnak. A sutik segitik a webhelyek mukodeset es javitjak a felhasznaloi elmenyt."
+                        hu: "A sütik kis szöveges fájlok, amelyeket a webhelyek a látogató böngészőjében tárolnak. A sütik segítik a webhelyek működését és javítják a felhasználói élményt."
                     },
                     text2: {
                         en: "Our website uses minimal data collection. We do not use marketing cookies and do not track our visitors for third parties.",
-                        hu: "A weboldalunk a leheto legkevesebb adatgyujtest alkalmazza. Nem hasznalunk marketing sutiket, es nem kovetedjuk a latogatoinkat harmadik felek szamara."
+                        hu: "A weboldalunk a lehető legkevesebb adatgyűjtést alkalmazza. Nem használunk marketing sütiket, és nem követjük a látogatóinkat harmadik felek számára."
                     }
                 },
                 categories: {
-                    title: { en: "Cookie Categories", hu: "Suti kategoriak" },
+                    title: { en: "Cookie Categories", hu: "Süti kategóriák" },
                     necessary: {
-                        title: { en: "1. Necessary Cookies", hu: "1. Szukseges sutik" },
+                        title: { en: "1. Necessary Cookies", hu: "1. Szükséges sütik" },
                         text: {
                             en: "These cookies are essential for the basic functioning of the website. Without them, the website would not be able to function properly.",
-                            hu: "Ezek a sutik elengedhetetlenek a webhely alapveto mukodesehez. Nelkuluk a webhely nem tudna megfeleloen mukodni."
+                            hu: "Ezek a sütik elengedhetetlenek a webhely alapvető működéséhez. Nélkülük a webhely nem tudna megfelelően működni."
                         }
                     },
                     functional: {
-                        title: { en: "2. Functional Cookies", hu: "2. Funkcionalis sutik" },
+                        title: { en: "2. Functional Cookies", hu: "2. Funkcionális sütik" },
                         text: {
                             en: "These cookies allow the website to remember your choices (e.g., language preference) and provide better, more personalized functionality.",
-                            hu: "Ezek a sutik lehetove teszik, hogy a webhely emlekezzen az On valasztasaira (pl. nyelvi preferencia), es jobb, szemelyre szabottabb funkcionalitast biztositsanak."
+                            hu: "Ezek a sütik lehetővé teszik, hogy a webhely emlékezzen az Ön választásaira (pl. nyelvi preferencia), és jobb, személyre szabottabb funkcionalitást biztosítsanak."
                         }
                     },
                     analytics: {
-                        title: { en: "3. Analytics Cookies", hu: "3. Analitikai sutik" },
+                        title: { en: "3. Analytics Cookies", hu: "3. Analitikai sütik" },
                         text: {
                             en: "These cookies help understand how visitors use the website. Our site currently does NOT use analytics cookies (e.g., Google Analytics).",
-                            hu: "Ezek a sutik segitenek megerteni, hogyan hasznaljak a latogatok a webhelyet. Az oldalunk jelenleg NEM hasznal analitikai sutiket (pl. Google Analytics)."
+                            hu: "Ezek a sütik segítenek megérteni, hogyan használják a látogatók a webhelyet. Az oldalunk jelenleg NEM használ analitikai sütiket (pl. Google Analytics)."
                         }
                     },
                     marketing: {
-                        title: { en: "4. Marketing Cookies", hu: "4. Marketing sutik" },
+                        title: { en: "4. Marketing Cookies", hu: "4. Marketing sütik" },
                         text: {
                             en: "These cookies are used for advertising targeting. Our site does NOT use marketing cookies.",
-                            hu: "Ezek a sutik a hirdetesek celzasara szolgalnak. Az oldalunk NEM hasznal marketing sutiket."
+                            hu: "Ezek a sütik a hirdetések célzására szolgálnak. Az oldalunk NEM használ marketing sütiket."
                         }
                     }
                 },
                 usedOnSite: {
-                    title: { en: "Cookies and Storage Used on Our Website", hu: "A weboldalunkon hasznalt sutik es tarolok" },
+                    title: { en: "Cookies and Storage Used on Our Website", hu: "A weboldalunkon használt sütik és tárolók" },
                     intro: {
                         en: "The qualidat.hu website uses minimal data collection. The following table summarizes the technologies used:",
-                        hu: "A qualidat.hu weboldal minimalis adatgyujtest alkalmaz. Az alabbi tablazat osszefoglalja a hasznalt technologiakat:"
+                        hu: "A qualidat.hu weboldal minimális adatgyűjtést alkalmaz. Az alábbi táblázat összefoglalja a használt technológiákat:"
                     },
                     note: {
                         en: "<strong>Note:</strong> Our website uses the AOS (Animate On Scroll) library for animations, which is loaded from cdnjs.cloudflare.com servers. This library does NOT store cookies and does NOT collect personal data.",
-                        hu: "<strong>Megjegyzes:</strong> A weboldalunk hasznalja az AOS (Animate On Scroll) konyvtarat animaciokhoz, amely a cdnjs.cloudflare.com szerverrol toltodik be. Ez a konyvtar NEM tarol sutiket es NEM gyujt szemelyes adatokat."
+                        hu: "<strong>Megjegyzés:</strong> A weboldalunk használja az AOS (Animate On Scroll) könyvtárat animációkhoz, amely a cdnjs.cloudflare.com szerverről töltődik be. Ez a könyvtár NEM tárol sütiket és NEM gyűjt személyes adatokat."
                     }
                 },
                 table: {
-                    name: { en: "Name", hu: "Nev" },
-                    type: { en: "Type", hu: "Tipus" },
-                    purpose: { en: "Purpose", hu: "Cel" },
-                    duration: { en: "Duration", hu: "Idotartam" },
-                    provider: { en: "Provider", hu: "Szolgaltato" },
-                    localStorage: { en: "Local storage (localStorage)", hu: "Helyi tarolo (localStorage)" },
-                    languagePurpose: { en: "Remember chosen language (HU/EN)", hu: "A valasztott nyelv (HU/EN) megjegyzese" },
-                    persistent: { en: "Persistent (until deleted)", hu: "Allandoo (amig nem torli)" },
-                    technicalCookies: { en: "Technical cookies", hu: "Technikai sutik" },
-                    sessionCookie: { en: "Session cookie", hu: "Munkamenet suti" },
-                    hostingPurpose: { en: "Minimal technical cookies used by GitHub Pages hosting provider", hu: "A GitHub Pages tarhelyszolgaltato altal hasznalt minimalis technikai sutik" },
+                    name: { en: "Name", hu: "Név" },
+                    type: { en: "Type", hu: "Típus" },
+                    purpose: { en: "Purpose", hu: "Cél" },
+                    duration: { en: "Duration", hu: "Időtartam" },
+                    provider: { en: "Provider", hu: "Szolgáltató" },
+                    localStorage: { en: "Local storage (localStorage)", hu: "Helyi tároló (localStorage)" },
+                    languagePurpose: { en: "Remember chosen language (HU/EN)", hu: "A választott nyelv (HU/EN) megjegyzése" },
+                    persistent: { en: "Persistent (until deleted)", hu: "Állandó (amíg nem törli)" },
+                    technicalCookies: { en: "Technical cookies", hu: "Technikai sütik" },
+                    sessionCookie: { en: "Session cookie", hu: "Munkamenet süti" },
+                    hostingPurpose: { en: "Minimal technical cookies used by GitHub Pages hosting provider", hu: "A GitHub Pages tárhelyszolgáltató által használt minimális technikai sütik" },
                     sessionDuration: { en: "Session", hu: "Munkamenet" }
                 },
                 manage: {
-                    title: { en: "How to Manage Cookies?", hu: "Hogyan kezelheti a sutiket?" },
+                    title: { en: "How to Manage Cookies?", hu: "Hogyan kezelheti a sütiket?" },
                     text: {
                         en: "Most browsers allow you to manage cookies through their settings. The following links provide guidance for each browser:",
-                        hu: "A legtobb bongeszo lehetove teszi a sutik kezeleset a beallitasokon keresztul. Az alabbi linkeken talalhato utmutatot az egyes bongeszokhoz:"
+                        hu: "A legtöbb böngésző lehetővé teszi a sütik kezelését a beállításokon keresztül. Az alábbi linkeken található útmutatót az egyes böngészőkhoz:"
                     }
                 },
                 browsers: {
@@ -526,32 +548,35 @@
                     title: { en: "Legal Basis", hu: "Jogalap" },
                     text1: {
                         en: "The use of necessary and functional cookies is based on the legitimate interest necessary for the operation of the website (GDPR Article 6(1)(f)).",
-                        hu: "A szukseges es funkcionalis sutik hasznalata a webhely mukodesehez szukseges jogos erdeken alapul (GDPR 6. cikk (1) bekezdes f) pont)."
+                        hu: "A szükséges és funkcionális sütik használata a webhely működéséhez szükséges jogos érdekén alapul (GDPR 6. cikk (1) bekezdés f) pont)."
                     },
                     text2: {
                         en: "Since our website does not use analytics or marketing cookies, we do not request consent for these.",
-                        hu: "Mivel weboldalunk nem hasznal analitikai vagy marketing sutiket, nem kerunk hozzajarulast ezekhez."
+                        hu: "Mivel weboldalunk nem használ analitikai vagy marketing sütiket, nem kérünk hozzájárulást ezekhez."
                     }
                 },
                 changes: {
-                    title: { en: "Changes to Cookie Policy", hu: "Valtozasok a suti szabalyzatban" },
+                    title: { en: "Changes to Cookie Policy", hu: "Változások a süti szabályzatban" },
                     text: {
                         en: "We reserve the right to modify this cookie policy at any time. Changes will be published on this page.",
-                        hu: "Fenntartjuk a jogot, hogy barmikor modositsuk ezt a suti tajekoztato. A valtozasokat ezen az oldalon tesszuk kozze."
+                        hu: "Fenntartjuk a jogot, hogy bármikor módosítsuk ezt a süti tájékoztató. A változásokat ezen az oldalon tesszük közzé."
                     }
                 },
                 contact: {
                     title: { en: "Contact", hu: "Kapcsolat" },
                     text: {
                         en: "If you have any questions about the use of cookies, please contact us:",
-                        hu: "Ha barmilyen kerdese van a sutik hasznalataval kapcsolatban, forduljon hozzank:"
+                        hu: "Ha bármilyen kérdése van a sütik használatával kapcsolatban, forduljon hozzánk:"
                     },
-                    company: { en: "Company:", hu: "Cegnev:" },
+                    company: { en: "Company:", hu: "Cégnév:" },
                     email: { en: "Email:", hu: "E-mail:" },
                     emailAddress: { en: "info@qualidat.hu", hu: "info@qualidat.hu" }
                 }
             },
             footer: {
+                imprint: { en: "Legal Imprint", hu: "Impresszum" },
+                privacy: { en: "Privacy Policy", hu: "Adatvédelmi Tájékoztató" },
+                cookies: { en: "Cookie Policy", hu: "Süti Tájékoztató" },
                 copyright: {
                     en: "© 2026 QualiDat. All rights reserved.",
                     hu: "© 2026 QualiDat. Minden jog fenntartva."

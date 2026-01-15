@@ -202,6 +202,23 @@
             text-align: center;
         }
 
+        .footer-links {
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
         @media (max-width: 600px) {
             .info-grid {
                 grid-template-columns: 1fr;
@@ -215,7 +232,7 @@
 <body>
     <nav class="navbar" role="navigation" aria-label="Main navigation">
         <div class="logo">
-            <a href="index.html" aria-label="QualiDat Fooldal">
+            <a href="index.html" aria-label="QualiDat Főoldal">
                 <img src="qualidat_logo.jpg" alt="QualiDat Dynamic Route Planner Logo" loading="lazy">
             </a>
         </div>
@@ -228,11 +245,11 @@
 
         <div class="language-selector">
             <button id="en-btn" class="language-btn" data-lang="en">
-                <span>GB</span> EN
+                <span>🇬🇧</span> EN
             </button>
             <span style="margin: 0 0.5rem;">|</span>
             <button id="hu-btn" class="language-btn active" data-lang="hu">
-                <span>HU</span> HU
+                <span>🇭🇺</span> HU
             </button>
         </div>
     </nav>
@@ -241,28 +258,28 @@
         <div class="content-section">
             <h1 data-i18n="imprint.title">Impresszum</h1>
 
-            <h2 data-i18n="imprint.companyData">Cegadatok</h2>
+            <h2 data-i18n="imprint.companyData">Cégadatok</h2>
 
             <div class="info-grid">
-                <span class="info-label" data-i18n="imprint.name">Nev:</span>
+                <span class="info-label" data-i18n="imprint.name">Név:</span>
                 <span class="info-value">QualiDat Kft.</span>
 
-                <span class="info-label" data-i18n="imprint.fullName">Teljes nev:</span>
-                <span class="info-value">QualiDat Adatkereskedelmi es Szolgaltato Korlatolt Felelossegu Tarsasag</span>
+                <span class="info-label" data-i18n="imprint.fullName">Teljes név:</span>
+                <span class="info-value">QualiDat Adatkereskedelmi és Szolgáltató Korlátolt Felelősségű Társaság</span>
 
-                <span class="info-label" data-i18n="imprint.registeredOffice">Szekhely:</span>
-                <span class="info-value">1037 Budapest, Nyereg ut 23.</span>
+                <span class="info-label" data-i18n="imprint.registeredOffice">Székhely:</span>
+                <span class="info-value">1037 Budapest, Nyereg út 23.</span>
 
-                <span class="info-label" data-i18n="imprint.taxNumber">Adoszam:</span>
+                <span class="info-label" data-i18n="imprint.taxNumber">Adószám:</span>
                 <span class="info-value">14106099-2-41</span>
 
-                <span class="info-label" data-i18n="imprint.registrationNumber">Cegjegyzekszam:</span>
+                <span class="info-label" data-i18n="imprint.registrationNumber">Cégjegyzékszám:</span>
                 <span class="info-value">01-09-436673</span>
 
-                <span class="info-label" data-i18n="imprint.registrationDate">Bejegyzes kelte:</span>
+                <span class="info-label" data-i18n="imprint.registrationDate">Bejegyzés kelte:</span>
                 <span class="info-value">2024/10/22</span>
 
-                <span class="info-label" data-i18n="imprint.euVatNumber">Kozossegi adoszam:</span>
+                <span class="info-label" data-i18n="imprint.euVatNumber">Közösségi adószám:</span>
                 <span class="info-value">HU 14106099</span>
             </div>
 
@@ -285,7 +302,7 @@
                 <span class="info-value"><a href="tel:+36302017554" style="color: var(--primary-color);">+36 30 201 7554</a></span>
             </div>
 
-            <h2 data-i18n="imprint.bankAccounts">Bankszamlak</h2>
+            <h2 data-i18n="imprint.bankAccounts">Bankszámlák</h2>
 
             <div class="bank-accounts">
                 <div class="bank-account">
@@ -307,10 +324,10 @@
                 </div>
             </div>
 
-            <h2 data-i18n="imprint.hosting">Tarhelyszolgaltatas</h2>
+            <h2 data-i18n="imprint.hosting">Tárhelyszolgáltatás</h2>
 
             <div class="info-grid">
-                <span class="info-label" data-i18n="imprint.hostingProvider">Szolgaltato:</span>
+                <span class="info-label" data-i18n="imprint.hostingProvider">Szolgáltató:</span>
                 <span class="info-value">GitHub Pages</span>
 
                 <span class="info-label" data-i18n="imprint.hostingWebsite">Weboldal:</span>
@@ -321,6 +338,11 @@
     </main>
 
     <footer class="footer" role="contentinfo">
+        <div class="footer-links">
+            <a href="imprint.html" data-i18n="footer.imprint">Impresszum</a> |
+            <a href="privacy.html" data-i18n="footer.privacy">Adatvédelmi Tájékoztató</a> |
+            <a href="cookies.html" data-i18n="footer.cookies">Süti Tájékoztató</a>
+        </div>
         <p data-i18n="footer.copyright">&copy; 2026 QualiDat. Minden jog fenntartva.</p>
     </footer>
 
@@ -328,30 +350,33 @@
     <script>
         const translations = {
             nav: {
-                features: { en: "Features", hu: "Funkciok" },
-                benefits: { en: "Benefits", hu: "Elonyok" },
-                stats: { en: "Impact", hu: "Eredmenyek" },
+                features: { en: "Features", hu: "Funkciók" },
+                benefits: { en: "Benefits", hu: "Előnyök" },
+                stats: { en: "Impact", hu: "Eredmények" },
                 contact: { en: "Contact", hu: "Kapcsolat" }
             },
             imprint: {
                 title: { en: "Legal Imprint", hu: "Impresszum" },
-                companyData: { en: "Company Information", hu: "Cegadatok" },
-                name: { en: "Name:", hu: "Nev:" },
-                fullName: { en: "Full legal name:", hu: "Teljes nev:" },
-                registeredOffice: { en: "Registered office:", hu: "Szekhely:" },
-                taxNumber: { en: "Tax number:", hu: "Adoszam:" },
-                registrationNumber: { en: "Registration number:", hu: "Cegjegyzekszam:" },
-                registrationDate: { en: "Registration date:", hu: "Bejegyzes kelte:" },
-                euVatNumber: { en: "EU VAT number:", hu: "Kozossegi adoszam:" },
+                companyData: { en: "Company Information", hu: "Cégadatok" },
+                name: { en: "Name:", hu: "Név:" },
+                fullName: { en: "Full legal name:", hu: "Teljes név:" },
+                registeredOffice: { en: "Registered office:", hu: "Székhely:" },
+                taxNumber: { en: "Tax number:", hu: "Adószám:" },
+                registrationNumber: { en: "Registration number:", hu: "Cégjegyzékszám:" },
+                registrationDate: { en: "Registration date:", hu: "Bejegyzés kelte:" },
+                euVatNumber: { en: "EU VAT number:", hu: "Közösségi adószám:" },
                 contact: { en: "Contact", hu: "Kapcsolat" },
                 phone: { en: "Phone:", hu: "Telefon:" },
-                bankAccounts: { en: "Bank Accounts", hu: "Bankszamlak" },
-                hosting: { en: "Web Hosting", hu: "Tarhelyszolgaltatas" },
-                hostingProvider: { en: "Provider:", hu: "Szolgaltato:" },
+                bankAccounts: { en: "Bank Accounts", hu: "Bankszámlák" },
+                hosting: { en: "Web Hosting", hu: "Tárhelyszolgáltatás" },
+                hostingProvider: { en: "Provider:", hu: "Szolgáltató:" },
                 hostingWebsite: { en: "Website:", hu: "Weboldal:" }
             },
             footer: {
-                copyright: { en: "(C) 2026 QualiDat. All rights reserved.", hu: "(C) 2026 QualiDat. Minden jog fenntartva." }
+                imprint: { en: "Legal Imprint", hu: "Impresszum" },
+                privacy: { en: "Privacy Policy", hu: "Adatvédelmi Tájékoztató" },
+                cookies: { en: "Cookie Policy", hu: "Süti Tájékoztató" },
+                copyright: { en: "© 2026 QualiDat. All rights reserved.", hu: "© 2026 QualiDat. Minden jog fenntartva." }
             }
         };
 
