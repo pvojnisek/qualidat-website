@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRP Mobile - Adatvédelmi kiegészítés / Privacy Addendum</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1d47b8;
+            --primary-dark: #163990;
+            --text-color: #333;
+            --light-bg: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            overflow-x: hidden;
+            background-color: var(--light-bg);
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navbar .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        /* Language Selector Styles */
+        .language-selector {
+            margin-left: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: color 0.3s;
+        }
+
+        .language-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .language-btn.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .language-btn > span {
+            margin-right: 5px;
+            font-size: 1.2rem;
+        }
+
+        .section {
+            padding: 5rem 2rem;
+        }
+
+        /* Main content styling */
+        #main-content {
+            padding-top: 100px;
+        }
+
+        #main-content h1, #main-content h2, #main-content h3 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+        }
+        #main-content h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        #main-content h2 {
+            font-size: 1.6rem;
+            margin-top: 2rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        #main-content h3 {
+            font-size: 1.3rem;
+            margin-top: 1.5rem;
+        }
+        #main-content p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        #main-content ul {
+            list-style-position: outside;
+            padding-left: 20px;
+            margin-bottom: 1.5rem;
+        }
+        #main-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-section {
+            max-width: 900px;
+            margin: 0 auto 3rem auto;
+            padding: 2.5rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Table styling */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .data-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+
+        .footer {
+            background: var(--light-bg);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .content-section {
+                padding: 1.5rem;
+            }
+            #main-content h1 {
+                font-size: 1.8rem;
+            }
+            .data-table {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="logo">
+            <img src="qualidat_logo.jpg" alt="QualiDat Logo">
+        </div>
+
+        <div class="language-selector">
+            <button id="en-btn" class="language-btn" data-lang="en">
+                <span>🇬🇧</span> EN
+            </button>
+            <span style="margin: 0 0.5rem;">|</span>
+            <button id="hu-btn" class="language-btn active" data-lang="hu">
+                <span>🇭🇺</span> HU
+            </button>
+        </div>
+    </nav>
+
+    <main id="main-content" class="section">
+        <div class="content-section" data-aos="fade-up">
+            <h1 data-i18n="policy.title">DRP Mobile alkalmazás — Adatvédelmi kiegészítés</h1>
+            <p data-i18n="policy.intro">Az alábbi kiegészítés a QualiDat Kft. DRP Mobile alkalmazására vonatkozik.</p>
+
+            <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #eee;">
+
+            <h2 data-i18n="policy.purpose.title">Az alkalmazás célja</h2>
+            <p data-i18n="policy.purpose.text">A DRP Mobile a QualiDat Kft. dinamikus útvonaltervező rendszerének (DRP) mobil kísérőalkalmazása. Kézbesítési sofőrök számára készült, és napi túraútvonalakat, partneri adatokat és navigációt biztosít.</p>
+
+            <h2 data-i18n="policy.data.title">Kezelt adatok és jogalapok</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th data-i18n="policy.data.table.h1">Adat</th>
+                        <th data-i18n="policy.data.table.h2">Cél</th>
+                        <th data-i18n="policy.data.table.h3">Jogalap</th>
+                        <th data-i18n="policy.data.table.h4">Megőrzés</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-i18n="policy.data.table.row1.c1">Kamera (fényképezőgép)</td>
+                        <td data-i18n="policy.data.table.row1.c2">QR-kód beolvasás az eszközpárosításhoz</td>
+                        <td data-i18n="policy.data.table.row1.c3">Hozzájárulás (engedélykérés)</td>
+                        <td data-i18n="policy.data.table.row1.c4">Nincs tárolás — a kamera kizárólag a QR-kód dekódolásához aktív</td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="policy.data.table.row2.c1">Helyadatok (GPS)</td>
+                        <td data-i18n="policy.data.table.row2.c2">Útvonal-navigáció és térképmegjelenítés</td>
+                        <td data-i18n="policy.data.table.row2.c3">Hozzájárulás (engedélykérés)</td>
+                        <td data-i18n="policy.data.table.row2.c4">Nincs tárolás a szerveren — kizárólag az eszközön, valós időben használt</td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="policy.data.table.row3.c1">Sofőr-azonosító és párosítási kulcs</td>
+                        <td data-i18n="policy.data.table.row3.c2">Az eszköz és a szerver közötti hitelesítés</td>
+                        <td data-i18n="policy.data.table.row3.c3">Szerződés teljesítése</td>
+                        <td data-i18n="policy.data.table.row3.c4">A párosítás megszüntetéséig</td>
+                    </tr>
+                    <tr>
+                        <td data-i18n="policy.data.table.row4.c1">Hálózati kommunikáció</td>
+                        <td data-i18n="policy.data.table.row4.c2">A DRP szerver és az alkalmazás közötti adatcsere</td>
+                        <td data-i18n="policy.data.table.row4.c3">Szerződés teljesítése</td>
+                        <td data-i18n="policy.data.table.row4.c4">A munkamenet időtartama</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 data-i18n="policy.permissions.title">Engedélyek részletezése</h2>
+            <ul>
+                <li data-i18n="policy.permissions.item1"><strong>Kamera (CAMERA):</strong> Kizárólag a QR-kódos eszközpárosításhoz szükséges. Az alkalmazás nem készít fényképeket és nem rögzít videót. A kamera kép nem kerül tárolásra vagy továbbításra.</li>
+                <li data-i18n="policy.permissions.item2"><strong>Helyadatok (ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION):</strong> Kizárólag a térképen való aktuális pozíció megjelenítéséhez és a kézbesítési útvonal navigációjához szükséges. A helyadatok nem kerülnek továbbításra a szerverre, kizárólag az eszközön kerülnek feldolgozásra.</li>
+                <li data-i18n="policy.permissions.item3"><strong>Internet (INTERNET):</strong> A DRP szerverrel való kommunikációhoz szükséges (túraadatok lekérdezése, hitelesítés).</li>
+            </ul>
+
+            <h2 data-i18n="policy.sharing.title">Adattovábbítás harmadik félnek</h2>
+            <p data-i18n="policy.sharing.text">Az alkalmazás <strong>nem továbbít személyes adatokat harmadik félnek</strong>. A kommunikáció kizárólag a QualiDat Kft. saját DRP szervere és az alkalmazás között zajlik, titkosított (HTTPS) csatornán.</p>
+
+            <h2 data-i18n="policy.security.title">Adatbiztonság</h2>
+            <ul>
+                <li data-i18n="policy.security.item1">Az eszközpárosítás Ed25519 aszimmetrikus kulcspárral történik</li>
+                <li data-i18n="policy.security.item2">Minden szerver-kommunikáció HTTPS protokollon keresztül zajlik</li>
+                <li data-i18n="policy.security.item3">A párosítási kulcsok az Android Keystore rendszerben, titkosítva tárolódnak</li>
+            </ul>
+
+            <h2 data-i18n="policy.rights.title">Felhasználói jogok</h2>
+            <p data-i18n="policy.rights.intro">A felhasználó bármikor:</p>
+            <ul>
+                <li data-i18n="policy.rights.item1">Visszavonhatja a kamera- és helymeghatározási engedélyeket a telefon beállításaiban</li>
+                <li data-i18n="policy.rights.item2">Törölheti az alkalmazást, amivel minden helyi adat törlődik</li>
+                <li data-i18n="policy.rights.item3">Kérheti a párosítás megszüntetését a munkáltatóján keresztül</li>
+            </ul>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p data-i18n="policy.footer.copyright">© 2026 QualiDat. Minden jog fenntartva.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        const translations = {
+            policy: {
+                title: { hu: "DRP Mobile alkalmazás — Adatvédelmi kiegészítés", en: "Mobile App Privacy Addendum" },
+                intro: {
+                    hu: "Az alábbi kiegészítés a QualiDat Kft. DRP Mobile alkalmazására vonatkozik.",
+                    en: "The following addendum applies to QualiDat Kft.'s DRP Mobile application."
+                },
+                purpose: {
+                    title: { hu: "Az alkalmazás célja", en: "Purpose of the Application" },
+                    text: {
+                        hu: "A DRP Mobile a QualiDat Kft. dinamikus útvonaltervező rendszerének (DRP) mobil kísérőalkalmazása. Kézbesítési sofőrök számára készült, és napi túraútvonalakat, partneri adatokat és navigációt biztosít.",
+                        en: "DRP Mobile is the companion mobile application for QualiDat Kft.'s Dynamic Route Planner (DRP) system. It is designed for delivery drivers and provides daily tour routes, partner details, and navigation."
+                    }
+                },
+                data: {
+                    title: { hu: "Kezelt adatok és jogalapok", en: "Data Processed and Legal Basis" },
+                    table: {
+                        h1: { hu: "Adat", en: "Data" },
+                        h2: { hu: "Cél", en: "Purpose" },
+                        h3: { hu: "Jogalap", en: "Legal basis" },
+                        h4: { hu: "Megőrzés", en: "Retention" },
+                        row1: {
+                            c1: { hu: "Kamera (fényképezőgép)", en: "Camera" },
+                            c2: { hu: "QR-kód beolvasás az eszközpárosításhoz", en: "QR code scanning for device pairing" },
+                            c3: { hu: "Hozzájárulás (engedélykérés)", en: "Consent (permission prompt)" },
+                            c4: { hu: "Nincs tárolás — a kamera kizárólag a QR-kód dekódolásához aktív", en: "Not stored — camera is active only during QR decoding" }
+                        },
+                        row2: {
+                            c1: { hu: "Helyadatok (GPS)", en: "Location (GPS)" },
+                            c2: { hu: "Útvonal-navigáció és térképmegjelenítés", en: "Route navigation and map display" },
+                            c3: { hu: "Hozzájárulás (engedélykérés)", en: "Consent (permission prompt)" },
+                            c4: { hu: "Nincs tárolás a szerveren — kizárólag az eszközön, valós időben használt", en: "Not stored on server — used in real-time on device only" }
+                        },
+                        row3: {
+                            c1: { hu: "Sofőr-azonosító és párosítási kulcs", en: "Driver ID and pairing key" },
+                            c2: { hu: "Az eszköz és a szerver közötti hitelesítés", en: "Authentication between device and server" },
+                            c3: { hu: "Szerződés teljesítése", en: "Performance of contract" },
+                            c4: { hu: "A párosítás megszüntetéséig", en: "Until pairing is revoked" }
+                        },
+                        row4: {
+                            c1: { hu: "Hálózati kommunikáció", en: "Network communication" },
+                            c2: { hu: "A DRP szerver és az alkalmazás közötti adatcsere", en: "Data exchange between DRP server and app" },
+                            c3: { hu: "Szerződés teljesítése", en: "Performance of contract" },
+                            c4: { hu: "A munkamenet időtartama", en: "Duration of session" }
+                        }
+                    }
+                },
+                permissions: {
+                    title: { hu: "Engedélyek részletezése", en: "Permission Details" },
+                    item1: {
+                        hu: "<strong>Kamera (CAMERA):</strong> Kizárólag a QR-kódos eszközpárosításhoz szükséges. Az alkalmazás nem készít fényképeket és nem rögzít videót. A kamera kép nem kerül tárolásra vagy továbbításra.",
+                        en: "<strong>Camera (CAMERA):</strong> Used exclusively for QR code device pairing. The app does not take photos or record video. Camera images are not stored or transmitted."
+                    },
+                    item2: {
+                        hu: "<strong>Helyadatok (ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION):</strong> Kizárólag a térképen való aktuális pozíció megjelenítéséhez és a kézbesítési útvonal navigációjához szükséges. A helyadatok nem kerülnek továbbításra a szerverre, kizárólag az eszközön kerülnek feldolgozásra.",
+                        en: "<strong>Location (ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION):</strong> Used solely for displaying current position on the map and navigating delivery routes. Location data is not sent to the server; it is processed on-device only."
+                    },
+                    item3: {
+                        hu: "<strong>Internet (INTERNET):</strong> A DRP szerverrel való kommunikációhoz szükséges (túraadatok lekérdezése, hitelesítés).",
+                        en: "<strong>Internet (INTERNET):</strong> Required for communication with the DRP server (tour data retrieval, authentication)."
+                    }
+                },
+                sharing: {
+                    title: { hu: "Adattovábbítás harmadik félnek", en: "Third-Party Data Sharing" },
+                    text: {
+                        hu: "Az alkalmazás <strong>nem továbbít személyes adatokat harmadik félnek</strong>. A kommunikáció kizárólag a QualiDat Kft. saját DRP szervere és az alkalmazás között zajlik, titkosított (HTTPS) csatornán.",
+                        en: "The application <strong>does not share personal data with any third party</strong>. Communication occurs exclusively between QualiDat Kft.'s own DRP server and the application, over encrypted (HTTPS) channels."
+                    }
+                },
+                security: {
+                    title: { hu: "Adatbiztonság", en: "Data Security" },
+                    item1: { hu: "Az eszközpárosítás Ed25519 aszimmetrikus kulcspárral történik", en: "Device pairing uses Ed25519 asymmetric key pairs" },
+                    item2: { hu: "Minden szerver-kommunikáció HTTPS protokollon keresztül zajlik", en: "All server communication is over HTTPS" },
+                    item3: { hu: "A párosítási kulcsok az Android Keystore rendszerben, titkosítva tárolódnak", en: "Pairing keys are stored encrypted in Android Keystore" }
+                },
+                rights: {
+                    title: { hu: "Felhasználói jogok", en: "User Rights" },
+                    intro: { hu: "A felhasználó bármikor:", en: "The user may at any time:" },
+                    item1: { hu: "Visszavonhatja a kamera- és helymeghatározási engedélyeket a telefon beállításaiban", en: "Revoke camera and location permissions in phone settings" },
+                    item2: { hu: "Törölheti az alkalmazást, amivel minden helyi adat törlődik", en: "Uninstall the application, which deletes all local data" },
+                    item3: { hu: "Kérheti a párosítás megszüntetését a munkáltatóján keresztül", en: "Request pairing revocation through their employer" }
+                },
+                footer: {
+                    copyright: { hu: "© 2026 QualiDat. Minden jog fenntartva.", en: "© 2026 QualiDat. All rights reserved." }
+                }
+            }
+        };
+
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Set default language from localStorage or to 'hu'
+        let currentLanguage = localStorage.getItem('preferredLanguage') || 'hu';
+        document.documentElement.lang = currentLanguage;
+
+        // Apply translations based on selected language
+        function applyTranslations(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const keys = element.getAttribute('data-i18n').split('.');
+                let value = translations;
+
+                for (let i = 0; i < keys.length; i++) {
+                    const key = keys[i];
+                    if (value && typeof value === 'object' && value[key] !== undefined) {
+                        value = value[key];
+                        if (i === keys.length - 1 && typeof value === 'object' && value[lang] !== undefined) {
+                            if (value[lang].includes('<') && value[lang].includes('>')) {
+                                element.innerHTML = value[lang];
+                            } else {
+                                element.textContent = value[lang];
+                            }
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+            });
+
+            // Update active class on language buttons
+            languageButtons.forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        const languageButtons = document.querySelectorAll('.language-btn');
+        languageButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const language = this.getAttribute('data-lang');
+                applyTranslations(language);
+                localStorage.setItem('preferredLanguage', language);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            applyTranslations(currentLanguage);
+        });
+    </script>
+</body>
+</html>
